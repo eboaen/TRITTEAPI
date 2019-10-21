@@ -1,99 +1,243 @@
-import requests #Found at python-requests.org/
+from flask import Flask
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import session
+from flask import url_for
+from flask import flash
+from flask import send_from_directory
+from flask_wtf import FlaskForm, CSRFProtect
+from wtforms import TextField, PasswordField, TextAreaField, validators, SelectField, StringField, SubmitField
+from wtforms.validators import DataRequired
+from werkzeug.utils import secure_filename
+
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm.exc import NoResultFound
+
+import os
+import logging
+import calendar
+import config
+import random
+import datetime
+import time
+import re
+import csv
 import json
+import requests
 
-url="https://tabletop.events/api"
-api_key_id = '0A4DCD00-ED07-11E9-B27C-43B2D530A4B6' #Replace with yours
-username = 'eric.boaen@theroleinitiative.o' #Replace with yours
-password = 'Unobtainium1' #Replace with yours
+# logger stuff
+logger = logging.getLogger(__name__)
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+console = logging.StreamHandler()
+console.setLevel(logging.DEBUG)
+console.setFormatter(formatter)
+logger.addHandler(console)
 
-#Get a Session
-params = {'api_key_id': api_key_id, 'username' : username, 'password': password}
-response = requests.post(url + "/session", params=params)
-if response.status_code==200:
-  print("----Status code OK!----")
-  print("---Get a session---")
-  print(response.json())
-  print("-------------------")
-session = response.json()['result']
+# init app and load conf
+app = Flask(__name__, static_url_path='/static')
+app.config.from_object(config)
+csrf = CSRFProtect(app)
 
-# Fetch my account info
-params = {'session_id': session['id']}
-response = requests.get(url + "/user/" + session['user_id'], params=params)
-print("---Get account info---")
-print(response.json())
-print("----------------------")
+# init db
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
-# Fetch Group info
-params = {'session_id': session['id']}
-response = requests.get(url + "/group/B3124686-B852-11E8-AB7F-B79E49AF76B9/conventions", params=params)
-data = response.json()
-convention_count = 0
-conventions = {}
-print ("---Get Convention Info---")
-for convention in data['result']['items']:
-    toadd = {'Name': convention['name'], 'ID': convention['id']}
-    conventions[convention_count]= toadd
-    convention_count = convention_count + 1
-print (conventions)
-print("----------------------")
+# -----------------------------------------------------------------------
+# Database models
+# -----------------------------------------------------------------------
+class Conventions(db.Model):
+    name = db.Column(db.String(255))
+    datestart = db.Column(db.DateTime)
+    dateend = db.Column(db.DateTime)
+    tteuri = db.Column(db.String(255))
+    tteid = db.Column(db.String(255), primary_key=True)
 
-# Fetch Convention events
-for con in conventions:
-    print (con,conventions[con]['Name'])
-while True:
-    try:
-        select_con = int(input("Select the convention: "))
-        if select_con in range(convention_count):
-            print("---Convention Information---")
-            params = {'session_id': session['id'], '_include_relationships': '1'}
-            response = requests.get(url + "/convention/" + conventions[select_con]['ID'], params=params)
-            data = response.json()
-            print("---Event Listing---")
-            response = requests.get('https://tabletop.events' + data['result']['_relationships']['events'], params=params)
-            data = response.json()
-            for field in data['result']['items']:
-                print (field['name'],field['_relationships']['eventhosts'])
-#            for field in data['result']['items']:
-#            for field in data['result']:
-#                print (field, data['result']['items'][field])
-#            print("----------------------")
-            break
-        if select_con == 99:
-            break
-    except:
-        pass
+class Volunteers(db.Model):
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    slot_pref = db.Column(db.String(512))
+    tteuri = db.Column(db.String(255))
+    tteid = db.Column(db.String(255), primary_key=True)
 
-    print ('\nIncorrect input, try again')
-#for con_info in data:
-#    conventions[con].update({'view_uri': data[con_info]['view_uri']})
+class Slots(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    datetimestart = db.Column(db.DateTime)
+    datetimeend = db.Column(db.DateTime)
 
-# Fetch Convention info
-# params = {'session_id': session['id']}
-# response = requests.get(url + "/convention", params=params)
-# print("---Get Convention info---")
-# data = response.json()
-# for convention in data['result']['items']:
-#    print (convention['name'])
-# print("----------------------")
+class Events(db.Model):
+    code = db.Column(db.String(255))
+    title = db.Column(db.String(255))
+    length = db.Column(db.Integer)
+    description = db.Column(db.String(1024))
+    tier = db.Column(db.Integer)
+    tteuri = db.Column(db.String(255))
+    tteid = db.Column(db.String(255), primary_key=True)
 
-# Upload a file
-#params = {
-#'name': 'example.png',
-#'folder_id': root_folder_id,
-#'session_id': session['id']
-#}
-#files = { 'file': open('example.png','rb') }
-#response = requests.post(url + "/file", params=params, files=files)
-#print("---Upload response---")
-#print(response.json())
-#print("---------------------")
+class Tables(db.Model):
+    tteid = db.Column(db.String(255), primary_key=True)
 
-# Search Games
-#params = {
-#'q' : 'Steampunk',
-#'session_id': session['id'] #optional
-#}
-#response = requests.get(url + "/game", params=params)
-#print("----- Results -----")
-#print(response)
-#print("------ Done! -------")
+# -----------------------------------------------------------------------
+# Forms
+# -----------------------------------------------------------------------
+class LoginForm(FlaskForm):
+    name = TextField('Name:', validators=[validators.DataRequired()])
+    email = TextField('Email:', validators=[validators.DataRequired()])
+    password = TextField('Password:', validators=[validators.DataRequired()])
+
+class SlotForm(FlaskForm):
+    number = TextField('Slot Number', validators=[validators.optional()])
+    year = SelectField('Year:', coerce=int, validators=[validators.optional()])
+    month = SelectField('Month:', coerce=str, validators=[validators.optional()])
+    day = SelectField('Day:', coerce=int, validators=[validators.optional()])
+    length = TextField('Length:', validators=[validators.optional()])
+    time = TextField('Time:', validators=[validators.optional()])
+    submit = SubmitField(label='Submit')
+    clear = SubmitField(label='Clear All Slots')
+    delete = SubmitField(label='Delete')
+
+    def reset(self):
+        blankData = MultiDict([ ('csrf', self.reset_csrf() ) ])
+        self.process(blankData)
+
+class TableForm(FlaskForm):
+    number = TextField('Table Number', validators=[validators.optional()])
+    players = TextField('Number of Players:', validators=[validators.optional()])
+    bulk_tables = TextField('Number of Tables:', validators=[validators.optional()])
+    bulk_players = TextField('Number of Players:', validators=[validators.optional()])
+    submit = SubmitField(label='Submit')
+    clear = SubmitField(label='Clear All Tables')
+    bulk_add = SubmitField(label='Add Multiple Tables')
+
+    def reset(self):
+        blankData = MultiDict([ ('csrf', self.reset_csrf() ) ])
+        self.process(blankData)
+
+class EventForm(FlaskForm):
+    number = TextField('Table Number', validators=[validators.DataRequired()])
+    code = TextField('Adventure Code', validators=[validators.DataRequired()])
+    title = TextField('Adventure Code', validators=[validators.DataRequired()])
+    length = TextField('Adventure Code', validators=[validators.DataRequired()])
+    description = TextAreaField('Adventure Code', validators=[validators.DataRequired()])
+    tier = TextField('Adventure Code', validators=[validators.DataRequired()])
+    submit = SubmitField(label='Submit')
+    clear = SubmitField(label='Clear All Slots')
+
+    def reset(self):
+        blankData = MultiDict([ ('csrf', self.reset_csrf() ) ])
+        self.process(blankData)
+
+class SessionForm(FlaskForm):
+    table = SelectField('Table', coerce=int)
+    slot = SelectField('Slot', coerce=int)
+    volunteer = SelectField('Volunteer', coerce=int)
+    event = SelectField('Event', coerce=str)
+    session_info = SubmitField(label='Submit')
+    delete = SubmitField(label='Delete Sessions')
+
+class SessionDeleteForm(FlaskForm):
+    sessions = SelectField('Session', coerce=str)
+    delete = SubmitField(label='Delete Slots')
+
+class FileForm(FlaskForm):
+    selectfile = SelectField('Filename', validators=[validators.DataRequired()])
+    submit = SubmitField(label='Submit')
+    clear = SubmitField(label='Clear All Slots')
+
+# -----------------------------------------------------------------------
+# Internal Functions
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# Start a Session to TTE
+# -----------------------------------------------------------------------
+def tte_session():
+    params = {'api_key_id': config.tte_api_key_id, 'username' : config.tte_username, 'password': config.tte_password}
+    response = requests.post(config.tte_url + "/session", params=params)
+    if response.status_code==200:
+        session = response.json()['result']
+    return (session)
+
+# -----------------------------------------------------------------------
+# Pull Convention listing from TTE
+# -----------------------------------------------------------------------
+def gettteconventions(ttesession):
+    params = {'session_id': ttesession['id']}
+    response = requests.get(config.tte_url + "/group/" + config.tte_group_id + "/conventions", params=params)
+    data = response.json()
+    convention_count = 0
+    conventions = {}
+    for convention in data['result']['items']:
+        toadd = {'name': convention['name'], 'id': convention['id']}
+        conventions[convention_count]= toadd
+        convention_count = convention_count + 1
+    return(conventions)
+
+# -----------------------------------------------------------------------
+# Pull Convention listing from TTE
+# -----------------------------------------------------------------------
+def newconventionfile(convention):
+    print (convention['name'])
+    new = open(convention['name'] + ".html", "w+")
+    new.close
+    return()
+# -----------------------------------------------------------------------
+# Login to server route
+# -----------------------------------------------------------------------
+# This is a rudimentary authentication scheme.  A more robuest auth setup will be implemented before I do final release.
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    form = LoginForm(request.form)
+    session['id'] = 0
+
+    if request.method == 'POST':
+        name = request.form['name']
+        user = request.form['email'] #
+        password = request.form['password']
+
+        if form.validate():
+            if 'Eric' in name:
+                session['name'] = name
+                session['ttesession'] = tte_session()
+                return redirect(url_for('index'))
+            else:
+                flash('Please enter a valid user')
+                return redirect(request.url)
+        else:
+            flash('All the form fields are required.')
+            return redirect(request.url)
+    return render_template('login.html', form=form)
+
+# -----------------------------------------------------------------------
+# Index Route
+# -----------------------------------------------------------------------
+@app.route('/')
+def index():
+    # Check to see if the user already exists.
+    # If it does, pass the user's name to the render_template
+    if 'name' in session:
+        name = session.get('name')
+        ttesession = session.get('ttesession')
+        tteconventions = gettteconventions(ttesession)
+        for convention in tteconventions:
+            if os.path.isfile(tteconventions[convention]['id'] + '.html') is False:
+                newconvention = newconventionfile(tteconventions[convention])
+        return render_template('base.html', **{'name' : name, "tteconventions" : tteconventions})
+    else:
+    #Otherwose, just load the page.  Page has code to detect if name exists
+        return render_template('base.html')
+
+# -----------------------------------------------------------------------
+# Convention Page Routes
+# -----------------------------------------------------------------------
+@app.route('/<convention>')
+    def convention
+
+# -----------------------------------------------------------------------
+# Run Program
+# -----------------------------------------------------------------------
+if __name__ == '__main__':
+    app.run(port=config.PORT, host=config.HOST)

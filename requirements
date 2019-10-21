@@ -1,0 +1,10 @@
+requests
+Flask
+Flask-Login
+Flask-Migrate
+Flask-Table
+flask_wtf
+sqlalchemy
+wtforms
+pymysql
+simplejson
