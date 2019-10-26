@@ -16,6 +16,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import NoResultFound
 
 import os
+import shutil
+from pathlib import Path
 import logging
 import calendar
 import config
@@ -179,10 +181,10 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 # Pull Convention listing from TTE
 # -----------------------------------------------------------------------
-def newconventionfile(convention):
-    print (convention['name'])
-    new = open(convention['name'] + ".html", "w+")
-    new.close
+def newconventionfile(con_name):
+    dst = "templates/" + con_name + ".html"
+    src = ("templates/newconventionbase.html")
+    shutil.copy(src,dst)
     return()
 # -----------------------------------------------------------------------
 # Login to server route
@@ -223,9 +225,9 @@ def index():
         ttesession = session.get('ttesession')
         tteconventions = gettteconventions(ttesession)
         for convention in tteconventions:
-            if os.path.isfile(tteconventions[convention]['id'] + '.html') is False:
-                newconvention = newconventionfile(tteconventions[convention])
-        return render_template('base.html', **{'name' : name, "tteconventions" : tteconventions})
+            if os.path.isfile('templates/' + tteconventions[convention]['name'] + '.html') is False:
+                newconvention = newconventionfile(tteconventions[convention]['name'])
+        return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
         return render_template('base.html')
@@ -234,8 +236,12 @@ def index():
 # Convention Page Routes
 # -----------------------------------------------------------------------
 @app.route('/<convention>')
-    def convention
-
+def convention():
+#    name = session.get('name')
+#    print (con_name)
+#    file = con_name + '.html'
+#    return render_template(file, **{'name' : name, 'ttecon': ttecon})
+    return ()
 # -----------------------------------------------------------------------
 # Run Program
 # -----------------------------------------------------------------------

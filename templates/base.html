@@ -32,12 +32,11 @@
       </div>
     </main>
   </div> <!-- /container -->
-
   <div class="container">
           <div class="row">
               <div class="col-md-12">
-                  {% for convention in tteconventions %}
-                    <p class="lead text-left"><a href="{{ url_for(tteconventions[convention].name) }}"> {{ tteconventions[convention].name }}</a></p>
+                  {% for con in tteconventions %}
+                    <p class="lead text-left"><a href= {{ url_for('convention') }} > {{ tteconventions[con].name }}</a></p>
                   {% endfor %}
               </div>
          </div>
