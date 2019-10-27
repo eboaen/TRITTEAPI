@@ -236,12 +236,12 @@ def index():
 # Convention Page Routes
 # -----------------------------------------------------------------------
 @app.route('/<convention>')
-def convention():
-#    name = session.get('name')
+def tte(convention):
+    name = session.get('name')
 #    print (con_name)
-#    file = con_name + '.html'
-#    return render_template(file, **{'name' : name, 'ttecon': ttecon})
-    return ()
+    file = convention + '.html'
+    return render_template(file, **{'name' : name, 'ttecon' : convention})
+
 # -----------------------------------------------------------------------
 # Run Program
 # -----------------------------------------------------------------------
