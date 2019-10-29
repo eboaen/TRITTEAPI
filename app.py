@@ -204,12 +204,12 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     for field in event_data['result']['items']:
         slot_url = field['_relationships']['slots']
         event_slots = get_slot_info(ttesession,slot_url)
+        print (field['name'],field['id'])
         for slot in event_slots:
-            print(slot)
-#        print (field['name'],field['startdaypart_name'],field['id'])
-#        hosts = field['hosts']
-#        for host in hosts:
-#            print (host['name'],host['user_id'])
+            print(slot['name'])
+        hosts = field['hosts']
+        for host in hosts:
+            print (host['name'],host['user_id'])
     return(event_data)
 
 # -----------------------------------------------------------------------
