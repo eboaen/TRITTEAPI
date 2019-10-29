@@ -216,7 +216,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
 # -----------------------------------------------------------------------
 def get_space_info(ttesession,space_url):
     space_params = {'session_id': ttesession}
-    space_response = requests.get('https://tabletop.events' + space_url, params= con_params)
+    space_response = requests.get('https://tabletop.events' + space_url, params= space_params)
     space_data = space_response.json()
     return(space_data)
 
