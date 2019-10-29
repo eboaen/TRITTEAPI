@@ -207,7 +207,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
         print (field['name'],field['id'])
         hosts = field['hosts']
         for slot in event_slots:
-            print(slot['name'],slot['daypart_id']
+            print(slot['name'],slot['daypart_id'])
         for host in hosts:
             print (host['name'],host['user_id'])
     return(event_data)
