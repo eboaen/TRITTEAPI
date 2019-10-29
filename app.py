@@ -199,7 +199,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     print(con_name)
     print("---Event Listing---")
     event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
-    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params=params)
+    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], event_params=params)
     event_data = event_response.json()
     for field in event_data['result']['items']:
         print(field)
