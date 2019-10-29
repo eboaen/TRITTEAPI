@@ -192,28 +192,30 @@ def newconventionfile(tteconventions,ttesession):
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,con_name,con_id):
-    params = {'session_id': ttesession, "_include_relationships": 1}
-    con_response = requests.get(config.tte_url + "/convention/" + con_id, params=params)
+    con_params = {'session_id': ttesession, "_include_relationships": 1}
+    con_response = requests.get(config.tte_url + "/convention/" + con_id, con_params=params)
     con_data = con_response.json()
     print("---Convention---")
     print(con_name)
     print("---Event Listing---")
+    event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
     event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params=params)
     event_data = event_response.json()
     for field in event_data['result']['items']:
-        hosts = get_hosts(ttesession,con_id,field['_relationships']['eventhosts'])
+        print(field)
+#        hosts = get_hosts(ttesession,con_id,field['_relationships']['eventhosts'])
 #        print (field['name'],field['space_name'],field['space_id'],field['startdaypart_name'],field['id'],hosts)
     return(event_data)
 
 # -----------------------------------------------------------------------
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
-def get_hosts(ttesession,con_id,hosts_uri):
-    params = {'session_id': ttesession, '_include': 'hosts'}
-    hosts_response = requests.get('https://tabletop.events' + hosts_uri, params=params)
-    hosts_data = hosts_response.json()
-    print(hosts_data)
-    return(hosts_data)
+# def get_hosts(ttesession,con_id,hosts_uri):
+#    params = {'session_id': ttesession, '_include': 'hosts'}
+#    hosts_response = requests.get('https://tabletop.events' + hosts_uri, params=params)
+#    hosts_data = hosts_response.json()
+#    print(hosts_data)
+#    return(hosts_data)
 
 # -----------------------------------------------------------------------
 # Login to server route
