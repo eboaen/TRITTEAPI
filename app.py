@@ -202,8 +202,10 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params= event_params)
     event_data = event_response.json()
     for field in event_data['result']['items']:
-        print(field)
-#        print (field['name'],field['space_name'],field['space_id'],field['startdaypart_name'],field['id'])
+        space_url = field['_relationships']['spaces']
+        event_spaces = get_space_info(ttesession,space_url)
+        print(event_spaces)
+#        print (field['name'],field['startdaypart_name'],field['id'])
 #        hosts = field['hosts']
 #        for host in hosts:
 #            print (host['name'],host['user_id'])
@@ -212,12 +214,11 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
 # -----------------------------------------------------------------------
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
-# def get_hosts(ttesession,con_id,hosts_uri):
-#    params = {'session_id': ttesession, '_include': 'hosts'}
-#    hosts_response = requests.get('https://tabletop.events' + hosts_uri, params=params)
-#    hosts_data = hosts_response.json()
-#    print(hosts_data)
-#    return(hosts_data)
+def get_space_info(ttesession,space_url):
+    space_params = {'session_id': ttesession}
+    space_response = requests.get('https://tabletop.events' + space_url, params= con_params)
+    space_data = space_response.json()
+    return(space_data)
 
 # -----------------------------------------------------------------------
 # Login to server route
