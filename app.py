@@ -204,7 +204,8 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     for field in event_data['result']['items']:
         slot_url = field['_relationships']['slots']
         event_slots = get_slot_info(ttesession,slot_url)
-        print(event_slots)
+        for slot in event_slots:
+            print(slot)
 #        print (field['name'],field['startdaypart_name'],field['id'])
 #        hosts = field['hosts']
 #        for host in hosts:
@@ -218,7 +219,7 @@ def get_slot_info(ttesession,slot_url):
     slot_params = {'session_id': ttesession}
     slot_response = requests.get('https://tabletop.events' + slot_url, params= slot_params)
     slot_data = slot_response.json()
-#    for slot in slot_data['result']['items']:
+    slot_data = slot_data['result']['items']
     return(slot_data)
 
 # -----------------------------------------------------------------------
