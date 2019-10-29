@@ -209,7 +209,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
 def get_hosts(ttesession,con_id,hosts_uri):
-    params = {'session_id': ttesession, "_include": hosts}
+    params = {'session_id': ttesession, '_include': 'hosts'}
     hosts_response = requests.get('https://tabletop.events' + hosts_uri)
     hosts_data = hosts_response.json()
     print(hosts_data)
