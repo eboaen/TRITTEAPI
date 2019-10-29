@@ -191,7 +191,7 @@ def newconventionfile(tteconventions,ttesession):
 # -----------------------------------------------------------------------
 #
 # -----------------------------------------------------------------------
-def tte_convention_api_pull(ttesession,con_name,con_id)
+def tte_convention_api_pull(ttesession,con_name,con_id):
     params = {'session_id': ttesession}
     con_response = requests.get(config.tte_url + "/convention/" + con_id, params=params)
     con_data = con_response.json()
@@ -202,7 +202,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id)
     event_data = event_response.json()
     for field in event_data['result']['items']:
         print (field)
-        print (field['name'],field['_relationships']['eventhosts'])
+#        print (field['name'],field['_relationships']['eventhosts'])
     return(event_data)
 # -----------------------------------------------------------------------
 # Login to server route
