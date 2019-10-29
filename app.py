@@ -182,14 +182,7 @@ def gettteconventions(ttesession):
 def newconventionfile(tteconventions,ttesession):
     con_name = tteconventions['name']
     con_id = tteconventions['id']
-    params = ttesession
-    con_response = requests.get(config.tte_url + "/convention/" + con_id, params=params)
-    con_data = con_response.json()
-    print("---Event Listing---")
-    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params=params)
-    event_data = event_response.json()
-    for field in event_data['result']['items']:
-        print (field['name'],field['_relationships']['eventhosts'])
+    con_events = tte_convention_api_pull(ttesession,con_name,con_id)
     dst = "templates/" + con_name + ".html"
     src = ("templates/newconventionbase.html")
     shutil.copy(src,dst)
@@ -198,8 +191,19 @@ def newconventionfile(tteconventions,ttesession):
 # -----------------------------------------------------------------------
 #
 # -----------------------------------------------------------------------
-
-
+def tte_convention_api_pull(ttesession,con_name,con_id)
+    params = {'session_id': ttesession}
+    con_response = requests.get(config.tte_url + "/convention/" + con_id, params=params)
+    con_data = con_response.json()
+    print("---Convention---")
+    print(con_name)
+    print("---Event Listing---")
+    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params=params)
+    event_data = event_response.json()
+    for field in event_data['result']['items']:
+        print (field)
+        print (field['name'],field['_relationships']['eventhosts'])
+    return(event_data)
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
