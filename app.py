@@ -253,8 +253,10 @@ def index():
         ttesession = session.get('ttesession')
         tteconventions = gettteconventions(ttesession)
         for convention in tteconventions:
-            if os.path.isfile('templates/' + tteconventions[convention]['name'] + '.html') is False:
-                newconvention = newconventionfile(tteconventions[convention],ttesession)
+            f_name = 'templates/' + tteconventions[convention]['name'] + '.html'
+#            if os.path.isfile(f_name) is False:
+            os.remove(f_name)
+            newconvention = newconventionfile(tteconventions[convention],ttesession)
         return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
