@@ -40,7 +40,7 @@ console.setFormatter(formatter)
 logger.addHandler(console)
 
 # init app and load conf
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__, static_url_path='/templates')
 app.config.from_object(config)
 csrf = CSRFProtect(app)
 
@@ -53,8 +53,6 @@ migrate = Migrate(app, db)
 # -----------------------------------------------------------------------
 class Conventions(db.Model):
     name = db.Column(db.String(255))
-    datestart = db.Column(db.DateTime)
-    dateend = db.Column(db.DateTime)
     tteuri = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
@@ -181,11 +179,27 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 # Pull Convention listing from TTE
 # -----------------------------------------------------------------------
-def newconventionfile(con_name):
+def newconventionfile(tteconventions,ttesession):
+    con_name = tteconventions['name']
+    con_id = tteconventions['id']
+    params = ttesession
+    con_response = requests.get(config.tte_url + "/convention/" + con_id, params=params)
+    con_data = con_response.json()
+    print("---Event Listing---")
+    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params=params)
+    event_data = event_response.json()
+    for field in event_data['result']['items']:
+        print (field['name'],field['_relationships']['eventhosts'])
     dst = "templates/" + con_name + ".html"
     src = ("templates/newconventionbase.html")
     shutil.copy(src,dst)
     return()
+
+# -----------------------------------------------------------------------
+#
+# -----------------------------------------------------------------------
+
+
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -226,7 +240,7 @@ def index():
         tteconventions = gettteconventions(ttesession)
         for convention in tteconventions:
             if os.path.isfile('templates/' + tteconventions[convention]['name'] + '.html') is False:
-                newconvention = newconventionfile(tteconventions[convention]['name'])
+                newconvention = newconventionfile(tteconventions[convention],ttesession)
         return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
@@ -238,7 +252,7 @@ def index():
 @app.route('/<convention>')
 def tte(convention):
     name = session.get('name')
-#    print (con_name)
+    gettteconid =
     file = convention + '.html'
     return render_template(file, **{'name' : name, 'ttecon' : convention})
 
