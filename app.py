@@ -255,8 +255,12 @@ def index():
         tteconventions = gettteconventions(ttesession)
         for convention in tteconventions:
             f_name = 'templates/' + tteconventions[convention]['name'] + '.html'
-#            if os.path.isfile(f_name) is False:
-            os.remove(f_name)
+
+
+            if os.path.isfile(f_name) is False:
+                pass
+            elif os.path.isfile(f_name) is True:
+                os.remove(f_name)
             newconvention = newconventionfile(tteconventions[convention],ttesession)
         return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions})
     else:
