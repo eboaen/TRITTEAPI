@@ -205,9 +205,9 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
         slot_url = field['_relationships']['slots']
         event_slots = get_slot_info(ttesession,slot_url)
         print (field['name'],field['id'])
+        hosts = field['hosts']
         for slot in event_slots:
             print(slot['name'],slot['daypart_id']
-        hosts = field['hosts']
         for host in hosts:
             print (host['name'],host['user_id'])
     return(event_data)
