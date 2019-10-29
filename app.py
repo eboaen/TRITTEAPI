@@ -204,6 +204,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
         print (field)
 #        print (field['name'],field['_relationships']['eventhosts'])
     return(event_data)
+
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -256,7 +257,6 @@ def index():
 @app.route('/<convention>')
 def tte(convention):
     name = session.get('name')
-    gettteconid =
     file = convention + '.html'
     return render_template(file, **{'name' : name, 'ttecon' : convention})
 
