@@ -203,7 +203,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     event_data = event_response.json()
     for field in event_data['result']['items']:
         print (field['name'],field['space_name'],field['space_id'],field['startdaypart_name'],field['id'])
-        hosts = field['_relationships']['hosts'])
+        hosts = field['_relationships']['hosts']
         for host in hosts:
             print (host['name'],host['user_id'])
     return(event_data)
