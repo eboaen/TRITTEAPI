@@ -202,10 +202,11 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params= event_params)
     event_data = event_response.json()
     for field in event_data['result']['items']:
-        print (field['name'],field['space_name'],field['space_id'],field['startdaypart_name'],field['id'])
-        hosts = field['hosts']
-        for host in hosts:
-            print (host['name'],host['user_id'])
+        print(field)
+#        print (field['name'],field['space_name'],field['space_id'],field['startdaypart_name'],field['id'])
+#        hosts = field['hosts']
+#        for host in hosts:
+#            print (host['name'],host['user_id'])
     return(event_data)
 
 # -----------------------------------------------------------------------
