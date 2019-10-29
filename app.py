@@ -193,13 +193,13 @@ def newconventionfile(tteconventions,ttesession):
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,con_name,con_id):
     con_params = {'session_id': ttesession, "_include_relationships": 1}
-    con_response = requests.get(config.tte_url + "/convention/" + con_id, con_params=params)
+    con_response = requests.get(config.tte_url + "/convention/" + con_id, params= con_params)
     con_data = con_response.json()
     print("---Convention---")
     print(con_name)
     print("---Event Listing---")
     event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
-    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], event_params=params)
+    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params= event_params)
     event_data = event_response.json()
     for field in event_data['result']['items']:
         print(field)
