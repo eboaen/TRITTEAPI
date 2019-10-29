@@ -189,7 +189,7 @@ def newconventionfile(tteconventions,ttesession):
     return()
 
 # -----------------------------------------------------------------------
-#
+# Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,con_name,con_id):
     params = {'session_id': ttesession, "_include_relationships": 1}
@@ -201,9 +201,18 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params=params)
     event_data = event_response.json()
     for field in event_data['result']['items']:
-        print (field)
-#        print (field['name'],field['_relationships']['eventhosts'])
+        hosts = get_hosts(ttesession,con_id,field['_relationships']['eventhosts'])
+        print (field['name'],field['space_name'],field['space_id'],field['startdaypart_name'],field['id'],hosts)
     return(event_data)
+
+# -----------------------------------------------------------------------
+# Pull Convention Data from the TTE API
+# -----------------------------------------------------------------------
+def get_hosts(ttesession,con_id,hosts_uri):
+    params = {'session_id': ttesession}
+    hosts_response = requests.get('https://tabletop.events' + hosts_uri)
+    hosts_data = hosts_response.json()
+    return(hosts_data)
 
 # -----------------------------------------------------------------------
 # Login to server route
