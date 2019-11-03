@@ -40,7 +40,7 @@
             <select name= convention method="GET" action="/">
               {% for con in tteconventions %}
                   {% set convention = tteconventions[con].name %}
-                  <option value= "{{tteconventions[con].name}}" SELECTED={{ tteconventions[con].name }}</option>"
+                  <option value= "{{ convention }}" SELECTED={{ convention }}</option>
               {% endfor %}
             </select>
           </div> <!-- /container -->
