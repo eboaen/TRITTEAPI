@@ -38,8 +38,7 @@
         <div class ="media">
           <div class="container">
             <select name= convention method="GET" action="/">
-              {% for con in tteconventions[1:] %}
-                <option value="{{tteconventions[0]}}" selected>{{tteconventions[0]}}</option>
+              {% for con in tteconventions %}
                   {% set convention = tteconventions[con].name %}
                   <option value= "{{convention}}">{{ convention }}</option>
               {% endfor %}
