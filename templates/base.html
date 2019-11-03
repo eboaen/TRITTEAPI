@@ -33,15 +33,21 @@
     </main>
   </div> <!-- /container -->
   <div class="container">
-          <div class="row">
-              <div class="col-md-12">
-                  {% for con in tteconventions %}
-                    {% set convention = tteconventions[con].name %}
-                    <p class="lead text-left"><a href= {{ url_for('tte', convention = convention) }} > {{ tteconventions[con].name }}</a></p>
-                  {% endfor %}
-              </div>
-         </div>
-  </div> <!-- /container -->
+    <main role="main">
+      <div class="jumbotron">
+        <div class ="media">
+          <div class="container">
+            <select name= convention method="GET" action="/">
+              {% for con in tteconventions %}
+                  {% set convention = tteconventions[con].name %}
+                  <option value= "{{tteconventions[con].name}}" SELECTED={{ tteconventions[con].name }}</option>"
+              {% endfor %}
+            </select>
+          </div> <!-- /container -->
+        </div> <!-- /media -->
+      </div> <!-- /jumbotron -->
+    </main>
+
 {% else %}
   <div class="container">
         	<div class="row">

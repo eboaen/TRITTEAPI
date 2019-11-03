@@ -60,7 +60,7 @@ class Volunteers(db.Model):
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
     email = db.Column(db.String(255))
-    slot_pref = db.Column(db.String(512))
+    dayparts = db.Column(db.String(512))
     tteuri = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
@@ -223,6 +223,72 @@ def get_slot_info(ttesession,slot_url):
     return(slot_data)
 
 # -----------------------------------------------------------------------
+# Convention Selection
+# -----------------------------------------------------------------------
+def convention(ttesession):
+
+
+
+# -----------------------------------------------------------------------
+# Route for Game Event creation
+# -----------------------------------------------------------------------
+@app.route('/events', methods=['POST', 'GET'])
+# Events are what is being run, typically an adventure.
+# An Event must have an id, a code (typically from DDAL or CCC if D&D), a Title, runtime length in hours, a description of the event, and if AL, what tier it is.
+# tier and time are extremely important for scheduling purposes!
+
+def events():
+    folder = config.UPLOAD_FOLDER
+    files = os.listdir(folder)
+    form = EventForm(request.form)
+    fileform = FileForm(request.form, obj=files)
+    eventinfo = {}
+    all_events = list_events()
+
+    fileform.selectfile.choices = [(file,file) for file in files]
+
+    if 'name' in session:
+        name = session.get('name')
+
+        if request.method == 'POST':
+            eventinfo['number'] = request.form['number']
+            eventinfo['code'] = request.form['code']
+            eventinfo['title'] = request.form['title']
+            eventinfo['length'] = request.form['length']
+            eventinfo['description'] = request.form['description']
+            eventinfo['tier'] = request.form['tier']
+            select = request.form.get('selectfile')
+            location = os.path.join(folder,select)
+
+            if form.validate_on_submit:
+                if request.form['submit'] == 'submit':
+                    saved = save_event(eventinfo)
+                    if saved is 'exists':
+                        flash('Error! This event already exists')
+                        all_events = list_events()
+                        return render_template('events.html', form=form, fileform=fileform, **{'all_events': all_events, 'name': name})
+                    elif saved is 'failed':
+                        flash('Error! Slot did not Save')
+                        all_events = list_events()
+                        return render_template('events.html', form=form, fileform=fileform, **{'all_events': all_events, 'name': name})
+                    elif saved is 'saved':
+                        all_events = list_events()
+                        return render_template('events.html', form=form, fileform=fileform, **{'all_events': all_events, 'name': name})
+                elif request.form['submit'] == 'clear':
+                    del_events()
+                    return redirect(request.url)
+                elif request.form['submit'] == 'bulk_submit':
+                    bulk_event_upload(location)
+                    return redirect(request.url)
+            else:
+                flash(form.errors)
+                flash(fileform.errors)
+                return redirect(request.url)
+    else:
+        return redirect(url_for('login'))
+    return render_template('events.html', form=form, fileform=fileform, **{'name': name, 'all_events': all_events})
+
+# -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
 # This is a rudimentary authentication scheme.  A more robuest auth setup will be implemented before I do final release.
@@ -260,20 +326,20 @@ def index():
         name = session.get('name')
         ttesession = session.get('ttesession')
         tteconventions = gettteconventions(ttesession)
-        for convention in tteconventions:
-            f_name = 'templates/' + tteconventions[convention]['name'] + '.html'
-            if os.path.isfile(f_name) is False:
-                pass
-            elif os.path.isfile(f_name) is True:
-                os.remove(f_name)
-            newconvention = newconventionfile(tteconventions[convention],ttesession)
+#        for convention in tteconventions:
+#            f_name = 'templates/' + tteconventions[convention]['name'] + '.html'
+#            if os.path.isfile(f_name) is False:
+#                pass
+#            elif os.path.isfile(f_name) is True:
+#                os.remove(f_name)
+#            newconvention = newconventionfile(tteconventions[convention],ttesession)
         return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
         return render_template('base.html')
 
 # -----------------------------------------------------------------------
-# Convention Page Routes
+# Convention Page Route
 # -----------------------------------------------------------------------
 @app.route('/<convention>')
 def tte(convention):
