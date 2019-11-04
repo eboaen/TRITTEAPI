@@ -264,10 +264,7 @@ def index():
                  'tteconvention_id' : tteconvention_id,
                  'tteconvention_info' : tteconvention_info
                  })
-        return render_template('base.html', **{'name' : name,
-        'tteconventions' : tteconventions,
-        'event_data' : event_data,
-        })
+        return render_template('base.html', **{'name' : name,'tteconventions' : tteconventions})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
         return render_template('base.html')
