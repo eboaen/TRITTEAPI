@@ -39,8 +39,9 @@
           <div class="container">
             <select name= convention method="GET" action="/">
               {% for con in tteconventions %}
-                  {% set convention = tteconventions[con].name %}
-                  <option value= "{{convention}}">{{ convention }}</option>
+                  {% set convention_name = tteconventions[con].name %}
+                  {% set convention_id = tteconventions[con].id %}
+                  <option value= "{{convention_id}}">{{ convention }}</option>
               {% endfor %}
             </select>
           </div> <!-- /container -->
