@@ -264,13 +264,6 @@ def index():
             tteconvention_id = request.form.get("conventions", None)
             if tteconvention_id !=None:
                 return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions, 'tteconvention_id' : tteconvention_id})
-#        for convention in tteconventions:
-#            f_name = 'templates/' + tteconventions[convention]['name'] + '.html'
-#            if os.path.isfile(f_name) is False:
-#                pass
-#            elif os.path.isfile(f_name) is True:
-#                os.remove(f_name)
-#            newconvention = newconventionfile(tteconventions[convention],ttesession)
         return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists

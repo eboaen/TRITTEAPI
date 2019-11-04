@@ -38,6 +38,7 @@
         <div class ="media">
           <div class="container">
             <form id="form1" action="/" method="POST" enctype="multipart/form-data">
+              {{ form.hidden_tag() }}
               <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
                   {% set convention_name = tteconventions[con].name %}
