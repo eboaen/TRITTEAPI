@@ -204,12 +204,7 @@ def tte_convention_api_pull(ttesession,con_name,con_id):
     for field in event_data['result']['items']:
         slot_url = field['_relationships']['slots']
         event_slots = get_slot_info(ttesession,slot_url)
-        print (field['name'],field['id'])
-        hosts = field['hosts']
-        for slot in event_slots:
-            print(slot['name'],slot['daypart_id'])
-        for host in hosts:
-            print (host['name'],host['user_id'])
+        event_data['result']['items'][field]['event_slots'] = event_slots
     return(event_data)
 
 # -----------------------------------------------------------------------
@@ -263,8 +258,16 @@ def index():
         if request.method == "POST":
             tteconvention_id = request.form.get("conventions", None)
             if tteconvention_id !=None:
-                return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions, 'tteconvention_id' : tteconvention_id})
-        return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions})
+                tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_name,tteconvention_id)
+                return render_template('base.html', **{'name' : name,
+                 'tteconventions' : tteconventions,
+                 'tteconvention_id' : tteconvention_id,
+                 'tteconvention_info' : tteconvention_info
+                 })
+        return render_template('base.html', **{'name' : name,
+        'tteconventions' : tteconventions,
+        'event_data' : event_data,
+        })
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
         return render_template('base.html')
