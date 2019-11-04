@@ -50,13 +50,12 @@
             </form>
             <div id="result">
               {% if tteconvention_id is defined %}
-                You have selected: {{ tteconvention_name }}
                 {% for field in tteconvention_info.result['items'] %}
                   {% for slot in field['event_slots'] %}
-                    {{slot.name}}, {{slot.daypart_id}}
+                    <p>{{slot.name}}, {{slot.daypart_id}}</p>
                   {% endfor %}
                   {% for host in field['hosts'] %}
-                    {{host.name}},{{host.user_id}}
+                    <p>{{host.name}},{{host.user_id}}</p>
                   {% endfor %}
                 {% endfor %}
               {% endif %}
