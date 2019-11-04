@@ -62,7 +62,7 @@
                       {% for field in tteconvention_info.result['items'] %}
                         <tr>
                           {% for slot in field['event_slots'] %}
-                            {{slot.name}}
+                              <td>{{slot.name}}</td>
                           {% endfor %}
                           {% for host in field['hosts'] %}
                             <td>{{host.name}}</td>
