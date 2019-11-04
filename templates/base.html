@@ -50,14 +50,28 @@
             </form>
             <div id="result">
               {% if tteconvention_id is defined %}
-                {% for field in tteconvention_info.result['items'] %}
-                  {% for slot in field['event_slots'] %}
-                    <p>{{slot.name}}</p>
-                  {% endfor %}
-                  {% for host in field['hosts'] %}
-                    <p>{{host.name}}</p>
-                  {% endfor %}
-                {% endfor %}
+                <div class="container">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="col-xs-1">Slot</th>
+                        <th scope="col" class="col-xs-1">Volunteer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      {% for field in tteconvention_info.result['items'] %}
+                        <tr>
+                          {% for slot in field['event_slots'] %}
+                            {{slot.name}}
+                          {% endfor %}
+                          {% for host in field['hosts'] %}
+                            <td>{{host.name}}</td>
+                          {% endfor %}
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
               {% endif %}
             </div>
           </div> <!-- /container -->
