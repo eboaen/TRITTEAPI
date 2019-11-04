@@ -41,7 +41,7 @@
               {% for con in tteconventions %}
                   {% set convention_name = tteconventions[con].name %}
                   {% set convention_id = tteconventions[con].id %}
-                  <option value= "{{convention_id}}">{{ convention }}</option>
+                  <option value= "{{convention_id}}">{{ convention_name }}</option>
               {% endfor %}
             </select>
           </div> <!-- /container -->
