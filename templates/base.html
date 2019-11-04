@@ -37,13 +37,21 @@
       <div class="jumbotron">
         <div class ="media">
           <div class="container">
-            <select name= convention method="GET" action="/">
+            <form id="form1" action="/" method="POST" enctype="multipart/form-data">
+              <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
                   {% set convention_name = tteconventions[con].name %}
                   {% set convention_id = tteconventions[con].id %}
                   <option value= "{{convention_id}}">{{ convention_name }}</option>
               {% endfor %}
-            </select>
+              </select>
+              <input type="submit" value="Submit">
+            </form>
+            <div id="result">
+              {% if tteconvention_id is defined %}
+                You have selected: {{ tteconvention_id }}
+              {% endif %}
+            </div>
           </div> <!-- /container -->
         </div> <!-- /media -->
       </div> <!-- /jumbotron -->

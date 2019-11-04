@@ -252,7 +252,7 @@ def login():
 # -----------------------------------------------------------------------
 # Index Route
 # -----------------------------------------------------------------------
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     # Check to see if the user already exists.
     # If it does, pass the user's name to the render_template
@@ -260,6 +260,10 @@ def index():
         name = session.get('name')
         ttesession = session.get('ttesession')
         tteconventions = gettteconventions(ttesession)
+        if request.method == "POST":
+            tteconvention_id = request.form.get("conventions", None)
+            if tteconvention_id !=None:
+                return render_template('base.html', **{'name' : name, 'tteconventions' : tteconventions, 'tteconvention_id' : tteconvention_id})
 #        for convention in tteconventions:
 #            f_name = 'templates/' + tteconventions[convention]['name'] + '.html'
 #            if os.path.isfile(f_name) is False:
