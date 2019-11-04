@@ -54,9 +54,10 @@
                 {% for field in tteconvention_info.result['items'] %}
                   {% for slot in field['event_slots'] %{}
                     {{slot.name}}, {{slot.daypart_id}}
-                {% endfor %}
-                {% for host in field['hosts'] %}
-                  {{host.name}},{{host.user_id}}
+                  {% endfor %}
+                  {% for host in field['hosts'] %}
+                    {{host.name}},{{host.user_id}}
+                  {% endfor %}
                 {% endfor %}
               {% endif %}
             </div>
