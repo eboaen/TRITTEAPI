@@ -177,27 +177,12 @@ def gettteconventions(ttesession):
     return(conventions)
 
 # -----------------------------------------------------------------------
-# Pull Convention listing from TTE
-# -----------------------------------------------------------------------
-def newconventionfile(tteconventions,ttesession):
-    con_name = tteconventions['name']
-    con_id = tteconventions['id']
-    con_events = tte_convention_api_pull(ttesession,con_name,con_id)
-    dst = "templates/" + con_name + ".html"
-    src = ("templates/newconventionbase.html")
-    shutil.copy(src,dst)
-    return()
-
-# -----------------------------------------------------------------------
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
-def tte_convention_api_pull(ttesession,con_name,con_id):
+def tte_convention_api_pull(ttesession,con_id):
     con_params = {'session_id': ttesession, "_include_relationships": 1}
     con_response = requests.get(config.tte_url + "/convention/" + con_id, params= con_params)
     con_data = con_response.json()
-    print("---Convention---")
-    print(con_name)
-    print("---Event Listing---")
     event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
     event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params= event_params)
     event_data = event_response.json()
@@ -258,7 +243,7 @@ def index():
         if request.method == "POST":
             tteconvention_id = request.form.get("conventions", None)
             if tteconvention_id !=None:
-                tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_name,tteconvention_id)
+                tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_id)
                 return render_template('base.html', **{'name' : name,
                  'tteconventions' : tteconventions,
                  'tteconvention_id' : tteconvention_id,
