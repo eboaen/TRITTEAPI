@@ -39,7 +39,7 @@
       <div class="jumbotron">
         <div class ="media">
           <div class="container">
-            <form id="form1" action="/" method="POST" enctype="multipart/form-data">
+            <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
