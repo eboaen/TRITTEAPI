@@ -115,7 +115,7 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,convention_info):
     con_params = {'session_id': ttesession, "_include_relationships": 1}
-    print (type(convention_info)
+    print (type(convention_info))
     con_id = convention_info['id']
     con_response = requests.get(config.tte_url + "/convention/" + con_id, params= con_params)
     con_data = con_response.json()
