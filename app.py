@@ -144,7 +144,7 @@ def save_convention(convention):
     convention_exist = Conventions.query.get(convention['id'])
 
     if convention_exist is None:
-        new_convention.id = convention['id']
+        new_convention.id = convention['tteid']
         new_convention.name = convention['name']
         db.session.merge(new_convention)
         try:
