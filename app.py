@@ -113,8 +113,9 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
-def tte_convention_api_pull(ttesession,con_id):
+def tte_convention_api_pull(ttesession,convention_info):
     con_params = {'session_id': ttesession, "_include_relationships": 1}
+    con_id = convention_info['id']
     con_response = requests.get(config.tte_url + "/convention/" + con_id, params= con_params)
     con_data = con_response.json()
     event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
@@ -245,14 +246,13 @@ def conventions():
     ttesession = session.get('ttesession')
     tteconventions = gettteconventions(ttesession)
     if request.method == "POST":
-        tteconvention_id = request.form.get("conventions", None)
-        print(tteconvention_id)
+        tteconvention_info = request.form.get("conventions", None)
         if tteconvention_id !=None:
-            tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_id)
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_info)
             return render_template('conventions.html', **{'name' : name,
             'tteconventions' : tteconventions,
-            'tteconvention_id' : tteconvention_id,
-            'tteconvention_info' : tteconvention_info
+            'tteconvention_info' : tteconvention_info,
+            'tteconvention_data' : tteconvention_data
             })
     else:
         return render_template('conventions.html', **{'name' : name,
