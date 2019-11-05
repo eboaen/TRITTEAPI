@@ -206,17 +206,6 @@ def index():
     if 'name' in session:
         name = session.get('name')
         ttesession = session.get('ttesession')
-        tteconventions = gettteconventions(ttesession)
-        if request.method == "POST":
-            tteconvention_id = request.form.get("conventions", None)
-            if tteconvention_id !=None:
-                tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_id)
-                return render_template('base.html', **{'name' : name,
-                 'tteconventions' : tteconventions,
-                 'tteconvention_id' : tteconvention_id,
-                 'tteconvention_info' : tteconvention_info
-                 })
-        return render_template('base.html', **{'name' : name,'tteconventions' : tteconventions})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
         return render_template('base.html')
@@ -245,6 +234,25 @@ def upload():
          file.save(os.path.join(folder, filename))
          return render_template('upload.html', filename=filename)
  return render_template('upload.html', )
+
+# -----------------------------------------------------------------------
+# Conventions Route
+# -----------------------------------------------------------------------
+@app.route('/conventions', methods=['GET', 'POST'])
+def conventions():
+    name = session.get('name')
+    ttesession = session.get('ttesession')
+    tteconventions = gettteconventions(ttesession)
+    if request.method == "POST":
+        tteconvention_id = request.form.get("conventions", None)
+        if tteconvention_id !=None:
+            tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_id)
+            return render_template('conventions.html', **{'name' : name,
+             'tteconventions' : tteconventions,
+             'tteconvention_id' : tteconvention_id,
+             'tteconvention_info' : tteconvention_info
+             })
+     return render_template('conventions.html', **{'name' : name,'tteconventions' : tteconventions})
 
 # -----------------------------------------------------------------------
 # Run Program

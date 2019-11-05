@@ -26,63 +26,13 @@
         <div class ="media">
           <div class="media-body" >
             <p class="lead text-left">Hello {{ name }}</p>
-            <p class='text-center'> Select a Convention </p>
             <p class='text-center'><a href="{{ url_for('upload') }}">Upload files</a></p>
+            <p class='text-center'><a href="{{ url_for('conventions') }}">Work on Conventions</a></p>
           </div>
         </div>
       </div>
     </main>
   </div> <!-- /container -->
-  <div class="container">
-    <main role="main">
-      <div class="jumbotron">
-        <div class ="media">
-          <div class="container">
-            <form id="form1" action="/" method="POST" enctype="multipart/form-data">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <select id="mySelect" name="conventions">
-              {% for con in tteconventions %}
-                  {% set convention_name = tteconventions[con].name %}
-                  {% set convention_id = tteconventions[con].id %}
-                  <option value= "{{convention_id}}">{{ convention_name }}</option>
-              {% endfor %}
-              </select>
-              <input type="submit" value="Submit">
-            </form>
-            <div id="result">
-              {% if tteconvention_id is defined %}
-                <div class="container">
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th scope="col" class="col-xs-1">Slot</th>
-                        <th scope="col" class="col-xs-1">Volunteer</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                      {% for field in tteconvention_info.result['items'] %}
-                          {% for slot in field['event_slots'] %}
-                            <tr>
-                              <td>{{slot.name}}</td>
-                            </tr>
-                          {% endfor %}
-                          {% for host in field['hosts'] %}
-                            <tr>
-                              <td>{{host.name}}</td>
-                            </tr>
-                          {% endfor %}
-
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
-              {% endif %}
-            </div>
-          </div> <!-- /container -->
-        </div> <!-- /media -->
-      </div> <!-- /jumbotron -->
-    </main>
-
 {% else %}
   <div class="container">
         	<div class="row">

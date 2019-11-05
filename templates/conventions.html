@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!--[if IE]>
+    <meta http-equiv="X-UA-Compatible" content="IE=10">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="E. (Zand Vor) Boaen">
+
+    <title>The Role Initiative Scheduling Tool</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-sm navbar-warning bg-warning">
+		<a class="navbar-brand mb-0 h2">Welcome to The Role Initiative Scheduling Tool</a>
+	</nav>
+
+{% if name %}
+  <div class="container">
+    <main role="main">
+      <div class="jumbotron">
+        <div class ="media">
+          <div class="media-body" >
+            <p class="lead text-left">Hello {{ name }}</p>
+            {% if convention_name %}
+            <p class='text-center'> You are working on {{ convention_name }} </p>
+            {% else %}
+            <p class='text-center'> Please select a convention below </p>
+            {%  endif %}
+          </div>
+        </div>
+      </div>
+    </main>
+  </div> <!-- /container -->
+  <div class="container">
+    <main role="main">
+      <div class="jumbotron">
+        <div class ="media">
+          <div class="container">
+            <form id="form1" action="/" method="POST" enctype="multipart/form-data">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <select id="mySelect" name="conventions">
+              {% for con in tteconventions %}
+                  {% set convention_name = tteconventions[con].name %}
+                  {% set convention_id = tteconventions[con].id %}
+                  <option value= "{{convention_id}}">{{ convention_name }}</option>
+              {% endfor %}
+              </select>
+              <input type="submit" value="Submit">
+            </form>
+            <div id="result">
+              {% if tteconvention_id is defined %}
+                <div class="container">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="col-xs-1">Slot</th>
+                        <th scope="col" class="col-xs-1">Volunteer</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                      {% for field in tteconvention_info.result['items'] %}
+                          {% for slot in field['event_slots'] %}
+                            <tr>
+                              <td>{{slot.name}}</td>
+                            </tr>
+                          {% endfor %}
+                          {% for host in field['hosts'] %}
+                            <tr>
+                              <td>{{host.name}}</td>
+                            </tr>
+                          {% endfor %}
+
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% endif %}
+            </div>
+          </div> <!-- /container -->
+        </div> <!-- /media -->
+      </div> <!-- /jumbotron -->
+    </main>
+{% else %}
+  <div class="container">
+        	<div class="row">
+            	<div class="col-md-12">
+                <p class="lead text-left"><a href="{{ url_for('login') }}">Login</a></p>
+              </div>
+         </div>
+	</div> <!-- /container -->
+{% endif %}
+
+	<footer class="container">
+		<a>DEBUGGING</a>
+	</footer>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</body>
+</html>
