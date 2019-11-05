@@ -24,8 +24,8 @@
         <div class ="media">
           <div class="media-body" >
             <p class="lead text-left">Hello {{ name }}</p>
-            {% if tteconvention_info is defined %}
-              <p class='text-center'> You are working on {{ tteconvention_info }} </p>
+            {% if convention_id is defined %}
+              <p class='text-center'> You are working on {{ convention_name }} </p>
             {% else %}
               <p class='text-center'> Please select a convention below </p>
             {% endif %}
