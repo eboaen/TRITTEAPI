@@ -18,7 +18,6 @@
 	<nav class="navbar navbar-expand-sm navbar-warning bg-warning">
 		<a class="navbar-brand mb-0 h2">Welcome to The Role Initiative Scheduling Tool</a>
 	</nav>
-{% if name %}
   <div class="container">
     <main role="main">
       <div class="jumbotron">
@@ -84,16 +83,6 @@
         </div> <!-- /media -->
       </div> <!-- /jumbotron -->
     </main>
-{% else %}
-  <div class="container">
-        	<div class="row">
-            	<div class="col-md-12">
-                <p class="lead text-left"><a href="{{ url_for('login') }}">Login</a></p>
-              </div>
-         </div>
-	</div> <!-- /container -->
-{% endif %}
-
 	<footer class="container">
 		<a>DEBUGGING</a>
 	</footer>
