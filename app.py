@@ -244,7 +244,7 @@ def upload():
      if file and allowed_file(file.filename):
          filename = secure_filename(file.filename)
          file.save(os.path.join(folder, filename))
-         return render_template('upload.html', filename=filename))
+         return render_template('upload.html', filename=filename)
  return render_template('upload.html', )
 
 # -----------------------------------------------------------------------
