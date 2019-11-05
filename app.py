@@ -206,7 +206,7 @@ def index():
     if 'name' in session:
         name = session.get('name')
         ttesession = session.get('ttesession')
-        return render_template('base.html', 'name' : name)
+        return render_template('base.html', **{'name' : name})
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
         return render_template('base.html')
