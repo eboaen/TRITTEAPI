@@ -217,24 +217,24 @@ def index():
 @app.route('/upload', methods=['GET', 'POST'])
 # Display a visual to upload a CSV file.
 def upload():
- folder=config.UPLOAD_FOLDER
+    folder=config.UPLOAD_FOLDER
 
- if request.method == 'POST':
-     # check if the post request has the file part
-     if 'file' not in request.files:
-         flash('No file part')
-         return redirect(request.url)
-     file = request.files['file']
-     # if user does not select file, browser also
-     # submit an empty part without filename
-     if file.filename == '':
-         flash('No selected file')
-         return redirect(request.url)
-     if file and allowed_file(file.filename):
-         filename = secure_filename(file.filename)
-         file.save(os.path.join(folder, filename))
-         return render_template('upload.html', filename=filename)
- return render_template('upload.html', )
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(folder, filename))
+            return render_template('upload.html', filename=filename)
+    return render_template('upload.html', )
 
 # -----------------------------------------------------------------------
 # Conventions Route
