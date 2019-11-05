@@ -234,7 +234,7 @@ def upload():
             filename = secure_filename(file.filename)
             file.save(os.path.join(folder, filename))
             return render_template('upload.html', filename=filename)
-    return render_template('upload.html', )
+    return render_template('upload.html')
 
 # -----------------------------------------------------------------------
 # Conventions Route
@@ -249,14 +249,10 @@ def conventions():
         if tteconvention_id !=None:
             tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_id)
             return render_template('conventions.html', **{'name' : name,
-             'tteconventions' : tteconventions,
-             'tteconvention_id' : tteconvention_id,
-             'tteconvention_info' : tteconvention_info
-             })
-         else:
-             pass
-     else:
-         return render_template('conventions.html', **{'name' : name,'tteconventions' : tteconventions})
+            'tteconventions' : tteconventions,
+            'tteconvention_id' : tteconvention_id,
+            'tteconvention_info' : tteconvention_info
+    return render_template('conventions.html', **{'name' : name,'tteconventions' : tteconventions})
 
 # -----------------------------------------------------------------------
 # Run Program
