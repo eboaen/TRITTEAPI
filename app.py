@@ -248,7 +248,7 @@ def conventions():
         tteconvention_id = request.form.get("conventions", None)
         if tteconvention_id !=None:
             tteconvention_info = tte_convention_api_pull(ttesession,tteconvention_id)
-            return render_template('conventions.html', **{'name' : name,
+            return redirect_uri('conventions.html', **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_id' : tteconvention_id,
             'tteconvention_info' : tteconvention_info
