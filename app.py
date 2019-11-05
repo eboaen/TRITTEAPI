@@ -256,7 +256,7 @@ def conventions():
             })
     else:
         return render_template('conventions.html', **{'name' : name,
-        'tteconventions' : tteconventions,
+        'tteconventions' : tteconventions
         })
 # -----------------------------------------------------------------------
 # Run Program
