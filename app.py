@@ -206,6 +206,7 @@ def index():
     if 'name' in session:
         name = session.get('name')
         ttesession = session.get('ttesession')
+        return render_template('base.html', 'name' = name)
     else:
     #Otherwose, just load the page.  Page has code to detect if name exists
         return render_template('base.html')
@@ -252,6 +253,7 @@ def conventions():
              'tteconvention_id' : tteconvention_id,
              'tteconvention_info' : tteconvention_info
              })
+     else:
          return render_template('conventions.html', **{'name' : name,'tteconventions' : tteconventions})
 
 # -----------------------------------------------------------------------
