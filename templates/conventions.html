@@ -24,8 +24,8 @@
         <div class ="media">
           <div class="media-body" >
             <p class="lead text-left">Hello {{ name }}</p>
-            {% if convention_id is defined %}
-              <p class='text-center'> You are working on {{ convention_name }} </p>
+            {% if tteconvention_info is defined %}
+              <p class='text-center'> You are working on {{ tteconvention_info.name }} </p>
             {% else %}
               <p class='text-center'> Please select a convention below </p>
             {% endif %}
@@ -43,9 +43,9 @@
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
-                  {% set convention_name = tteconventions[con].name %}
-                  {% set convention_id = tteconventions[con].id %}
-                  <option value= "{{convention_id}}">{{ convention_name }}</option>
+                  {% set convention_info.name = tteconventions[con].name %}
+                  {% set convention_info.id = tteconventions[con].id %}
+                  <option value= "{{convention_info}}">{{ convention_info.name }}</option>
               {% endfor %}
               </select>
               <input type="submit" value="Submit">
