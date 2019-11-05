@@ -66,9 +66,6 @@ class Timeslots(db.Model):
     datetimestart = db.Column(db.DateTime)
     datetimeend = db.Column(db.DateTime)
 
-class Events(db.Model):
-    id = db.Column(db.String())
-
 # -----------------------------------------------------------------------
 # Forms
 # -----------------------------------------------------------------------
