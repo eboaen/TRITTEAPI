@@ -43,7 +43,8 @@
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
-                  {% set convention_info = { 'name': tteconventions[con].name, 'id': tteconventions[con].id %}
+                  {% set convention_info = dict() %}
+                  {% set convention_info = {'name': tteconventions[con].name, 'id': tteconventions[con].id %}
                   <option value= "{{convention_info}}">{{ convention_info[name] }}</option>
               {% endfor %}
               </select>
