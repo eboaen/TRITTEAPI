@@ -115,7 +115,6 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,convention_info):
     con_params = {'session_id': ttesession, "_include_relationships": 1}
-    print (convention_info)
     con_id = convention_info['id']
     con_response = requests.get(config.tte_url + "/convention/" + con_id, params= con_params)
     con_data = con_response.json()
@@ -248,7 +247,8 @@ def conventions():
     tteconventions = gettteconventions(ttesession)
     tteconvention_info = None
     if request.method == "POST":
-        tteconvention_info = request.form.to_dict("conventions")
+        tteconvention_info = request.form.to_dict()['conventions']
+        tteconvention_info
         if tteconvention_info !=None:
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_info)
             return render_template('conventions.html', **{'name' : name,
