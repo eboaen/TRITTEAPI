@@ -50,7 +50,7 @@
               <input type="submit" value="Submit">
             </form>
             <div id="result">
-              {% if convention_info[id] is defined %}
+              {% if convention_data is defined %}
                 <div class="container">
                   <table class="table table-striped">
                     <thead>
@@ -60,7 +60,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                      {% for field in tteconvention_info.result['items'] %}
+                      {% for field in tteconvention_data.result['items'] %}
                           {% for slot in field['event_slots'] %}
                             <tr>
                               <td>{{slot.name}}</td>
