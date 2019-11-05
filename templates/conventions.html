@@ -44,8 +44,8 @@
               <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
                   {% set con_name = tteconventions[con].name %}
-                  {% set con_id = tteconventions[con].id} %}
-                  <option value= "{{con_id}}{{con_name}}">{{ con_name }}</option>
+                  {% set con_id = tteconventions[con].id %}
+                  <option value= "{{con_id}} {{con_name}}">{{ con_name }}</option>
               {% endfor %}
               </select>
               <input type="submit" value="Submit">
