@@ -252,7 +252,7 @@ def conventions():
              'tteconvention_id' : tteconvention_id,
              'tteconvention_info' : tteconvention_info
              })
-     return render_template('conventions.html', **{'name' : name,'tteconventions' : tteconventions})
+         return render_template('conventions.html', **{'name' : name,'tteconventions' : tteconventions})
 
 # -----------------------------------------------------------------------
 # Run Program
