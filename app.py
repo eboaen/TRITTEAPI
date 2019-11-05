@@ -53,33 +53,21 @@ migrate = Migrate(app, db)
 # -----------------------------------------------------------------------
 class Conventions(db.Model):
     name = db.Column(db.String(255))
-    tteuri = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
 class Volunteers(db.Model):
-    first_name = db.Column(db.String(255))
-    last_name = db.Column(db.String(255))
+    name = db.Column(db.String(255))
     email = db.Column(db.String(255))
-    dayparts = db.Column(db.String(512))
-    tteuri = db.Column(db.String(255))
+    slots = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
-class Slots(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class Timeslots(db.Model):
+    tteid = db.Column(db.String(255), primary_key=True)
     datetimestart = db.Column(db.DateTime)
     datetimeend = db.Column(db.DateTime)
 
 class Events(db.Model):
-    code = db.Column(db.String(255))
-    title = db.Column(db.String(255))
-    length = db.Column(db.Integer)
-    description = db.Column(db.String(1024))
-    tier = db.Column(db.Integer)
-    tteuri = db.Column(db.String(255))
-    tteid = db.Column(db.String(255), primary_key=True)
-
-class Tables(db.Model):
-    tteid = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.String())
 
 # -----------------------------------------------------------------------
 # Forms
@@ -88,60 +76,6 @@ class LoginForm(FlaskForm):
     name = TextField('Name:', validators=[validators.DataRequired()])
     email = TextField('Email:', validators=[validators.DataRequired()])
     password = TextField('Password:', validators=[validators.DataRequired()])
-
-class SlotForm(FlaskForm):
-    number = TextField('Slot Number', validators=[validators.optional()])
-    year = SelectField('Year:', coerce=int, validators=[validators.optional()])
-    month = SelectField('Month:', coerce=str, validators=[validators.optional()])
-    day = SelectField('Day:', coerce=int, validators=[validators.optional()])
-    length = TextField('Length:', validators=[validators.optional()])
-    time = TextField('Time:', validators=[validators.optional()])
-    submit = SubmitField(label='Submit')
-    clear = SubmitField(label='Clear All Slots')
-    delete = SubmitField(label='Delete')
-
-    def reset(self):
-        blankData = MultiDict([ ('csrf', self.reset_csrf() ) ])
-        self.process(blankData)
-
-class TableForm(FlaskForm):
-    number = TextField('Table Number', validators=[validators.optional()])
-    players = TextField('Number of Players:', validators=[validators.optional()])
-    bulk_tables = TextField('Number of Tables:', validators=[validators.optional()])
-    bulk_players = TextField('Number of Players:', validators=[validators.optional()])
-    submit = SubmitField(label='Submit')
-    clear = SubmitField(label='Clear All Tables')
-    bulk_add = SubmitField(label='Add Multiple Tables')
-
-    def reset(self):
-        blankData = MultiDict([ ('csrf', self.reset_csrf() ) ])
-        self.process(blankData)
-
-class EventForm(FlaskForm):
-    number = TextField('Table Number', validators=[validators.DataRequired()])
-    code = TextField('Adventure Code', validators=[validators.DataRequired()])
-    title = TextField('Adventure Code', validators=[validators.DataRequired()])
-    length = TextField('Adventure Code', validators=[validators.DataRequired()])
-    description = TextAreaField('Adventure Code', validators=[validators.DataRequired()])
-    tier = TextField('Adventure Code', validators=[validators.DataRequired()])
-    submit = SubmitField(label='Submit')
-    clear = SubmitField(label='Clear All Slots')
-
-    def reset(self):
-        blankData = MultiDict([ ('csrf', self.reset_csrf() ) ])
-        self.process(blankData)
-
-class SessionForm(FlaskForm):
-    table = SelectField('Table', coerce=int)
-    slot = SelectField('Slot', coerce=int)
-    volunteer = SelectField('Volunteer', coerce=int)
-    event = SelectField('Event', coerce=str)
-    session_info = SubmitField(label='Submit')
-    delete = SubmitField(label='Delete Sessions')
-
-class SessionDeleteForm(FlaskForm):
-    sessions = SelectField('Session', coerce=str)
-    delete = SubmitField(label='Delete Slots')
 
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
@@ -172,6 +106,7 @@ def gettteconventions(ttesession):
     conventions = {}
     for convention in data['result']['items']:
         toadd = {'name': convention['name'], 'id': convention['id']}
+        save_convention(toadd)
         conventions[convention_count]= toadd
         convention_count = convention_count + 1
     return(conventions)
@@ -193,7 +128,7 @@ def tte_convention_api_pull(ttesession,con_id):
     return(event_data)
 
 # -----------------------------------------------------------------------
-# Pull Convention Data from the TTE API
+# Pull Slot Data from the TTE API
 # -----------------------------------------------------------------------
 def get_slot_info(ttesession,slot_url):
     slot_params = {'session_id': ttesession}
@@ -202,6 +137,29 @@ def get_slot_info(ttesession,slot_url):
     slot_data = slot_data['result']['items']
     return(slot_data)
 
+# -----------------------------------------------------------------------
+# Save Convention information
+# -----------------------------------------------------------------------
+def save_convention(convention):
+    new_convention = Conventions()
+    convention_exist = Conventions.query.get(convention['id'])
+
+    if convention_exist is None:
+        new_convention.id = convention['id']
+        new_convention.name = convention['name']
+        db.session.merge(new_convention)
+        try:
+            db.session.commit()
+            saved = 'saved'
+            return (saved)
+        except:
+            logger.exception("Cannot save new event")
+            db.session.rollback()
+            saved = 'failed'
+            return (saved)
+    else:
+        saved = 'exists'
+        return (saved)
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -230,10 +188,20 @@ def login():
     return render_template('login.html', form=form)
 
 # -----------------------------------------------------------------------
+# Allow only CSV files
+# -----------------------------------------------------------------------
+def allowed_file(filename):
+    extensions=config.ALLOWED_EXTENSIONS
+
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in extensions
+
+# -----------------------------------------------------------------------
 # Index Route
 # -----------------------------------------------------------------------
 @app.route('/', methods=['GET', 'POST'])
 def index():
+
     # Check to see if the user already exists.
     # If it does, pass the user's name to the render_template
     if 'name' in session:
@@ -255,13 +223,29 @@ def index():
         return render_template('base.html')
 
 # -----------------------------------------------------------------------
-# Convention Page Route
+# Upload file Route
 # -----------------------------------------------------------------------
-@app.route('/<convention>')
-def tte(convention):
-    name = session.get('name')
-    file = convention + '.html'
-    return render_template(file, **{'name' : name, 'ttecon' : convention})
+@app.route('/upload', methods=['GET', 'POST'])
+# Display a visual to upload a CSV file.
+def upload():
+ folder=config.UPLOAD_FOLDER
+
+ if request.method == 'POST':
+     # check if the post request has the file part
+     if 'file' not in request.files:
+         flash('No file part')
+         return redirect(request.url)
+     file = request.files['file']
+     # if user does not select file, browser also
+     # submit an empty part without filename
+     if file.filename == '':
+         flash('No selected file')
+         return redirect(request.url)
+     if file and allowed_file(file.filename):
+         filename = secure_filename(file.filename)
+         file.save(os.path.join(folder, filename))
+         return render_template('upload.html', filename=filename))
+ return render_template('upload.html', )
 
 # -----------------------------------------------------------------------
 # Run Program
