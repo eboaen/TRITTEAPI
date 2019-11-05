@@ -246,9 +246,11 @@ def conventions():
     ttesession = session.get('ttesession')
     tteconventions = gettteconventions(ttesession)
     tteconvention_info = None
+    tteconvention_info = {}
     if request.method == "POST":
-        tteconvention_info = request.form.to_dict()
-        tteconvention_info = tteconvention_info['conventions']
+        tteconvention_info = request.form.get(con_id,con_name)
+        tteconvention_info['id'] = con_id
+        tteconvention_info['name'] = con_name
         print(tteconvention_info)
         if tteconvention_info !=None:
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_info)
