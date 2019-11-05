@@ -58,6 +58,8 @@ class Conventions(db.Model):
 class Volunteers(db.Model):
     name = db.Column(db.String(255))
     email = db.Column(db.String(255))
+    tiers = db.Column(db.String(255))
+    hours = db.Column(db.Integer)
     slots = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
