@@ -43,9 +43,9 @@
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
-                  {% set con_name = tteconventions[con].name %}
+                  {% do  con_name = tteconventions[con].name %}
                   {% set con_id = tteconventions[con].id %}
-                  <option value= "{{con_id}} {{con_name}}">{{ con_name }}</option>
+                  <option value="{{con_id}}{{con_name}}">{{ con_name }}</option>
               {% endfor %}
               </select>
               <input type="submit" value="Submit">
