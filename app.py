@@ -376,7 +376,7 @@ def conventions():
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
     # Form Declarations
-    form = FileForm(request.form, obj=files)
+    fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
     # Function calls
     tteconventions = gettteconventions(ttesession)
@@ -392,12 +392,12 @@ def conventions():
                 if 'volunteersave' in request.form.get('submit'):
                     location = os.path.join(folder,select)
 #                   saved = volunteer_parse(location)
-                return render_template('conventions.html', form=form, **{'name' : name,
+                return render_template('conventions.html', fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
                 'tteconvention_data' : tteconvention_data
                 })
     else:
-        return render_template('conventions.html', form=form, **{'name' : name,
+        return render_template('conventions.html', fileform=fileform, **{'name' : name,
         'tteconventions' : tteconventions
         })
 # -----------------------------------------------------------------------
