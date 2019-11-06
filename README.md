@@ -17,6 +17,10 @@ Welcome Page
       - time/dates
 
 Convention Page
+* timeslot creation, ingest as tte shifts, save to database
+* volunteer import, ingest as tte volunteer, save to database
+* event import, ingest as tte events, save to database
+
     * Volunteer Object
       - Name
       - email address
@@ -45,6 +49,9 @@ Convention Page
       - Assigned Host(s)
         - Uses Volunteer Object to determine if Volunteer is available during slot to host
         - Updates Volunteer Object once assigned to a Slot to make that Volunteer no longer available for that Slot
+
+
+
 
 Extras:
   * Auto-generation of volunteer schedule
