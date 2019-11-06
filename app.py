@@ -114,6 +114,7 @@ def gettteconventions(ttesession):
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,tteconvention_id):
+    convention_info = {}
     convention_exist = Conventions.query.get(tteconvention_id)
     if convention_exist is not None:
         con_params = {'session_id': ttesession, "_include_relationships": 1}
