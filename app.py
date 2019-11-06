@@ -377,6 +377,7 @@ def conventions():
     files = os.listdir(folder)
     # Form Declarations
     form = FileForm(request.form, obj=files)
+    print(form)
     # Function calls
     tteconventions = gettteconventions(ttesession)
     if request.method == "POST":
@@ -387,7 +388,7 @@ def conventions():
             # Volunteer Management
             if request.form.get('submit') == 'volunteersave':
                 print (request.form.get('submit'))
-#                location = os.path.join(folder,select)
+                location = os.path.join(folder,select)
 #                saved = volunteer_parse(location)
             return render_template('conventions.html', form=form, **{'name' : name,
             'tteconventions' : tteconventions,
