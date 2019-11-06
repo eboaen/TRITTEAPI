@@ -389,7 +389,7 @@ def conventions():
                 print (request.form.get('submit'))
 #                location = os.path.join(folder,select)
 #                saved = volunteer_parse(location)
-            return render_template('conventions.html', **{'name' : name,
+            return render_template('conventions.html', form=form, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data
             })
