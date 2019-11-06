@@ -389,7 +389,7 @@ def conventions():
             select = request.form.get('selectfile')
             if form.validate_on_submit():
                 print (request.form.get('submit')
-                if request.form.get('submit') is 'volunteersave':
+                if 'volunteersave' in request.form.get('submit'):
                     location = os.path.join(folder,select)
 #                   saved = volunteer_parse(location)
                 return render_template('conventions.html', form=form, **{'name' : name,
