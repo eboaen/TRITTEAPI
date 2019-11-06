@@ -373,6 +373,8 @@ def conventions():
     name = session.get('name')
     ttesession = session.get('ttesession')
     tteconvention_info = None
+    folder = config.UPLOAD_FOLDER
+    files = os.listdir(folder)
     # Form Declarations
     form = FileForm(request.form, obj=files)
     # Function calls
