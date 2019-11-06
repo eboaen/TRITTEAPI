@@ -388,7 +388,7 @@ def conventions():
             # Volunteer Management
             select = request.form.get('selectfile')
             if form.validate_on_submit():
-                print (request.form.get('submit')
+                print (request.form.get('submit'))
                 if 'volunteersave' in request.form.get('submit'):
                     location = os.path.join(folder,select)
 #                   saved = volunteer_parse(location)
