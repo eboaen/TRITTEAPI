@@ -377,7 +377,7 @@ def conventions():
     files = os.listdir(folder)
     # Form Declarations
     form = FileForm(request.form, obj=files)
-    print(form)
+    fileform.selectfile.choices = [(file,file) for file in files]
     # Function calls
     tteconventions = gettteconventions(ttesession)
     if request.method == "POST":
@@ -387,16 +387,17 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             # Volunteer Management
             select = request.form.get('selectfile')
-            if request.form.get('submit') == 'volunteersave':
-                print (request.form.get('submit'))
-                location = os.path.join(folder,select)
-#                saved = volunteer_parse(location)
-            return render_template('conventions.html', form=form, **{'name' : name,
-            'tteconventions' : tteconventions,
-            'tteconvention_data' : tteconvention_data
-            })
+            if form.validate_on_submit():
+                print (request.form.get('submit')
+                if request.form.get('submit') == 'volunteersave':
+                    location = os.path.join(folder,select)
+#                   saved = volunteer_parse(location)
+                return render_template('conventions.html', form=form, **{'name' : name,
+                'tteconventions' : tteconventions,
+                'tteconvention_data' : tteconvention_data
+                })
     else:
-        return render_template('conventions.html', **{'name' : name,
+        return render_template('conventions.html', form=form, **{'name' : name,
         'tteconventions' : tteconventions
         })
 # -----------------------------------------------------------------------
