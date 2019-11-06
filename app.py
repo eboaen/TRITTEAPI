@@ -193,7 +193,7 @@ def volunteer_parse(filename):
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for header in reader.fieldnames:
-            elif 'Email Address' in header:
+            if 'Email Address' in header:
                 newheader.append('email')
             elif 'Name' in header:
                 newheader.append('name')
