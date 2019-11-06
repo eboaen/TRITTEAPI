@@ -120,7 +120,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
         convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
         convention_data = convention_response.json()
         event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
-        event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params= event_params)
+        event_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['events'], params= event_params)
         event_data = event_response.json()
         for field in event_data['result']['items']:
             slot_url = field['_relationships']['slots']
