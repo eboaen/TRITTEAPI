@@ -13,12 +13,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
-
 <body>
 	<nav class="navbar navbar-expand-sm navbar-warning bg-warning">
 		<a class="navbar-brand mb-0 h2">Welcome to The Role Initiative Scheduling Tool</a>
 	</nav>
-  <div class="container">
+  <div class="container"><!-- Introduction -->
     <main role="main">
       <div class="jumbotron">
         <div class ="media">
@@ -34,10 +33,11 @@
       </div>
     </main>
   </div> <!-- /container -->
-  <div class="container">
+  <div class="container"> <!-- Select a convention to work on -->
     <main role="main">
       <div class="jumbotron">
         <div class ="media">
+          {% if tteconvention_data is defined %}
           <div class="container">
             <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -49,40 +49,84 @@
               <input type="submit" value="Submit">
             </form>
             <div id="result">
-              {% if tteconvention_data is defined %}
-                <div class="container">
-                  <table class="table table-striped">
-                    <thead>
+          </div>
+        </div> <!-- /container -->
+        <div class="container"> <!-- Import Volunteers -->
+          <form action="" method="post" role="form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <label form="sel1">Select a File:</label>
+              <div class="form-group">
+                  {{ form.selectfile }}
+              </div>
+              <div class="input submit">
+                  <button type="submit" class="btn btn-success" name='submit'value='volunteersave'></button>
+                  <button type="submit" class="btn btn-success" name='submit'value='volunteerclear'></button>
+                  <button type="submit" class="btn btn-success" name='submit'value='volunteertteupload'></button>
+              </div>
+              {% if all_volunteers is defined %}
+              <div class="container">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="col-xs-1">Name</th>
+                      <th scope="col" class="col-xs-1">DM or Admin</th>
+                      <th scope="col" class="col-xs-1">Tiers DMing</th>
+                      <th scope="col" class="col-xs-1">Slot Preference</th>
+                      <th scope="col" class="col-xs-1">Hours Volunteered/Current Hours Working</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    {% for volunteer in all_volunteers %}
                       <tr>
-                        <th scope="col" class="col-xs-1">Slot</th>
-                        <th scope="col" class="col-xs-1">Volunteer</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                      {% for field in tteconvention_data.event.result['items'] %}
-                          {% for slot in field['event_slots'] %}
-                            <tr>
-                              <td>{{slot.name}}</td>
-                            </tr>
-                          {% endfor %}
-                          {% for host in field['hosts'] %}
-                            <tr>
-                              <td>{{host.name}}</td>
-                            </tr>
-                          {% endfor %}
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
+                        <td>{{ volunteer.Name }}</td>
+                        <td>{{ volunteer. }}</td>
+                        <td>{{ volunteer.dm_tag }}</td>
+                        <td>{{ volunteer.tiers }}</td>
+                        <td>{{ volunteer.slot_pref }}</td>
+                        <td>{{ volunteer.sessions }}</td>
+                        <td><button type="submit" class="btn btn-success" name='submit' value='{{ volunteer.id }}'>Clear Volunteer</button></td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
               {% endif %}
-            </div>
-          </div> <!-- /container -->
-        </div> <!-- /media -->
-      </div> <!-- /jumbotron -->
+          </form>
+        </div>
+        <div class="container"> <!-- Import Volunteers -->
+        </div> <!-- /container -->
+        <div class="container"> <!-- Show Events and Hosts -->
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="col-xs-1">Slot</th>
+                <th scope="col" class="col-xs-1">Volunteer</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for field in tteconvention_data.event.result['items'] %}
+                  {% for slot in field['event_slots'] %}
+                    <tr>
+                      <td>{{slot.name}}</td>
+                    </tr>
+                  {% endfor %}
+                  {% for host in field['hosts'] %}
+                    <tr>
+                      <td>{{host.name}}</td>
+                    </tr>
+                  {% endfor %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+        </div><!-- /media -->
+      </div><!-- /jumbotron -->
     </main>
-	<footer class="container">
-		<a>DEBUGGING</a>
-	</footer>
+  </div> <!-- /container -->
+<footer class="container">
+	<a>DEBUGGING</a>
+</footer>
 
 
 <!-- Optional JavaScript -->

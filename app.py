@@ -58,8 +58,9 @@ class Conventions(db.Model):
 class Volunteers(db.Model):
     name = db.Column(db.String(255))
     email = db.Column(db.String(255))
-    tiers = db.Column(db.String(255))
+    role = db.Column(db.String(255))
     hours = db.Column(db.Integer)
+    tiers = db.Column(db.String(255))
     slots = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
@@ -78,8 +79,9 @@ class LoginForm(FlaskForm):
 
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
-    submit = SubmitField(label='Submit')
-    clear = SubmitField(label='Clear All Slots')
+    volunteersave = SubmitField(label='Submit')
+    volunteerclear = SubmitField(label='Clear All')
+    volunteertteupload = SubmitField(label='Upload to TTE')
 
 # -----------------------------------------------------------------------
 # Internal Functions
@@ -117,9 +119,11 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     convention_info = {}
     convention_exist = Conventions.query.get(tteconvention_id)
     if convention_exist is not None:
+        # API Pull from TTE to get the convention information and urls needed to process the convention.
         con_params = {'session_id': ttesession, "_include_relationships": 1}
         convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
         convention_data = convention_response.json()
+        # API Pull from TTE to get the convention information
         event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
         event_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['events'], params= event_params)
         event_data = event_response.json()
@@ -127,9 +131,15 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
             slot_url = field['_relationships']['slots']
             event_slots = get_slot_info(ttesession,slot_url)
             field['event_slots'] = event_slots
+        # API Pull from TTE to get the volunteer information
+        volunteer_params = {'session_id': ttesession}
+        volunteer_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['volunteers'], params= volunteer_params)
+        volunteer_data = volunteer_response.json()
+        # Populate dictionary with the info pulled from TTE
         convention_info['event'] = event_data
         convention_info['info'] = convention_exist
         convention_info['data'] = convention_data
+        convention_info['volunteers'] = volunteer_data
         return(convention_info)
 
 # -----------------------------------------------------------------------
@@ -165,6 +175,117 @@ def save_convention(convention):
     else:
         saved = 'exists'
         return (saved)
+
+# -----------------------------------------------------------------------
+# Volunteer Functions
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# Ingest Volunteers
+# -----------------------------------------------------------------------
+def volunteer_parse(filename):
+    # Definitions
+    volunteer = {}
+    newheader = []
+    slottimes = []
+    all_slots = []
+
+    # Open CSV file and verify headers
+    with open(filename, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for header in reader.fieldnames:
+            elif 'Email Address' in header:
+                newheader.append('email')
+            elif 'Name' in header:
+                newheader.append('name')
+            elif 'Role' in header:
+                newheader.append('role')
+            elif 'Hours' in header:
+                newheader.append('hours')
+            elif 'Tiers' in header:
+                newheader.append('tiers')
+            elif 'Slot' in header:
+                header_l = header.rsplit()
+                newheader.append('slot ' + header_l[1])
+        reader.fieldnames = newheader
+        for vol in reader:
+            saved = volunteer_save(vol)
+        return(saved)
+
+# -----------------------------------------------------------------------
+# Volunteer Save to Database
+# -----------------------------------------------------------------------
+def volunteer_save(new_volunteer):
+    #Declarations
+    tiers = []
+    header_l = []
+    volunteer = Volunteers()
+    #
+    all_volunteers = list_volunteers()
+
+    name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    role = db.Column(db.String(255))
+    hours = db.Column(db.Integer)
+    tiers = db.Column(db.String(255))
+    slots = db.Column(db.String(255))
+    tteid = db.Column(db.String(255), primary_key=True)
+
+    try:
+        volunteer.name = new_volunteer['name']
+        volunteer.email = new_volunteer['email']
+        volunteer.emergency_info = new_volunteer['emergency_info']
+        volunteer.role = new_volunteer['role']
+    except:
+        pass
+    try:
+        if 'Tier 1' in new_volunteer['tiers']:
+            tiers.append('1')
+        if 'Tier 2' in new_volunteer['tiers']:
+            tiers.append('2')
+        if 'Tier 3' in new_volunteer['tiers']:
+            tiers.append('3')
+        if 'Tier 4' in new_volunteer['tiers']:
+            tiers.append('4')
+        volunteer.tiers = ','.join(tiers)
+    except:
+        pass
+    try:
+        if new_volunteer['hours'] == 'badge':
+            volunteer.hours = 12
+        if new_volunteer['hours'] == 'hotel':
+            volunteer.hours = 20
+        if int(new_volunteer['hours']):
+            volunteer.hours = 20 = new_volunteer['hours']
+    except:
+        pass
+    for volunteer_header,volunteer_info in new_volunteer:
+        if 'slot' in volunteer_header:
+            header_l = volunteer_header.rsplit()
+            if 'X' in volunteer_info:
+                all_slots.append(header_l)
+        volunteer.slot_pref = all_slots
+    db.session.merge(volunteer)
+    try:
+        db.session.commit()
+        #session.permanent = True
+        saved = 'saved'
+        return (saved)
+    except:
+        logger.exception("Cannot save volunteer")
+        db.session.rollback()
+        saved = 'failed'
+        return ()
+
+# -----------------------------------------------------------------------
+# List all volunteers in database
+# -----------------------------------------------------------------------
+def list_volunteers():
+    volunteer = Volunteers()
+
+    all_volunteers = Volunteers.query.order_by(volunteer.id).all()
+    return(all_volunteers)
+
+
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -247,15 +368,25 @@ def upload():
 # -----------------------------------------------------------------------
 @app.route('/conventions', methods=['GET', 'POST'])
 def conventions():
+    # Declarations
+    tteconvention_info = {}
     name = session.get('name')
     ttesession = session.get('ttesession')
-    tteconventions = gettteconventions(ttesession)
     tteconvention_info = None
-    tteconvention_info = {}
+    # Form Declarations
+    form = FileForm(request.form, obj=files)
+    # Function calls
+    tteconventions = gettteconventions(ttesession)
     if request.method == "POST":
         tteconvention_id = request.form.get("conventions", None)
         if tteconvention_id !=None:
+            # Pull all the data regarding the convention
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # Volunteer Management
+            if if request.form.get('submit') == 'volunteersave':
+                print (request.form.get('submit'))
+#                location = os.path.join(folder,select)
+#                saved = volunteer_parse(location)
             return render_template('conventions.html', **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data
