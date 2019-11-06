@@ -37,7 +37,6 @@
     <main role="main">
       <div class="jumbotron">
         <div class ="media">
-          {% if tteconvention_data is defined %}
           <div class="container">
             <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -51,6 +50,7 @@
             <div id="result">
           </div>
         </div> <!-- /container -->
+        {% if tteconvention_data is defined %}
         <div class="container"> <!-- Import Volunteers -->
           <form action="" method="post" role="form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
