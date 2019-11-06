@@ -48,9 +48,14 @@
               <input type="submit" value="Submit">
             </form>
             <div id="result">
-          </div>
-        </div> <!-- /container -->
-        {% if tteconvention_data is defined %}
+            </div>
+          </div><!-- /container -->
+        </div><!-- /media -->
+      </div><!-- /jumbotron -->
+    </div> <!-- /container -->
+    {% if tteconvention_data is defined %}
+    <div class="jumbotron">
+      <div class ="media">
         <div class="container"> <!-- Import Volunteers -->
           <form action="" method="post" role="form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -93,8 +98,12 @@
               {% endif %}
           </form>
         </div>
-        <div class="container"> <!-- Import Volunteers -->
-        </div> <!-- /container -->
+      </div><!-- /media -->
+    </div><!-- /jumbotron -->
+      <div class="container"> <!-- Import Volunteers -->
+      </div> <!-- /container -->
+    <div class="jumbotron">
+      <div class ="media">
         <div class="container"> <!-- Show Events and Hosts -->
           <table class="table table-striped">
             <thead>
@@ -119,7 +128,7 @@
             </tbody>
           </table>
         </div>
-        {% endif %}
+      {% endif %}
         </div><!-- /media -->
       </div><!-- /jumbotron -->
     </main>
