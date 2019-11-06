@@ -255,7 +255,7 @@ def volunteer_save(new_volunteer):
         if new_volunteer['hours'] == 'hotel':
             volunteer.hours = 20
         if int(new_volunteer['hours']):
-            volunteer.hours = 20 = new_volunteer['hours']
+            volunteer.hours = new_volunteer['hours']
     except:
         pass
     for volunteer_header,volunteer_info in new_volunteer:
