@@ -113,18 +113,20 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
-def tte_convention_api_pull(ttesession,convention_info):
-    con_params = {'session_id': ttesession, "_include_relationships": 1}
-    con_id = convention_info['id']
-    con_response = requests.get(config.tte_url + "/convention/" + con_id, params= con_params)
-    con_data = con_response.json()
-    event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
-    event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params= event_params)
-    event_data = event_response.json()
-    for field in event_data['result']['items']:
-        slot_url = field['_relationships']['slots']
-        event_slots = get_slot_info(ttesession,slot_url)
-        field['event_slots'] = event_slots
+def tte_convention_api_pull(ttesession,tteconvention_id):
+    convention_exist = Conventions.query.get(tteconvention_id)
+    if convention_exist is not None:
+        con_params = {'session_id': ttesession, "_include_relationships": 1}
+        con_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
+        con_data = con_response.json()
+        print (con_data)
+        event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
+        event_response = requests.get('https://tabletop.events' + con_data['result']['_relationships']['events'], params= event_params)
+        event_data = event_response.json()
+        for field in event_data['result']['items']:
+            slot_url = field['_relationships']['slots']
+            event_slots = get_slot_info(ttesession,slot_url)
+            field['event_slots'] = event_slots
     return(event_data)
 
 # -----------------------------------------------------------------------
@@ -248,10 +250,10 @@ def conventions():
     tteconvention_info = None
     tteconvention_info = {}
     if request.method == "POST":
-        tteconvention_info = request.form.get("conventions")
-        print(tteconvention_info)
+        tteconvention_id = request.form.get("conventions", None)
+        print(tteconvention_id)
         if tteconvention_info !=None:
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_info)
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             return render_template('conventions.html', **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_info' : tteconvention_info,
