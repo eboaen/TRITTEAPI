@@ -385,17 +385,15 @@ def conventions():
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
     if request.method == "POST":
-        tteconvention_id = request.form.get('selectcon',None)
-        if tteconvention_id != None:
-            # Pull all the data regarding the convention
+        # Pull all the data regarding the convention
+        if 'consubmit' in request.form.get('submit'):
+            tteconvention_id = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    #            if conform.validate_on_submit:
-            if 'consubmit' in request.form.get('submit'):
-                return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
-                'tteconventions' : tteconventions,
-                'tteconvention_data' : tteconvention_data
-                })
-    #            if fileform.validate_on_submit:
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_data' : tteconvention_data
+            })
+        if tteconvention_id != None:
             # Volunteer Management
             if 'volunteersave' in request.form.get('submit'):
                 select = request.form.get('selectfile')
