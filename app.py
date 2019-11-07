@@ -378,31 +378,31 @@ def conventions():
     tteconvention_info = None
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
-
-    # Function calls
     tteconventions = gettteconventions(ttesession)
+    # Function calls
     conform = ConForm(request.form, obj=tteconventions)
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
     if request.method == "POST":
-        tteconvention_id = request.form.get("conventions", None)
-        if tteconvention_id !=None:
-            select = request.form.get('selectfile')
-            location = os.path.join(folder,select)
-            conselect = request.form.get('selectcon')
+        conselect = request.form.get('selectcon',None)
+        print (conselect)
+        select = request.form.get('selectfile')
+        location = os.path.join(folder,select)
+        tteconvention_id = conselect['id']
+        if tteconvention_id != None:
             # Pull all the data regarding the convention
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-#            if conform.validate_on_submit:
+    #            if conform.validate_on_submit:
             if 'consubmit' in request.form.get('submit'):
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
                 'tteconvention_data' : tteconvention_data
                 })
-#            if fileform.validate_on_submit:
+    #            if fileform.validate_on_submit:
             # Volunteer Management
             if 'volunteersave' in request.form.get('submit'):
-#                   saved = volunteer_parse(location)
+    #                   saved = volunteer_parse(location)
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
                 'tteconvention_data' : tteconvention_data
