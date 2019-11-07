@@ -41,18 +41,6 @@
             <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               {{ conform.selectcon }}
-
-
-
-              <select id="mySelect" name="conventions">
-              {% for con in tteconventions %}
-                  <option value="{{tteconventions[con].id}}">{{ tteconventions[con].name }}</option>
-              {% endfor %}
-              </select>
-              <input type="submit" value="Submit">
-            </form>
-            <div id="result">
-            </div>
           </div><!-- /container -->
         </div><!-- /media -->
       </div><!-- /jumbotron -->

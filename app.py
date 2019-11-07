@@ -85,6 +85,7 @@ class FileForm(FlaskForm):
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
+    conselect = = SubmitField(label='Submit')
 # -----------------------------------------------------------------------
 # Internal Functions
 # -----------------------------------------------------------------------
@@ -382,7 +383,6 @@ def conventions():
     tteconventions = gettteconventions(ttesession)
     print(tteconventions)
     conform = ConForm(request.form, obj=tteconventions)
-    print (conform)
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     print (conform.selectcon.choices)
     fileform = FileForm(request.form, obj=files)
