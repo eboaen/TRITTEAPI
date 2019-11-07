@@ -40,6 +40,10 @@
           <div class="container">
             <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+
+
+
               <select id="mySelect" name="conventions">
               {% for con in tteconventions %}
                   <option value="{{tteconventions[con].id}}">{{ tteconventions[con].name }}</option>
