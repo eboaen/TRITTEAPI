@@ -387,8 +387,6 @@ def conventions():
     if request.method == "POST":
         conselect = request.form.get('selectcon',None)
         print (conselect)
-        select = request.form.get('selectfile')
-        location = os.path.join(folder,select)
         tteconvention_id = conselect['id']
         if tteconvention_id != None:
             # Pull all the data regarding the convention
@@ -402,6 +400,8 @@ def conventions():
     #            if fileform.validate_on_submit:
             # Volunteer Management
             if 'volunteersave' in request.form.get('submit'):
+                select = request.form.get('selectfile')
+                location = os.path.join(folder,select)
     #                   saved = volunteer_parse(location)
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
