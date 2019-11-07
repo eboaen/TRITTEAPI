@@ -404,10 +404,6 @@ def conventions():
                 'all_volunteers' : session.get('all_volunteers'),
                 'tteconvention_data' : session.get('tteconvention_data')
                 })
-            else:
-                return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
-                'tteconventions' : tteconventions,
-                })
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
         'tteconvention_data' : session.get('tteconvention_data')
