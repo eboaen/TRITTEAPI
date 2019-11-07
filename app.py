@@ -380,8 +380,9 @@ def conventions():
 
     # Function calls
     tteconventions = gettteconventions(ttesession)
-    conform = FileForm(request.form, obj=files)
-    conform.selectcon.choices = [(con,con['id']) for con in tteconventions]
+    print(tteconventions)
+    conform = FileForm(request.form, obj=tteconventions)
+    conform.selectcon.choices = [(con,con) for con in tteconventions]
     print (conform.selectcon.choices)
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
