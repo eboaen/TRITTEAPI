@@ -62,6 +62,7 @@ class Volunteers(db.Model):
     hours = db.Column(db.Integer)
     tiers = db.Column(db.String(255))
     slots = db.Column(db.String(255))
+    conventions = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
 class Timeslots(db.Model):
@@ -222,25 +223,14 @@ def volunteer_save(new_volunteer):
     tiers = []
     header_l = []
     volunteer = Volunteers()
-    #
-    all_volunteers = list_volunteers()
-
-    name = db.Column(db.String(255))
-    email = db.Column(db.String(255))
-    role = db.Column(db.String(255))
-    hours = db.Column(db.Integer)
-    tiers = db.Column(db.String(255))
-    slots = db.Column(db.String(255))
-    tteid = db.Column(db.String(255), primary_key=True)
-
-    try:
+    #Load the volunteers from the TRI database for this convention
+    all_volunteers = list_volunteers(tteconvention_id)
+    # Check the database to see if the volunteer already exists
+    k = 'email', new_volunteer['email']
+    if k not in all_volunteers and value != all_volunteers[k]:
         volunteer.name = new_volunteer['name']
         volunteer.email = new_volunteer['email']
-        volunteer.emergency_info = new_volunteer['emergency_info']
         volunteer.role = new_volunteer['role']
-    except:
-        pass
-    try:
         if 'Tier 1' in new_volunteer['tiers']:
             tiers.append('1')
         if 'Tier 2' in new_volunteer['tiers']:
@@ -249,25 +239,22 @@ def volunteer_save(new_volunteer):
             tiers.append('3')
         if 'Tier 4' in new_volunteer['tiers']:
             tiers.append('4')
-        volunteer.tiers = ','.join(tiers)
-    except:
-        pass
-    try:
+        if tiers is not None:
+            volunteer.tiers = ','.join(tiers)
         if new_volunteer['hours'] == 'badge':
             volunteer.hours = 12
         if new_volunteer['hours'] == 'hotel':
             volunteer.hours = 20
         if int(new_volunteer['hours']):
             volunteer.hours = new_volunteer['hours']
-    except:
-        pass
-    for volunteer_header,volunteer_info in new_volunteer:
-        if 'slot' in volunteer_header:
-            header_l = volunteer_header.rsplit()
-            if 'X' in volunteer_info:
-                all_slots.append(header_l)
-        volunteer.slot_pref = all_slots
-    db.session.merge(volunteer)
+        for volunteer_header,volunteer_info in new_volunteer:
+            if 'slot' in volunteer_header:
+                header_l = volunteer_header.rsplit(1)
+                if 'X' in volunteer_info:
+                    all_slots.append(header_l)
+            volunteer.slot_pref = all_slots
+        volunteer.tteid = tte_convention_volunteer_pull(new_volunteer)
+        db.session.merge(volunteer)
     try:
         db.session.commit()
         #session.permanent = True
@@ -280,12 +267,26 @@ def volunteer_save(new_volunteer):
         return ()
 
 # -----------------------------------------------------------------------
+# - Check if Volunteer exists in TTE for the convention
+# - If Volunteer doesn't exist in TTE, add them.
+# -----------------------------------------------------------------------
+def tte_convention_volunteer_pull(new_volunteer):
+    #Declarations
+    ttesession = session.get('ttesession')
+    tteconventiond_id = session.get('tteconvention_id')
+    tteconvention_data = session.get('tteconvention_data')
+    tte_volunteer = tteconvention_data['volunteer']
+    print(tte_volunteer)
+    return(tte_volunteer)
+
+
+# -----------------------------------------------------------------------
 # List all volunteers in database
 # -----------------------------------------------------------------------
-def list_volunteers():
+def list_volunteers(tteconvention_id):
     volunteer = Volunteers()
-
-    all_volunteers = Volunteers.query.order_by(volunteer.id).all()
+    all_volunteers = Volunteers.query.filter(Volunteers.conventions.contain(tteconvention_id)).all()
+    print(all_volunteers)
     return(all_volunteers)
 
 
@@ -369,7 +370,7 @@ def upload():
 # -----------------------------------------------------------------------
 # Conventions Route
 # -----------------------------------------------------------------------
-@app.route('/conventions', methods=['GET', 'POST'])
+@app.route('/conventions', methods=['GET', 'POST', 'PUT'])
 def conventions():
     # Declarations
     name = session.get('name')
@@ -387,10 +388,10 @@ def conventions():
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             session['tteconvention_data'] = tte_convention_api_pull(ttesession,session['tteconvention_id'])
-            session['all_volunteers'] = tte_convention_volunteer_pull(ttesession,session['tteconvention_id'])
+            session['all_volunteers'] = list_volunteers(session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
-            'tteconvention_data' : session['tteconvention_data']
+            'tteconvention_data' : session.get('tteconvention_data')
             })
         if session['tteconvention_id'] != None:
             # Volunteer Management
@@ -400,8 +401,8 @@ def conventions():
                 saved = volunteer_parse(location)
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
-                'all_volunteers' : session['all_volunteers']
-                'tteconvention_data' : session['tteconvention_data']
+                'all_volunteers' : session.get('all_volunteers'),
+                'tteconvention_data' : session.get('tteconvention_data')
                 })
             else:
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
