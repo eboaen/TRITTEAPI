@@ -40,7 +40,12 @@
           <div class="container">
             <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              {{ conform.selectcon }}
+                <div class="form-group">
+                  {{ conform.selectcon }}
+                </div>
+                <div class="input submit">
+                  {{ conform.consubmit}}
+                </div>
           </div><!-- /container -->
         </div><!-- /media -->
       </div><!-- /jumbotron -->
