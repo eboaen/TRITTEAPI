@@ -85,7 +85,7 @@ class FileForm(FlaskForm):
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
-    conselect = = SubmitField(label='Submit')
+    consubmit = SubmitField(label='Submit')
 # -----------------------------------------------------------------------
 # Internal Functions
 # -----------------------------------------------------------------------
