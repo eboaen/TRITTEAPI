@@ -385,12 +385,14 @@ def conventions():
         if tteconvention_id !=None:
             # Pull all the data regarding the convention
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-            # Volunteer Management
-            select = request.form.get('selectfile')
-            if fileform.validate_on_submit():
+
+            if fileform.validate_on_submit:
+                # Volunteer Management
+                select = request.form.get('selectfile')
+                location = os.path.join(folder,select)
                 print (request.form.get('submit'))
                 if 'volunteersave' in request.form.get('submit'):
-                    location = os.path.join(folder,select)
+
 #                   saved = volunteer_parse(location)
                     return render_template('conventions.html', fileform=fileform, **{'name' : name,
                     'tteconventions' : tteconventions,
