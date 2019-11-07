@@ -392,6 +392,10 @@ def conventions():
                 if 'volunteersave' in request.form.get('submit'):
                     location = os.path.join(folder,select)
 #                   saved = volunteer_parse(location)
+                    return render_template('conventions.html', fileform=fileform, **{'name' : name,
+                    'tteconventions' : tteconventions,
+                    'tteconvention_data' : tteconvention_data
+                    })
             return render_template('conventions.html', fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data
