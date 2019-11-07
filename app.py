@@ -385,8 +385,7 @@ def conventions():
         if tteconvention_id !=None:
             # Pull all the data regarding the convention
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-
-            if fileform.validate_on_submit:
+            if fileform.validate_on_submit is not None:
                 # Volunteer Management
                 select = request.form.get('selectfile')
                 location = os.path.join(folder,select)
