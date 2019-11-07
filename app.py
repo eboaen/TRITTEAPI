@@ -83,6 +83,8 @@ class FileForm(FlaskForm):
     volunteerclear = SubmitField(label='Clear All')
     volunteertteupload = SubmitField(label='Upload to TTE')
 
+class ConForm(FlaskForm):
+    selectcon = SelectField('Convention', validators=[validators.DataRequired()])
 # -----------------------------------------------------------------------
 # Internal Functions
 # -----------------------------------------------------------------------
@@ -375,17 +377,25 @@ def conventions():
     tteconvention_info = None
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
-    # Form Declarations
-    fileform = FileForm(request.form, obj=files)
-    fileform.selectfile.choices = [(file,file) for file in files]
+
     # Function calls
     tteconventions = gettteconventions(ttesession)
+    conform = FileForm(request.form, obj=files)
+    conform.selectcon.choices = [(con,con['id']) for con in tteconventions]
+    print (conform.selectcon.choices)
+    fileform = FileForm(request.form, obj=files)
+    fileform.selectfile.choices = [(file,file) for file in files]
     if request.method == "POST":
         tteconvention_id = request.form.get("conventions", None)
         if tteconvention_id !=None:
             # Pull all the data regarding the convention
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-            if fileform.validate_on_submit is not None:
+            if conform.validate_on_submit:
+                return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+                'tteconventions' : tteconventions,
+                'tteconvention_data' : tteconvention_data
+                })
+            if fileform.validate_on_submit:
                 # Volunteer Management
                 select = request.form.get('selectfile')
                 location = os.path.join(folder,select)
