@@ -372,10 +372,8 @@ def upload():
 @app.route('/conventions', methods=['GET', 'POST'])
 def conventions():
     # Declarations
-    tteconvention_info = {}
     name = session.get('name')
     ttesession = session.get('ttesession')
-    tteconvention_info = None
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
     tteconventions = gettteconventions(ttesession)
@@ -402,12 +400,10 @@ def conventions():
     #                   saved = volunteer_parse(location)
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
-                'tteconvention_data' : tteconvention_data
                 })
             else:
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
-                'tteconvention_data' : tteconvention_data
                 })
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
