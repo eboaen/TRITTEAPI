@@ -33,6 +33,7 @@
       </div>
     </main>
   </div> <!-- /container -->
+
   <div class="container"> <!-- Select a convention to work on -->
     <main role="main">
       <div class="jumbotron">
@@ -49,58 +50,66 @@
           </div><!-- /container -->
         </div><!-- /media -->
       </div><!-- /jumbotron -->
-    </div> <!-- /container -->
-    {% if tteconvention_data is defined %}
-    <div class="jumbotron">
+    </main>
+  </div> <!-- /container -->
+
+  <div class="jumbotron">
+    <div class ="media">
+      <div class="container"> <!-- Import Volunteers -->
+        <form action="" method="post" role="form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <label form="sel1">Select a File:</label>
+          <div class="form-group">
+            {{ fileform.selectfile }}
+          </div>
+          <div class="input submit">
+            {{ fileform.volunteersave }}
+            {{ fileform.volunteerclear }}
+            {{ fileform.volunteertteupload }}
+          </div>
+        </form>
+      </div> <!-- /container -->
+    </div><!-- /media -->
+  </div><!-- /jumbotron -->
+
+  {% if all_volunteers is defined %}
+  <div class="jumbotron">
       <div class ="media">
-        <div class="container"> <!-- Import Volunteers -->
-          <form action="" method="post" role="form">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <label form="sel1">Select a File:</label>
-              <div class="form-group">
-                  {{ fileform.selectfile }}
-              </div>
-              <div class="input submit">
-                  {{ fileform.volunteersave }}
-                  {{ fileform.volunteerclear }}
-                  {{ fileform.volunteertteupload }}
-              </div>
-              {% if all_volunteers is defined %}
-              <div class="container">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th scope="col" class="col-xs-1">Name</th>
-                      <th scope="col" class="col-xs-1">DM or Admin</th>
-                      <th scope="col" class="col-xs-1">Tiers DMing</th>
-                      <th scope="col" class="col-xs-1">Slot Preference</th>
-                      <th scope="col" class="col-xs-1">Hours Volunteered/Current Hours Working</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    {% for volunteer in all_volunteers %}
-                      <tr>
-                        <td>{{ volunteer.name }}</td>
-                        <td>{{ volunteer.role }}</td>
-                        <td>{{ volunteer.dm_tag }}</td>
-                        <td>{{ volunteer.tiers }}</td>
-                        <td>{{ volunteer.slot_pref }}</td>
-                        <td>{{ volunteer.sessions }}</td>
-                        <td><button type="submit" class="btn btn-success" name='submit' value='{{ volunteer.id }}'>Clear Volunteer</button></td>
-                      </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-              {% endif %}
-          </form>
-        </div>
-      </div><!-- /media -->
-    </div><!-- /jumbotron -->
+        <div class="container">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="col-xs-1">Name</th>
+                <th scope="col" class="col-xs-1">DM or Admin</th>
+                <th scope="col" class="col-xs-1">Tiers DMing</th>
+                <th scope="col" class="col-xs-1">Slot Preference</th>
+                <th scope="col" class="col-xs-1">Hours Volunteered/Current Hours Working</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for volunteer in all_volunteers %}
+                <tr>
+                  <td>{{ volunteer.name }}</td>
+                  <td>{{ volunteer.role }}</td>
+                  <td>{{ volunteer.dm_tag }}</td>
+                  <td>{{ volunteer.tiers }}</td>
+                  <td>{{ volunteer.slot_pref }}</td>
+                  <td>{{ volunteer.sessions }}</td>
+                  <td><button type="submit" class="btn btn-success" name='submit' value='{{ volunteer.id }}'>Clear Volunteer</button></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      </div><!-- /container -->
+    </div><!-- /media -->
+  </div><!-- /jumbotron -->
+  {% endif %}
       <div class="container"> <!-- Import Volunteers -->
       </div> <!-- /container -->
     <div class="jumbotron">
       <div class ="media">
+
+          {% if tteconvention_data is defined %}
         <div class="container"> <!-- Show Events and Hosts -->
           <table class="table table-striped">
             <thead>

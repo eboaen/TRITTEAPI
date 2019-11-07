@@ -386,20 +386,22 @@ def conventions():
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
-            tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
+            session['tteconvention_data'] = tte_convention_api_pull(ttesession,session['tteconvention_id'])
+            session['all_volunteers'] = tte_convention_volunteer_pull(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
-            'tteconvention_data' : tteconvention_data
+            'tteconvention_data' : session['tteconvention_data']
             })
         if session['tteconvention_id'] != None:
             # Volunteer Management
             if request.form.get('volunteersave'):
                 select = request.form.get('selectfile')
                 location = os.path.join(folder,select)
-                print (location)
-    #                   saved = volunteer_parse(location)
+                saved = volunteer_parse(location)
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
+                'all_volunteers' : session['all_volunteers']
+                'tteconvention_data' : session['tteconvention_data']
                 })
             else:
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
@@ -407,7 +409,7 @@ def conventions():
                 })
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
-        'tteconventions' : tteconventions
+        'tteconvention_data' : session['tteconvention_data']
         })
 # -----------------------------------------------------------------------
 # Run Program
