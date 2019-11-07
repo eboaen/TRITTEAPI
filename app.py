@@ -388,7 +388,6 @@ def conventions():
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
-            print(tteconvention_id)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
