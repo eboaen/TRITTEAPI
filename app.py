@@ -383,7 +383,7 @@ def conventions():
     print(tteconventions)
     conform = ConForm(request.form, obj=tteconventions)
     print (conform)
-    conform.selectcon.choices = [(con,con) for con in tteconventions]
+    conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     print (conform.selectcon.choices)
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
