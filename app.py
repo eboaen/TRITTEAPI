@@ -381,7 +381,6 @@ def conventions():
 
     # Function calls
     tteconventions = gettteconventions(ttesession)
-    print(tteconventions)
     conform = ConForm(request.form, obj=tteconventions)
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     print (conform.selectcon.choices)
@@ -392,24 +391,25 @@ def conventions():
         if tteconvention_id !=None:
             # Pull all the data regarding the convention
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-            if conform.validate_on_submit:
+#            if conform.validate_on_submit:
+            if 'volunteersave' in request.form.get('submit'):
                 conselect = request.form.get('selectcon')
                 print (conselect)
                 return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
                 'tteconvention_data' : tteconvention_data
                 })
-            if fileform.validate_on_submit:
-                # Volunteer Management
-                select = request.form.get('selectfile')
-                location = os.path.join(folder,select)
-                if 'volunteersave' in request.form.get('submit'):
+#            if fileform.validate_on_submit:
+            # Volunteer Management
+            select = request.form.get('selectfile')
+            location = os.path.join(folder,select)
+            if 'volunteersave' in request.form.get('submit'):
 
 #                   saved = volunteer_parse(location)
-                    return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
-                    'tteconventions' : tteconventions,
-                    'tteconvention_data' : tteconvention_data
-                    })
+                return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+                'tteconventions' : tteconventions,
+                'tteconvention_data' : tteconvention_data
+                })
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data
