@@ -374,7 +374,6 @@ def upload():
 def conventions():
     # Declarations
     name = session.get('name')
-    print(session.get('name'))
     ttesession = session.get('ttesession')
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
@@ -390,7 +389,6 @@ def conventions():
             session['tteconvention_id'] = request.form.get('selectcon',None)
             session['tteconvention_data'] = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             session['all_volunteers'] = list_volunteers(session['tteconvention_id'])
-            print(print(session.get('tteconvention_data')))
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : session.get('tteconvention_data')
@@ -407,6 +405,7 @@ def conventions():
                 'tteconvention_data' : session.get('tteconvention_data')
                 })
     else:
+        print(session.get('tteconvention_data'))
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
         'tteconvention_data' : session.get('tteconvention_data')
         })
