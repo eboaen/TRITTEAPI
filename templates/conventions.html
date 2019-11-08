@@ -23,7 +23,7 @@
         <div class ="media">
           <div class="media-body" >
             <p class="lead text-left">Hello {{ name }}</p>
-            {% if tteconvention_data %}
+            {% if tteconvention_data and tteconvention_data %}
               <p class='text-center'> You are working on {{ tteconvention_data.info['name'] }} </p>
             {% else %}
               <p class='text-center'> Please select a convention below}} </p>
@@ -77,7 +77,7 @@
   </div> <!-- /container -->
 
 
-  {% if all_volunteers is defined %}
+  {% if all_volunteers %}
   <div class="jumbotron">
       <div class ="main">
         <div class="container">

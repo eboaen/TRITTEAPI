@@ -28,6 +28,8 @@ import re
 import csv
 import json
 import requests
+#Debugging Tools
+import inspect
 
 # logger stuff
 logger = logging.getLogger(__name__)
@@ -285,6 +287,7 @@ def tte_convention_volunteer_pull(new_volunteer):
 # -----------------------------------------------------------------------
 def list_volunteers(tteconvention_id):
     volunteer = Volunteers()
+    print (inspect.getmembers(Volunteers.conventions, ,lambda a:not(inspect.isroutine(a)))))
     all_volunteers = Volunteers.query.filter(Volunteers.conventions.contain(tteconvention_id)).all()
     print(all_volunteers)
     return(all_volunteers)
