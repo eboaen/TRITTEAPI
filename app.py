@@ -383,13 +383,13 @@ def conventions():
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
-    print(session.get('tteconvention_data'))
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             session['tteconvention_data'] = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             session['all_volunteers'] = list_volunteers(session['tteconvention_id'])
+            print(print(session.get('tteconvention_data')))
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : session.get('tteconvention_data')
