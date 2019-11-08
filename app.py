@@ -374,6 +374,7 @@ def upload():
 def conventions():
     # Declarations
     name = session.get('name')
+    print(session.get('name'))
     ttesession = session.get('ttesession')
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
