@@ -278,7 +278,6 @@ def tte_convention_volunteer_pull(new_volunteer):
     tteconventiond_id = session.get('tteconvention_id')
     tteconvention_data = session.get('tteconvention_data')
     tte_volunteer = tteconvention_data['volunteer']
-    print(tte_volunteer)
     return(tte_volunteer)
 
 
