@@ -142,7 +142,6 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     volunteer_data = volunteer_response.json()
     # Populate dictionary with the info pulled from TTE
     convention_info['event'] = event_data
-    convention_info['info'] = convention_exist
     convention_info['data'] = convention_data
     convention_info['volunteers'] = volunteer_data
     return(convention_info)
