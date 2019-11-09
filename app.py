@@ -381,7 +381,7 @@ def conventions():
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
     if request.method == "POST":
-        print(request.form.get())
+        print(request.form)
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
