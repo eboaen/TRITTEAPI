@@ -127,7 +127,6 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     con_params = {'session_id': ttesession, "_include_relationships": 1}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     convention_data = convention_response.json()
-    print(convention_data)
     # API Pull from TTE to get the convention information
     event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
     event_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['events'], params= event_params)
@@ -285,7 +284,6 @@ def tte_convention_volunteer_pull(new_volunteer):
 def list_volunteers(tteconvention_id):
     volunteer = Volunteers()
     all_volunteers = Volunteers.query.filter(Volunteers.conventions.in_(tteconvention_id)).all()
-    print(all_volunteers)
     return(all_volunteers)
 
 
