@@ -392,7 +392,7 @@ def conventions():
             'tteconventions' : tteconventions,
             'tteconvention_data' : session.get('tteconvention_data')
             })
-        if session['tteconvention_id'] != None:
+        if session.get('tteconvention_id') is not None:
             # Volunteer Management
             if request.form.get('volunteersave'):
                 select = request.form.get('selectfile')
