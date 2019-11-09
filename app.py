@@ -126,8 +126,8 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     # API Pull from TTE to get the convention information and urls needed to process the convention.
     con_params = {'session_id': ttesession, "_include_relationships": 1}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
-    print(convention_response)
     convention_data = convention_response.json()
+    print(convention_data)
     # API Pull from TTE to get the convention information
     event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
     event_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['events'], params= event_params)
