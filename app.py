@@ -407,7 +407,6 @@ def conventions():
                 'tteconvention_data' : session.get('tteconvention_data')
                 })
     else:
-        print(session.get('tteconvention_data'))
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
         })
 # -----------------------------------------------------------------------
