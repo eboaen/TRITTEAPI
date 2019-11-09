@@ -383,6 +383,7 @@ def conventions():
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
     if request.method == "POST":
+        print(request.form.get())
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
@@ -401,6 +402,9 @@ def conventions():
             'tteconventions' : tteconventions,
             'all_volunteers' : session.get('all_volunteers'),
             'tteconvention_data' : session.get('tteconvention_data')
+            })
+        else:
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
             })
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
