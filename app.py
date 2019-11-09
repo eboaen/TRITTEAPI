@@ -392,17 +392,16 @@ def conventions():
             'tteconventions' : tteconventions,
             'tteconvention_data' : session.get('tteconvention_data')
             })
-        if session.get('tteconvention_id') is not None:
+        if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             # Volunteer Management
-            if request.form.get('volunteersave'):
-                select = request.form.get('selectfile')
-                location = os.path.join(folder,select)
-                saved = volunteer_parse(location)
-                return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
-                'tteconventions' : tteconventions,
-                'all_volunteers' : session.get('all_volunteers'),
-                'tteconvention_data' : session.get('tteconvention_data')
-                })
+            select = request.form.get('selectfile')
+            location = os.path.join(folder,select)
+            saved = volunteer_parse(location)
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'all_volunteers' : session.get('all_volunteers'),
+            'tteconvention_data' : session.get('tteconvention_data')
+            })
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
         })
