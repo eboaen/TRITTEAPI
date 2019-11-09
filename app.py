@@ -123,30 +123,29 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,tteconvention_id):
     convention_info = {}
-    convention_exist = Conventions.query.get(tteconvention_id)
-    if convention_exist is not None:
-        # API Pull from TTE to get the convention information and urls needed to process the convention.
-        con_params = {'session_id': ttesession, "_include_relationships": 1}
-        convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
-        convention_data = convention_response.json()
-        # API Pull from TTE to get the convention information
-        event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
-        event_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['events'], params= event_params)
-        event_data = event_response.json()
-        for field in event_data['result']['items']:
-            slot_url = field['_relationships']['slots']
-            event_slots = get_slot_info(ttesession,slot_url)
-            field['event_slots'] = event_slots
-        # API Pull from TTE to get the volunteer information
-        volunteer_params = {'session_id': ttesession}
-        volunteer_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['volunteers'], params= volunteer_params)
-        volunteer_data = volunteer_response.json()
-        # Populate dictionary with the info pulled from TTE
-        convention_info['event'] = event_data
-        convention_info['info'] = convention_exist
-        convention_info['data'] = convention_data
-        convention_info['volunteers'] = volunteer_data
-        return(convention_info)
+    # API Pull from TTE to get the convention information and urls needed to process the convention.
+    con_params = {'session_id': ttesession, "_include_relationships": 1}
+    convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
+    print(convention_response)
+    convention_data = convention_response.json()
+    # API Pull from TTE to get the convention information
+    event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
+    event_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['events'], params= event_params)
+    event_data = event_response.json()
+    for field in event_data['result']['items']:
+        slot_url = field['_relationships']['slots']
+        event_slots = get_slot_info(ttesession,slot_url)
+        field['event_slots'] = event_slots
+    # API Pull from TTE to get the volunteer information
+    volunteer_params = {'session_id': ttesession}
+    volunteer_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['volunteers'], params= volunteer_params)
+    volunteer_data = volunteer_response.json()
+    # Populate dictionary with the info pulled from TTE
+    convention_info['event'] = event_data
+    convention_info['info'] = convention_exist
+    convention_info['data'] = convention_data
+    convention_info['volunteers'] = volunteer_data
+    return(convention_info)
 
 # -----------------------------------------------------------------------
 # Pull Slot Data from the TTE API
