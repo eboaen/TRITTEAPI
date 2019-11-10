@@ -136,9 +136,8 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
         event_slots = get_slot_info(ttesession,slot_url)
         field['event_slots'] = event_slots
     # API Pull from TTE to get the volunteer information
-    volunteer_params = {'session_id': ttesession}
-    volunteer_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['volunteers'], params= volunteer_params)
-    volunteer_data = volunteer_response.json()
+    ttevolunteer_field = convention_data['result']['_relationships']['volunteers']
+    volunteer_data = tte_volunteer_api_pull(ttesession,ttevolunteer_field)
     # Populate dictionary with the info pulled from TTE
     convention_info['event'] = event_data
     convention_info['data'] = convention_data
@@ -228,7 +227,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
     all_volunteers = list_volunteers(tteconvention_id)
     # Check the database to see if the volunteer already exists
     k = 'email', new_volunteer['email']
-    test_tteid = 'email'
 #    if k not in all_volunteers and new_volunteer['email'] != all_volunteers[k]:
     if k not in all_volunteers:
         volunteer.name = new_volunteer['name']
@@ -288,6 +286,14 @@ def list_volunteers(tteconvention_id):
     all_volunteers = Volunteers.query.filter(Volunteers.conventions.in_(tteconvention_id)).all()
     return(all_volunteers)
 
+# -----------------------------------------------------------------------
+# List all volunteers for Convention in TTE
+# -----------------------------------------------------------------------
+def tte_volunteer_api_pull(ttesession,ttevolunteer_field):
+    volunteer_params = {'session_id': ttesession}
+    volunteer_response = requests.get('https://tabletop.events' + ttevolunteer_field, params= volunteer_params)
+    volunteer_data = volunteer_response.json()
+    return(volunteer_data)
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
