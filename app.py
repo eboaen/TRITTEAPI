@@ -477,7 +477,7 @@ def conventions():
             session['tteconvention_id'] = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             savedvolunteers = list_volunteers(session['tteconvention_id'])
-            tteslots = list_slots(session['tteconvention_id'])
+            savedslots = list_slots(session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
@@ -488,7 +488,7 @@ def conventions():
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session['tteconvention_id']
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-            ttevolunteers = list_volunteers(tteconvention_id)
+            savedvolunteers = list_volunteers(tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Volunteer Management
             select = request.form.get('selectfile')
@@ -505,6 +505,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             savedslots = list_slots(tteconvention_id)
+            print(savedslots)
             # Volunteer Management
             select = request.form.get('selectfile')
             location = os.path.join(folder,select)
