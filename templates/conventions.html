@@ -76,8 +76,32 @@
     </div><!-- main -->
   </div> <!-- /container -->
   {% endif %}
-
-  {% if all_volunteers %}
+  {% if savedslots %}
+  <div class="jumbotron">
+      <div class ="main">
+        <div class="container">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col" class="col-xs-1">Slot</th>
+                <th scope="col" class="col-xs-1">Slot Info</th>
+                <th scope="col" class="col-xs-1">Length</th>
+            </tr>
+            </thead>
+            <tbody>
+              {% for slot in savedslots %}
+                <tr>
+                  <td>{{ slot }}</td>
+                  <td>{{ slot.length }}</td>
+                  <td><button type="submit" class="btn btn-success" name='submit' value='{{ volunteer.id }}'>Clear Volunteer</button></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      </div><!-- /container -->
+    </div><!-- /media -->
+  </div><!-- /jumbotron -->
+  {% if savedvolunteers %}
   <div class="jumbotron">
       <div class ="main">
         <div class="container">
