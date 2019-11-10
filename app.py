@@ -229,7 +229,9 @@ def volunteer_save(new_volunteer,tteconvention_id):
     # Check the database to see if the volunteer already exists
     k = 'email', new_volunteer['email']
     test_tteid = 'email'
-    if k not in all_volunteers and value != all_volunteers[k]:
+    print (k)
+    print (all_volunteers[k])
+    if k not in all_volunteers and new_volunteer['email'] != all_volunteers[k]:
         volunteer.name = new_volunteer['name']
         volunteer.email = new_volunteer['email']
         volunteer.role = new_volunteer['role']
