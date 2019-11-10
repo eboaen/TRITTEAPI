@@ -260,9 +260,10 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 slot_number = slot_number[1]
                 if 'X' in new_volunteer[field]:
                     all_slots.append(slot_number)
-        volunteer.slot_pref = all_slots
+        print(all_slots)
+        volunteer.slots = all_slots
         tteconventions.append(tteconvention_id)
-        volunteer.tteconventions = tteconventions
+        volunteer.conventions = tteconventions
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
         if ttevolunteer_id is 'add':
             volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
@@ -274,7 +275,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         old_volunteer = all_volunteers[k]
         tteconventions = old_volunteer.tteconventions
         tteconventions.append(tteconvention_id)
-        old_volunteer.tteconventions = tteconventions
+        old_volunteer.conventions = tteconventions
         db.session.merge(old_volunteer)
     try:
         db.session.commit()
