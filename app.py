@@ -244,6 +244,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         if 'Tier 4' in new_volunteer['tiers']:
             tiers.append('4')
         if tiers is not None:
+            tiers
             volunteer.tiers = ','.join(tiers)
         if new_volunteer['hours'] == 'Badge':
             volunteer.hours = 12
@@ -260,10 +261,9 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 slot_number = slot_number[1]
                 if 'X' in new_volunteer[field]:
                     all_slots.append(slot_number)
-        print(all_slots)
-        volunteer.slots = all_slots
+        volunteer.slots = ','.join(all_slots)
         tteconventions.append(tteconvention_id)
-        volunteer.conventions = tteconventions
+        volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
         if ttevolunteer_id is 'add':
             volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
@@ -275,7 +275,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         old_volunteer = all_volunteers[k]
         tteconventions = old_volunteer.tteconventions
         tteconventions.append(tteconvention_id)
-        old_volunteer.conventions = tteconventions
+        old_volunteer.conventions = ','.join(tteconventions)
         db.session.merge(old_volunteer)
     try:
         db.session.commit()
