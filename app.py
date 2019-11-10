@@ -56,7 +56,7 @@ migrate = Migrate(app, db)
 class Conventions(db.Model):
     name = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
-    slots = db.Column(db.String(255))
+    slots = db.Column(db.String(1024))
 
 class Volunteers(db.Model):
     name = db.Column(db.String(255))
