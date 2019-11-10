@@ -302,6 +302,7 @@ def tte_user_api_pull(ttesession,volunteer_email):
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_data = volunteer_response.json()
+    volunteer_data(volunteer_data)
     try:
         volunteer_id = volunteer_data['result']['items']['id']
     except:
