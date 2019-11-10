@@ -230,7 +230,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
     k = 'email', new_volunteer['email']
     test_tteid = 'email'
     print (k)
-    print (all_volunteers[k])
+    print (all_volunteers)
     if k not in all_volunteers and new_volunteer['email'] != all_volunteers[k]:
         volunteer.name = new_volunteer['name']
         volunteer.email = new_volunteer['email']
