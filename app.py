@@ -338,11 +338,12 @@ def slot_parse(filename,tteconvention_id):
     # Open CSV file and verify headers
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
-        if 'Slot' in header:
-            header_l = header.rsplit()
-            newheader.append('slot ' + header_l[1])
-        if 'Length' in header:
-            newheader.append('length')
+        for header in reader.fieldnames:
+            if 'Slot' in header:
+                header_l = header.rsplit()
+                newheader.append('slot ' + header_l[1])
+            if 'Length' in header:
+                newheader.append('length')
         reader.fieldnames = newheader
         for slots_info in reader:
             slots_saved = slot_save(slots_info,tteconvention_id,tteconvention_name)
