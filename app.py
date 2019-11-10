@@ -209,7 +209,6 @@ def volunteer_parse(filename,tteconvention_id):
             elif 'Slot' in header:
                 header_l = header.rsplit()
                 newheader.append('slot ' + header_l[1])
-        print(newheader)
         reader.fieldnames = newheader
         for vol in reader:
             saved = volunteer_save(vol,tteconvention_id)
@@ -221,7 +220,7 @@ def volunteer_parse(filename,tteconvention_id):
 def volunteer_save(new_volunteer,tteconvention_id):
     #Declarations
     tiers = []
-    header_l = []
+    all_slots = []
     tteconventions = []
     volunteer = Volunteers()
     old_volunteer = Volunteers()
@@ -256,12 +255,12 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 volunteer.hours = new_volunteer['hours']
             except TypeError:
                 pass
-        for volunteer_header,volunteer_info in new_volunteer:
-            if 'slot' in volunteer_header:
-                header_l = volunteer_header.rsplit(1)
-                if 'X' in volunteer_info:
-                    all_slots.append(header_l)
-            volunteer.slot_pref = all_slots
+        for field,value in new_volunteer:
+            if 'slot' in field:
+                slot = field.rsplit(1)
+                if 'X' in value:
+                    all_slots.append(slot)
+        volunteer.slot_pref = all_slots
         volunteer.tteid = tte_convention_volunteer_pull(new_volunteer)
         tteconventions.append(tteconvention_id)
         volunteer.tteconventions = tteconventions
