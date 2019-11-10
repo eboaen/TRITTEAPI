@@ -364,7 +364,6 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
             slot_num = field.rsplit()
             new_slot[slot_num[1]] = slots_info[field]
     new_slot['length'] = slots_info['length']
-    print (new_slot)
     conventions_slots = json.dumps(new_slot)
     new_convention.slots = conventions_slots
     new_convention.tteid = tteconvention_id
@@ -483,6 +482,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
+            print(savedslots)
             tteconvention_name = tteconvention_data['data']['result']['name']
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
