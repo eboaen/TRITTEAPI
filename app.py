@@ -396,7 +396,7 @@ def conventions():
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session['tteconvention_id']
-            tteconvention_data = tte_convention_api_pull(ttesession,convention_id)
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             ttevolunteers = list_volunteers(session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Volunteer Management
