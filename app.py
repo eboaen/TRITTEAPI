@@ -362,7 +362,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
         if 'Slot' in field:
             slot_num = field.rsplit()
             new_slot[slot_num] = slots_info[field]
-    new_slot['length'] = slots_info['Length']
+    new_slot['length'] = slots_info['length']
     new_convention.slots = ','.join(new_slot)
     new_convention.tteid = tteconvention_id
     new_convention.name = tteconvention_name
