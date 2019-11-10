@@ -264,7 +264,10 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions.append(tteconvention_id)
         volunteer.tteconventions = tteconventions
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
-        volunter.tteid = ttevolunteer_data
+        if ttevolunteer_id is 'add':
+            volunter.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
+        else:
+            volunter.tteid = ttevolunteer_data
         db.session.merge(volunteer)
     # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
     elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
@@ -292,7 +295,7 @@ def list_volunteers(tteconvention_id):
     return(all_volunteers)
 
 # -----------------------------------------------------------------------
-# List all volunteers for Convention in TTE
+# Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
     volunteer_params = {'session_id': ttesession['id']}
@@ -300,9 +303,31 @@ def tte_user_api_pull(ttesession,volunteer_email):
     print (ttesession,volunteer_url)
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_data = volunteer_response.json()
-    if volunteer_data['items']['id']:
+    try:
         volunteer_id = volunteer_data['result']['items']['id']
-        return(volunteer_id)
+    except:
+        volunteer_id = 'add'
+    return(volunteer_id)
+
+# -----------------------------------------------------------------------
+# Add user to TTE
+# -----------------------------------------------------------------------
+def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
+    volunteer_name.rsplit()
+    useradd_params = {
+    'session_id': ttesession['id'],
+    'convention_id' : tteconvention_id,
+    'email_address' : volunteer_email,
+    'firstname' : volunteer_name[0],
+    'lastname' : volunteer_name[1],
+    'phone_number' : '555-555-5555',
+    'user_id' : volunteer_email
+    }
+    useradd_url = 'https://tabletop.events' + '/api/volunteer/by-organizer',
+    volunteer_response = requests.post(useradd_url, params = useradd_params)
+    volunteer_data = volunteer_response.json()
+    volunteer_id = volunteer_data['result']['items']['id']
+    return(volunteer_data)
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
