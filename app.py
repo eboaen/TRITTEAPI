@@ -124,11 +124,11 @@ def gettteconventions(ttesession):
 def tte_convention_api_pull(ttesession,tteconvention_id):
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
-    con_params = {'session_id': ttesession, "_include_relationships": 1}
+    con_params = {'session_id': ttesession['id'], "_include_relationships": 1}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     convention_data = convention_response.json()
     # API Pull from TTE to get the convention information
-    event_params = {'session_id': ttesession, "_include_relationships": 1, '_include': 'hosts'}
+    event_params = {'session_id': ttesession['id'], "_include_relationships": 1, '_include': 'hosts'}
     event_response = requests.get('https://tabletop.events' + convention_data['result']['_relationships']['events'], params= event_params)
     event_data = event_response.json()
     for field in event_data['result']['items']:
@@ -137,7 +137,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
         field['event_slots'] = event_slots
     # API Pull from TTE to get the volunteer information
     volunteer_field = convention_data['result']['_relationships']['volunteers']
-    volunteer_params = {'session_id': ttesession}
+    volunteer_params = {'session_id': ttesession['id']}
     volunteer_response = requests.get('https://tabletop.events' + volunteer_field, params = volunteer_params)
     volunteer_data = volunteer_response.json()
     # Populate dictionary with the info pulled from TTE
@@ -150,7 +150,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
 # Pull Slot Data from the TTE API
 # -----------------------------------------------------------------------
 def get_slot_info(ttesession,slot_url):
-    slot_params = {'session_id': ttesession}
+    slot_params = {'session_id': ttesession['id']}
     slot_response = requests.get('https://tabletop.events' + slot_url, params= slot_params)
     slot_data = slot_response.json()
     slot_data = slot_data['result']['items']
@@ -295,7 +295,7 @@ def list_volunteers(tteconvention_id):
 # List all volunteers for Convention in TTE
 # -----------------------------------------------------------------------
 def tte_volunteer_api_pull(ttesession,volunteer_email):
-    volunteer_params = {'session_id': ttesession}
+    volunteer_params = {'session_id': ttesession['id']}
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     print (ttesession,volunteer_url)
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
