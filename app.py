@@ -286,6 +286,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
 # List all volunteers in database
 # -----------------------------------------------------------------------
 def list_volunteers(tteconvention_id):
+    all_volunteers = {}
     volunteer = Volunteers()
     all_volunteers = Volunteers.query.filter(Volunteers.conventions.in_(tteconvention_id)).all()
     return(all_volunteers)
@@ -323,6 +324,7 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
 # List all volunteers in database
 # -----------------------------------------------------------------------
 def list_slots(tteconvention_id):
+    con_slots = {}
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
     con_slots = convention.slots
@@ -466,6 +468,7 @@ def conventions():
     files = os.listdir(folder)
     tteconventions = gettteconventions(ttesession)
     savedslots = {}
+    savedvolunteers = {}
     # Function calls
     conform = ConForm(request.form, obj=tteconventions)
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
