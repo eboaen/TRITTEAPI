@@ -318,7 +318,7 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/' + tteconvention_id + '/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
     print(volunteer_data)
-    volunteer_id = volunteer_data['result']['items']['id']
+    volunteer_id = volunteer_data['result']['items'][0]['id']
     return(volunteer_data)
 # -----------------------------------------------------------------------
 # Login to server route
