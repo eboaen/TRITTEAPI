@@ -477,7 +477,7 @@ def conventions():
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             tteslots = list_slots(session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
-            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -492,7 +492,7 @@ def conventions():
             select = request.form.get('selectfile')
             location = os.path.join(folder,select)
             saved = volunteer_parse(location,tteconvention_id)
-            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -504,17 +504,17 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             savedslots = list_slots(tteconvention_id)
             # Volunteer Management
-            select = request.form.get('selectslot')
+            select = request.form.get('selectfile')
             location = os.path.join(folder,select)
             saved = slot_parse(location,tteconvention_id)
-            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             'savedslots' : savedslots
             })
         else:
-            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
             })
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
