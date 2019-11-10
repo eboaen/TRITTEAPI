@@ -262,7 +262,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions.append(tteconvention_id)
         volunteer.tteconventions = tteconventions
         ttevolunteer_data = tte_volunteer_api_pull(ttesession,new_volunteer['email'])
-
+        volunter.tteid = ttevolunteer_data
         db.session.merge(volunteer)
     # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
     elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
@@ -298,7 +298,7 @@ def tte_volunteer_api_pull(ttesession,volunteer_email):
     volunteer_data = volunteer_response.json()
     print(volunteer_data)
     if volunteer_data['items']['id']:
-        return(volunteer_data)
+        return(volunteer_data['items']['id'])
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
