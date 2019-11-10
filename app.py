@@ -324,7 +324,8 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
 def list_slots(tteconvention_id):
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
-    con_slots = json.loads(convention.slots)
+    if con_slots != None
+        con_slots = json.loads(convention.slots)
     return(con_slots)
 
 # -----------------------------------------------------------------------
