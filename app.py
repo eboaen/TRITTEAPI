@@ -281,7 +281,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
 
 # -----------------------------------------------------------------------
 # - Check if Volunteer exists in TTE for the convention
-# - If Volunteer doesn't exist in TTE, add them.
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_pull(new_volunteer):
     #Declarations
