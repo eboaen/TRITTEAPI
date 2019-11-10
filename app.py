@@ -405,7 +405,7 @@ def conventions():
             saved = volunteer_parse(location)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
-            'tteconvention_name' : tteconvention_name',
+            'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             'ttevolunteers' : ttevolunteers
             })
