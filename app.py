@@ -365,7 +365,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
     apos = "'"
     new_apos = '"'
     conventions_slots = conventions_slots.replace(apos, new_apos)
-    new_convention.slots = str(new_slot)
+    new_convention.slots = conventions_slots
     new_convention.tteid = tteconvention_id
     new_convention.name = tteconvention_name
     db.session.merge(new_convention)
