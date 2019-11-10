@@ -245,13 +245,13 @@ def volunteer_save(new_volunteer,tteconvention_id):
             tiers.append('4')
         if tiers is not None:
             volunteer.tiers = ','.join(tiers)
-        if new_volunteer['hours'] == 'badge':
+        if new_volunteer['hours'] == 'Badge':
             volunteer.hours = 12
-        elif new_volunteer['hours'] == 'hotel':
+        elif new_volunteer['hours'] == 'Hotel':
             volunteer.hours = 20
         else:
             try:
-                volunteer.hours = new_volunteer['hours']
+                volunteer.hours = int(new_volunteer['hours'])
             except TypeError:
                 pass
         for field in new_volunteer:
