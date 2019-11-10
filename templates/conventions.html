@@ -75,69 +75,68 @@
       </div><!-- /jumbotron -->
     </div><!-- main -->
   </div> <!-- /container -->
-  {% endif %}
-  {% if savedslots %}
-  <div class="jumbotron">
-      <div class ="main">
-        <div class="container">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col" class="col-xs-1">Slot</th>
-                <th scope="col" class="col-xs-1">Slot Info</th>
-                <th scope="col" class="col-xs-1">Length</th>
-            </tr>
-            </thead>
-            <tbody>
-              {% for slot in savedslots %}
+    {% if savedslots %}
+    <div class="jumbotron">
+        <div class ="main">
+          <div class="container">
+            <table class="table table-striped">
+              <thead>
                 <tr>
-                  <td>{{ slot }}</td>
-                  <td>{{ slot.length }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-      </div><!-- /container -->
-    </div><!-- /media -->
-  </div><!-- /jumbotron -->
-  {% endif %}
-  {% if savedvolunteers %}
-  <div class="jumbotron">
-      <div class ="main">
-        <div class="container">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col" class="col-xs-1">Name</th>
-                <th scope="col" class="col-xs-1">DM or Admin</th>
-                <th scope="col" class="col-xs-1">Tiers DMing</th>
-                <th scope="col" class="col-xs-1">Slot Preference</th>
-                <th scope="col" class="col-xs-1">Hours Volunteered/Current Hours Working</th>
-            </tr>
-            </thead>
-            <tbody>
-              {% for volunteer in all_volunteers %}
+                  <th scope="col" class="col-xs-1">Slot</th>
+                  <th scope="col" class="col-xs-1">Slot Info</th>
+                  <th scope="col" class="col-xs-1">Length</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% for slot in savedslots %}
+                  <tr>
+                    <td>{{ slot }}</td>
+                    <td>{{ slot.length }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div><!-- /container -->
+      </div><!-- /media -->
+    </div><!-- /jumbotron -->
+    {% endif %}
+    {% if savedvolunteers %}
+    <div class="jumbotron">
+        <div class ="main">
+          <div class="container">
+            <table class="table table-striped">
+              <thead>
                 <tr>
-                  <td>{{ volunteer.name }}</td>
-                  <td>{{ volunteer.email }}</td>
-                  <td>{{ volunteer.role }}</td>
-                  <td>{{ volunteer.hours }}</td>
-                  <td>{{ volunteer.tiers }}</td>
-                  <td>{{ volunteer.slots }}</td>
-                  <td>{{ volunteer.sessions }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-      </div><!-- /container -->
-    </div><!-- /media -->
-  </div><!-- /jumbotron -->
+                  <th scope="col" class="col-xs-1">Name</th>
+                  <th scope="col" class="col-xs-1">DM or Admin</th>
+                  <th scope="col" class="col-xs-1">Tiers DMing</th>
+                  <th scope="col" class="col-xs-1">Slot Preference</th>
+                  <th scope="col" class="col-xs-1">Hours Volunteered/Current Hours Working</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% for volunteer in all_volunteers %}
+                  <tr>
+                    <td>{{ volunteer.name }}</td>
+                    <td>{{ volunteer.email }}</td>
+                    <td>{{ volunteer.role }}</td>
+                    <td>{{ volunteer.hours }}</td>
+                    <td>{{ volunteer.tiers }}</td>
+                    <td>{{ volunteer.slots }}</td>
+                    <td>{{ volunteer.sessions }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div><!-- /container -->
+      </div><!-- /media -->
+    </div><!-- /jumbotron -->
+    {% endif %}
   {% endif %}
       <div class="container">
       </div> <!-- /container -->
     <div class="jumbotron">
       <div class ="main">
-
         {% if tteconvention_data is defined %}
         <div class="container"> <!-- Show Events and Hosts -->
           <table class="table table-striped">
