@@ -355,7 +355,7 @@ def slot_parse(filename,tteconvention_id,tteconvention_name):
 def slot_save(slots_info,tteconvention_id,tteconvention_name):
     all_slots = list_slots(tteconvention_id)
     new_convention = Conventions()
-    new_slot = []
+    new_slot = {}
     # Check the database to see if the slot already exists for the convention
     print(slots_info)
     for field in slots_info:
@@ -363,7 +363,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
             slot_num = field.rsplit()
             new_slot[slot_num] = slots_info[field]
     new_slot['length'] = slots_info['length']
-    new_convention.slots = ','.join(new_slot)
+    new_convention.slots = str(new_slot)
     new_convention.tteid = tteconvention_id
     new_convention.name = tteconvention_name
     db.session.merge(new_convention)
