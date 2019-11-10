@@ -264,10 +264,11 @@ def volunteer_save(new_volunteer,tteconvention_id):
         volunteer.tteconventions = tteconventions
         db.session.merge(volunteer)
     # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
-    elif k in all_volunteers and value == all_volunteers[k]:
+    elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
         old_volunteer = all_volunteers[k]
         tteconventions = old_volunteer.tteconventions
         tteconventions.append(tteconvention_id)
+        old_volunteer.tteconventions = tteconventions
         db.session.merge(old_volunteer)
     try:
         db.session.commit()
