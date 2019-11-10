@@ -313,7 +313,6 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_name[0],'lastname' : volunteer_name[1],'phone_number' : '555-555-5555','user_id' : volunteer_email}
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
-    print(volunteer_data)
     volunteer_id = volunteer_data['result']['items'][0]['id']
     return(volunteer_data)
 
@@ -327,8 +326,7 @@ def list_slots(tteconvention_id):
     con_slots = {}
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
-    con_slots = convention.slots
-    print(type(con_slots))
+    con_slots = json.loads(convention.slots)
     return(con_slots)
 
 # -----------------------------------------------------------------------
