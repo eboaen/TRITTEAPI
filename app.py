@@ -331,7 +331,7 @@ def list_slots(tteconvention_id):
 # -----------------------------------------------------------------------
 # Parse the File for slots
 # -----------------------------------------------------------------------
-def slot_parse(filename,tteconvention_id):
+def slot_parse(filename,tteconvention_id,tteconvention_name):
     # Definitions
     slot = {}
     newheader = []
@@ -507,7 +507,7 @@ def conventions():
             # Volunteer Management
             select = request.form.get('selectfile')
             location = os.path.join(folder,select)
-            saved = slot_parse(location,tteconvention_id)
+            saved = slot_parse(location,tteconvention_id,tteconvention_name)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
