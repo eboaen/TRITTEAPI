@@ -260,7 +260,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 if 'X' in new_volunteer[field]:
                     all_slots.append(slot_number)
         volunteer.slot_pref = all_slots
-        volunteer.tteid = tte_convention_volunteer_pull(new_volunteer)
         tteconventions.append(tteconvention_id)
         volunteer.tteconventions = tteconventions
         db.session.merge(volunteer)
@@ -279,17 +278,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
         db.session.rollback()
         saved = 'failed'
         return (saved)
-
-# -----------------------------------------------------------------------
-# - Check if Volunteer exists in TTE for the convention
-# -----------------------------------------------------------------------
-def tte_convention_volunteer_pull(new_volunteer):
-    #Declarations
-    ttesession = session.get('ttesession')
-    tteconventiond_id = session.get('tteconvention_id')
-    tteconvention_data = session.get('tteconvention_data')
-    tte_volunteer = tteconvention_data['volunteer']
-    return(tte_volunteer)
 
 # -----------------------------------------------------------------------
 # List all volunteers in database
