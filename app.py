@@ -136,8 +136,10 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
         event_slots = get_slot_info(ttesession,slot_url)
         field['event_slots'] = event_slots
     # API Pull from TTE to get the volunteer information
-    ttevolunteer_field = convention_data['result']['_relationships']['volunteers']
-    volunteer_data = tte_volunteer_api_pull(ttesession,ttevolunteer_field)
+    volunteer_field = convention_data['result']['_relationships']['volunteers']
+    volunteer_params = {'session_id': ttesession}
+    volunteer_response = requests.get('https://tabletop.events' + ttevolunteer_field, params = volunteer_params)'
+    volunteer_data = volunteer_response.json()
     # Populate dictionary with the info pulled from TTE
     convention_info['event'] = event_data
     convention_info['data'] = convention_data
