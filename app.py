@@ -295,9 +295,9 @@ def list_volunteers(tteconvention_id):
 # List all volunteers for Convention in TTE
 # -----------------------------------------------------------------------
 def tte_volunteer_api_pull(ttesession,volunteer_email):
-    volunteer_params = {'query': volunteer_email}
-    #'session_id': ttesession, 
-    volunteer_response = requests.get('https://tabletop.events' + '/api/user', params= volunteer_params)
+    volunteer_params = {'session_id': ttesession}
+    ,
+    volunteer_response = requests.get('https://tabletop.events' + '/api/user' + '?query=' + volunteer_email, params= volunteer_params)
     volunteer_data = volunteer_response.json()
     print(volunteer_data)
     if volunteer_data['items']['id']:
