@@ -229,8 +229,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
     # Check the database to see if the volunteer already exists
     k = 'email', new_volunteer['email']
     test_tteid = 'email'
-    print (k)
-    print (new_volunteer)
 #    if k not in all_volunteers and new_volunteer['email'] != all_volunteers[k]:
     if k not in all_volunteers:
         volunteer.name = new_volunteer['name']
@@ -257,7 +255,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 pass
         for field in new_volunteer:
             if 'slot' in field:
-                slot_number = field.rsplit(1)
+                slot_number = str(field.rsplit(1))
                 if 'X' in new_volunteer[field]:
                     all_slots.append(slot_number)
         volunteer.slot_pref = all_slots
