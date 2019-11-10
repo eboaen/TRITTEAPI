@@ -249,10 +249,13 @@ def volunteer_save(new_volunteer,tteconvention_id):
             volunteer.tiers = ','.join(tiers)
         if new_volunteer['hours'] == 'badge':
             volunteer.hours = 12
-        if new_volunteer['hours'] == 'hotel':
+        elif new_volunteer['hours'] == 'hotel':
             volunteer.hours = 20
-        if int(new_volunteer['hours']):
-            volunteer.hours = new_volunteer['hours']
+        else:
+            try:
+                volunteer.hours = new_volunteer['hours']
+            except TypeError:
+                pass
         for volunteer_header,volunteer_info in new_volunteer:
             if 'slot' in volunteer_header:
                 header_l = volunteer_header.rsplit(1)
@@ -290,7 +293,6 @@ def tte_convention_volunteer_pull(new_volunteer):
     tte_volunteer = tteconvention_data['volunteer']
     return(tte_volunteer)
 
-
 # -----------------------------------------------------------------------
 # List all volunteers in database
 # -----------------------------------------------------------------------
@@ -298,7 +300,6 @@ def list_volunteers(tteconvention_id):
     volunteer = Volunteers()
     all_volunteers = Volunteers.query.filter(Volunteers.conventions.in_(tteconvention_id)).all()
     return(all_volunteers)
-
 
 # -----------------------------------------------------------------------
 # Login to server route
