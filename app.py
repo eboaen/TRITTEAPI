@@ -223,6 +223,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
     tteconventions = []
     volunteer = Volunteers()
     old_volunteer = Volunteers()
+    ttesession = session.get('ttesession')
     #Load the volunteers from the TRI database for this convention
     all_volunteers = list_volunteers(tteconvention_id)
     # Check the database to see if the volunteer already exists
@@ -260,6 +261,8 @@ def volunteer_save(new_volunteer,tteconvention_id):
         volunteer.slot_pref = all_slots
         tteconventions.append(tteconvention_id)
         volunteer.tteconventions = tteconventions
+        ttevolunteer_data = tte_volunteer_api_pull(ttesession,new_volunteer['email'])
+
         db.session.merge(volunteer)
     # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
     elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
@@ -289,11 +292,13 @@ def list_volunteers(tteconvention_id):
 # -----------------------------------------------------------------------
 # List all volunteers for Convention in TTE
 # -----------------------------------------------------------------------
-def tte_volunteer_api_pull(ttesession,ttevolunteer_field):
-    volunteer_params = {'session_id': ttesession}
-    volunteer_response = requests.get('https://tabletop.events' + ttevolunteer_field, params= volunteer_params)
+def tte_volunteer_api_pull(ttesession,volunteer_email):
+    volunteer_params = {'session_id': ttesession, 'query': volunteer_email}
+    volunteer_response = requests.get('https://tabletop.events' + /api/user, params= volunteer_params)
     volunteer_data = volunteer_response.json()
-    return(volunteer_data)
+    print(volunteer_data)
+    if volunteer_data['items']['id']:
+        return(volunteer_data)
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
