@@ -255,11 +255,11 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 volunteer.hours = new_volunteer['hours']
             except TypeError:
                 pass
-        for field,value in new_volunteer:
+        for field in new_volunteer:
             if 'slot' in field:
-                slot = field.rsplit(1)
-                if 'X' in value:
-                    all_slots.append(slot)
+                slot_number = field.rsplit(1)
+                if 'X' in new_volunteer[field]:
+                    all_slots.append(slot_number)
         volunteer.slot_pref = all_slots
         volunteer.tteid = tte_convention_volunteer_pull(new_volunteer)
         tteconventions.append(tteconvention_id)
