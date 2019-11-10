@@ -358,7 +358,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
     new_slot = {}
     # Check the database to see if the slot already exists for the convention
     for field in slots_info:
-        print(field, slots_info[slots_info])
+        print(field, slots_info[field])
         if 'Slot' in field:
             slot_num = field.rsplit()
             new_slot[slot_num] = slots_info[field]
