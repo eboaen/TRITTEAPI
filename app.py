@@ -255,6 +255,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 pass
         for field in new_volunteer:
             if 'slot' in field:
+                print (type(field),field)
                 slot_number = str(field.rsplit(1))
                 if 'X' in new_volunteer[field]:
                     all_slots.append(slot_number)
