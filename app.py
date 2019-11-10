@@ -185,7 +185,7 @@ def save_convention(convention):
 # -----------------------------------------------------------------------
 # Ingest Volunteers
 # -----------------------------------------------------------------------
-def volunteer_parse(filename):
+def volunteer_parse(filename,tteconvention_id):
     # Definitions
     volunteer = {}
     newheader = []
@@ -211,21 +211,24 @@ def volunteer_parse(filename):
                 newheader.append('slot ' + header_l[1])
         reader.fieldnames = newheader
         for vol in reader:
-            saved = volunteer_save(vol)
+            saved = volunteer_save(vol,tteconvention_id)
         return(saved)
 
 # -----------------------------------------------------------------------
 # Volunteer Save to Database
 # -----------------------------------------------------------------------
-def volunteer_save(new_volunteer):
+def volunteer_save(new_volunteer,tteconvention_id):
     #Declarations
     tiers = []
     header_l = []
+    tteconventions = []
     volunteer = Volunteers()
+    old_volunteer = Volunteers()
     #Load the volunteers from the TRI database for this convention
     all_volunteers = list_volunteers(tteconvention_id)
     # Check the database to see if the volunteer already exists
     k = 'email', new_volunteer['email']
+    test_tteid = 'email'
     if k not in all_volunteers and value != all_volunteers[k]:
         volunteer.name = new_volunteer['name']
         volunteer.email = new_volunteer['email']
@@ -253,17 +256,24 @@ def volunteer_save(new_volunteer):
                     all_slots.append(header_l)
             volunteer.slot_pref = all_slots
         volunteer.tteid = tte_convention_volunteer_pull(new_volunteer)
+        tteconventions.append(tteconvention_id)
+        volunteer.tteconventions = tteconventions
         db.session.merge(volunteer)
+    # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
+    elif k in all_volunteers and value == all_volunteers[k]:
+        old_volunteer = all_volunteers[k]
+        tteconventions = old_volunteer.tteconventions
+        tteconventions.append(tteconvention_id)
+        db.session.merge(old_volunteer)
     try:
         db.session.commit()
-        #session.permanent = True
         saved = 'saved'
         return (saved)
     except:
         logger.exception("Cannot save volunteer")
         db.session.rollback()
         saved = 'failed'
-        return ()
+        return (saved)
 
 # -----------------------------------------------------------------------
 # - Check if Volunteer exists in TTE for the convention
@@ -397,12 +407,12 @@ def conventions():
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session['tteconvention_id']
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-            ttevolunteers = list_volunteers(session['tteconvention_id'])
+            ttevolunteers = list_volunteers(tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Volunteer Management
             select = request.form.get('selectfile')
             location = os.path.join(folder,select)
-            saved = volunteer_parse(location)
+            saved = volunteer_parse(location,tteconvention_id)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
