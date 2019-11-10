@@ -78,13 +78,13 @@ class LoginForm(FlaskForm):
 
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
-    volunteersave = SubmitField(label='Submit')
-    volunteerclear = SubmitField(label='Clear All')
-    volunteertteupload = SubmitField(label='Upload to TTE')
+    volunteersave = SubmitField(label='Submit File for Volunteers')
+    slotsave = SubmitField(label='Submit File for Slots')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
     consubmit = SubmitField(label='Submit')
+
 # -----------------------------------------------------------------------
 # Internal Functions
 # -----------------------------------------------------------------------
