@@ -328,6 +328,7 @@ def list_slots(tteconvention_id):
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
     con_slots = convention.slots
+    print(type(con_slots))
     return(con_slots)
 
 # -----------------------------------------------------------------------
