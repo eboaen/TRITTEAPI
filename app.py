@@ -286,7 +286,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
 # List all volunteers in database
 # -----------------------------------------------------------------------
 def list_volunteers(tteconvention_id):
-    all_volunteers = {}
     volunteer = Volunteers()
     all_volunteers = Volunteers.query.filter(Volunteers.conventions.in_(tteconvention_id)).all()
     return(all_volunteers)
@@ -323,7 +322,6 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
 # List all volunteers in database
 # -----------------------------------------------------------------------
 def list_slots(tteconvention_id):
-    con_slots = {}
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
     con_slots = json.loads(convention.slots)
@@ -363,6 +361,10 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
             slot_num = field.rsplit()
             new_slot[slot_num[1]] = slots_info[field]
     new_slot['length'] = slots_info['length']
+    conventions_slots = str(new_slot)
+    apos = "'"
+    new_apos = '"'
+    conventions_slots = conventions_slots.replace(apos, new_apos)
     new_convention.slots = str(new_slot)
     new_convention.tteid = tteconvention_id
     new_convention.name = tteconvention_name
