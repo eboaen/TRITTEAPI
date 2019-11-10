@@ -405,6 +405,7 @@ def conventions():
     # Declarations
     name = session.get('name')
     ttesession = session.get('ttesession')
+    print(ttesession)
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
     tteconventions = gettteconventions(ttesession)
