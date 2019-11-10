@@ -209,6 +209,7 @@ def volunteer_parse(filename,tteconvention_id):
             elif 'Slot' in header:
                 header_l = header.rsplit()
                 newheader.append('slot ' + header_l[1])
+        print(newheader)
         reader.fieldnames = newheader
         for vol in reader:
             saved = volunteer_save(vol,tteconvention_id)
