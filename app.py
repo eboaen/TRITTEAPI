@@ -267,7 +267,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         if ttevolunteer_id is 'add':
             volunter.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
         else:
-            volunter.tteid = ttevolunteer_data
+            volunter.tteid = ttevolunteer_id
         db.session.merge(volunteer)
     # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
     elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
@@ -302,7 +302,6 @@ def tte_user_api_pull(ttesession,volunteer_email):
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_data = volunteer_response.json()
-    print(volunteer_data['result']['items'][0]['id'])
     try:
         volunteer_id = volunteer_data['result']['items'][0]['id']
     except:
