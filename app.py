@@ -361,10 +361,8 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
             slot_num = field.rsplit()
             new_slot[slot_num[1]] = slots_info[field]
     new_slot['length'] = slots_info['length']
-    conventions_slots = str(new_slot)
-    apos = "'"
-    new_apos = '"'
-    conventions_slots = conventions_slots.replace(apos, new_apos)
+    conventions_slots = json.dumps(new_slot)
+    print(conventions_slots)
     new_convention.slots = conventions_slots
     new_convention.tteid = tteconvention_id
     new_convention.name = tteconvention_name
