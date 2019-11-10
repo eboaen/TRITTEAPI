@@ -365,7 +365,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
             new_slot[slot_num[1]] = slots_info[field]
     new_slot['length'] = slots_info['length']
     print (new_slot)
-#    conventions_slots = json.dumps(new_slot)
+    conventions_slots = json.dumps(new_slot)
     new_convention.slots = conventions_slots
     new_convention.tteid = tteconvention_id
     new_convention.name = tteconvention_name
