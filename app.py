@@ -302,9 +302,9 @@ def tte_user_api_pull(ttesession,volunteer_email):
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_data = volunteer_response.json()
-    print(volunteer_data['result']['items']['id'])
+    print(volunteer_data['result']['items'][0]['id'])
     try:
-        volunteer_id = volunteer_data['result']['items']['id']
+        volunteer_id = volunteer_data['result']['items'][0]['id']
     except:
         volunteer_id = 'add'
     return(volunteer_id)
@@ -317,7 +317,6 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_name[0],'lastname' : volunteer_name[1],'phone_number' : '555-555-5555','user_id' : volunteer_email}
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/' + tteconvention_id + '/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
-    print(volunteer_data)
     volunteer_id = volunteer_data['result']['items'][0]['id']
     return(volunteer_data)
 # -----------------------------------------------------------------------
