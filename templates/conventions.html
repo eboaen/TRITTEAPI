@@ -60,14 +60,32 @@
           <div class="container">
             <form action="" method="post" role="form">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <label form="sel1">Select a File:</label>
+              <label form="sel1">Select a File to upload Volunteers:</label>
               <div class="form-group">
                 {{ fileform.selectfile }}
               </div>
               <div class="input submit">
                 {{ fileform.volunteersave }}
-                {{ fileform.volunteerclear }}
-                {{ fileform.volunteertteupload }}
+              </div>
+            </form>
+          </div> <!-- /container -->
+        </div><!-- /media -->
+      </div><!-- /jumbotron -->
+    </div><!-- main -->
+  </div> <!-- /container -->
+  <div class="container"> <!-- Import Volunteers -->
+    <div class ="main">
+      <div class="jumbotron">
+        <div class ="media">
+          <div class="container">
+            <form action="" method="post" role="form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <label form="sel1">Select a File to upload Slots:</label>
+              <div class="form-group">
+                {{ slotform.selectslot }}
+              </div>
+              <div class="input submit">
+                {{ fileform.slotsave }}
               </div>
             </form>
           </div> <!-- /container -->

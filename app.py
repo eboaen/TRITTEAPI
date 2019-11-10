@@ -56,6 +56,7 @@ migrate = Migrate(app, db)
 class Conventions(db.Model):
     name = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
+    slots = db.Column(db.String(255))
 
 class Volunteers(db.Model):
     name = db.Column(db.String(255))
@@ -66,11 +67,6 @@ class Volunteers(db.Model):
     slots = db.Column(db.String(255))
     conventions = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
-
-class Timeslots(db.Model):
-    tteid = db.Column(db.String(255), primary_key=True)
-    datetimestart = db.Column(db.DateTime)
-    datetimeend = db.Column(db.DateTime)
 
 # -----------------------------------------------------------------------
 # Forms
@@ -244,7 +240,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
         if 'Tier 4' in new_volunteer['tiers']:
             tiers.append('4')
         if tiers is not None:
-            tiers
             volunteer.tiers = ','.join(tiers)
         if new_volunteer['hours'] == 'Badge':
             volunteer.hours = 12
@@ -320,6 +315,66 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     print(volunteer_data)
     volunteer_id = volunteer_data['result']['items'][0]['id']
     return(volunteer_data)
+
+# -----------------------------------------------------------------------
+# Slot Functions
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# List all volunteers in database
+# -----------------------------------------------------------------------
+def list_slots(tteconvention_id):
+    convention = Conventions()
+    convention = Conventions.query.filter(Conventions.tteid = tteconvention_id).all()
+    con_slots = convention.slots
+    return(con_slots)
+
+# -----------------------------------------------------------------------
+# Parse the File for slots
+# -----------------------------------------------------------------------
+def slot_parse(filename,tteconvention_id):
+    # Definitions
+    slot = {}
+    newheader = []
+    # Open CSV file and verify headers
+    with open(filename, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        if 'Slot' in header:
+            header_l = header.rsplit()
+            newheader.append('slot ' + header_l[1])
+        if 'Length' in header:
+            newheader.append('length')
+        reader.fieldnames = newheader
+        for slots_info in reader:
+            slots_saved = slot_save(slots_info,tteconvention_id)
+        return(slots_saved)
+
+# -----------------------------------------------------------------------
+# Save slots to database
+# -----------------------------------------------------------------------
+def slot_save(slots_info,tteconvention_id,tteconvention_name):
+    all_slots = list_slots(tteconvention_id)
+    new_convention = Conventions()
+    new_slot = []
+    # Check the database to see if the slot already exists for the convention
+    for field in slots_info:
+        if 'Slot' in field:
+            slot_num = field.rsplit()
+            new_slot[slot_num] = slots_info[field]
+    new_slot['length']: slots_info['Length']
+    new_convention.slots = ','.join(new_slot)
+    new_convention.tteid = tteconvention_id
+    new_convention.name = tteconvention_name
+    db.session.merge(new_convention)
+    try:
+        db.session.commit()
+        saved = 'saved'
+        return (saved)
+    except:
+        logger.exception("Cannot save volunteer")
+        db.session.rollback()
+        saved = 'failed'
+        return (saved)
+
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -419,13 +474,14 @@ def conventions():
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
-            ttevolunteers = list_volunteers(session['tteconvention_id'])
+            savedvolunteers = list_volunteers(session['tteconvention_id'])
+            tteslots = list_slots(session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
-            'ttevolunteers' : ttevolunteers
+            'savedvolunteers' : savedvolunteers
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session['tteconvention_id']
@@ -436,14 +492,29 @@ def conventions():
             select = request.form.get('selectfile')
             location = os.path.join(folder,select)
             saved = volunteer_parse(location,tteconvention_id)
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
-            'ttevolunteers' : ttevolunteers
+            'savedvolunteers' : savedvolunteers
+            })
+        if request.form.get('slotsave') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session['tteconvention_id']
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            tteconvention_name = tteconvention_data['data']['result']['name']
+            savedslots = list_slots(tteconvention_id)
+            # Volunteer Management
+            select = request.form.get('selectslot')
+            location = os.path.join(folder,select)
+            saved = slot_parse(location,tteconvention_id)
+            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
+            'savedslots' : savedslots
             })
         else:
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
+            return render_template('conventions.html', slotform=slotform, conform=conform, fileform=fileform, **{'name' : name
             })
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
