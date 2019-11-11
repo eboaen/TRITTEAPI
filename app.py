@@ -515,16 +515,14 @@ def bulk_read_tables(ttesession,tteconvention_id):
     rooms_url = tteconvention_data['data']['result']['_relationships']['rooms']
     spaces_url = tteconvention_data['data']['result']['_relationships']['rooms']
 
-    for room in rooms:
-        room_params = {'session_id': ttesession['id']}
-        room_response = requests.get('https://tabletop.events' + rooms_url, params= room_params)
-        room_data = room_response.json()
-        print(space_data)
-    for space in spaces:
-        space_params = {'session_id': ttesession['id']}
-        space_response = requests.get('https://tabletop.events' + spaces_url, params= space_params)
-        space_data = space_response.json()
-        print(space_data)
+    room_params = {'session_id': ttesession['id']}
+    room_response = requests.get('https://tabletop.events' + rooms_url, params= room_params)
+    room_data = room_response.json()
+    print(space_data)
+    space_params = {'session_id': ttesession['id']}
+    space_response = requests.get('https://tabletop.events' + spaces_url, params= space_params)
+    space_data = space_response.json()
+    print(space_data)
 
 # -----------------------------------------------------------------------
 # Login to server route
