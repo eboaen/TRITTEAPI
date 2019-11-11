@@ -393,7 +393,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     tteconvention_days_uri = tteconvention_data['data']['result']['_relationships']['days']
     # Pull data in on the convention days
     day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    day_response = requests.post(config.tte_url + tteconvention_days_uri, params= day_params)
+    day_response = requests.post('https://tabletop.events' + tteconvention_days_uri, params= day_params)
     day_data = day_response.json()
     print(day_data)
     for slot in savedslots:
