@@ -388,6 +388,8 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
 # Post slots to TTE as Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
+    #Declarations
+    day_info = {}
     # Get the data on the convention
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     tteconvention_days_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
@@ -395,16 +397,20 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
     day_response = requests.get(tteconvention_days_uri, params= day_params)
     day_data = day_response.json()
-    print(day_data)
+    for item in day_data['result']['items']:
+        day_time = datetime.datetime.strptime(item['start_date'], '%Y/%m/%d %H:%M:%S'])
+        day_info[item['name']] = {'id' : item['id'], 'day_time' = day_time}
+    print(day_info)
     for slot in savedslots:
         slot_name = 'Slot' + str(slot)
         slot_time_s = savedslots[slot][0]
         slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
+        for day in day_info:
+            if datetime.date(slot_start) is datetime.date(day_info['day']['slot_start']):
+                day_id = day_info['day']['id']
         slot_length = int(savedslots[slot][1])
         slot_end = slot_start + datetime.timedelta(hours=slot_length)
-
-
-#        print (shift_data)
+        print (day_id,slot_start,slot_end)
          # API Post to TTE for Volunteer Shifts
 #        shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': slot_name, 'quantity_of_volunteers': '255', 'start_time': slot_start, 'end_time': slot_end, 'conventionday_id': slot_day}
 #        shift_response = requests.post(config.tte_url + '/api/shift', params= con_params)
