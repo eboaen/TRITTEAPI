@@ -403,10 +403,10 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         day_info[item['name']] = {'id' : item['id'], 'day_time' : day_time}
     # Verify if the shift "Slot" exists, if it doesn't, initialize the shifttype of "Slot" for tteid
     tteconvention_shifttypes_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
-    shifttype_get_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    shifttype_get_response = requests.get(tteconvention_days_uri, params= shifttypes_get_params)
-    shifttype_get_data = shifttype_get_response.json()
-    print(shifttype_get_data)
+    shifttypes_get_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+    shifttypes_get_response = requests.get(tteconvention_shifttypes_uri, params= shifttypes_get_params)
+    shifttypes_get_data = shifttypes_get_response.json()
+    print(shifttypes_get_data)
 #    If shifttype_get_data
 #        shifttype_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': 'Slot'}
 #        shifttype_response = requests.post(config.tte_url + '/shifttype', params= shifttype_params)
