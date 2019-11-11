@@ -480,9 +480,9 @@ def event_parse(location,tteconvention_id,tteconvention_name):
 # -----------------------------------------------------------------------
 # Save Events to Database
 # -----------------------------------------------------------------------
-def event_save(event,tteconvention_id)
-    new_event = {}
-    all_events = {}
+#def event_save(event,tteconvention_id):
+#    new_event = {}
+#    all_events = {}
     convention = Conventions()
 
 
