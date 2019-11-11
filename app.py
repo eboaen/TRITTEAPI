@@ -390,10 +390,10 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
     # Get the data on the convention
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    tteconvention_days_uri = tteconvention_data['data']['result']['_relationships']['days']
+    tteconvention_days_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
     # Pull data in on the convention days
     day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    day_response = requests.post('https://tabletop.events' + tteconvention_days_uri, params= day_params)
+    day_response = requests.post(tteconvention_days_uri, params= day_params)
     day_data = day_response.json()
     print(day_data)
     for slot in savedslots:
