@@ -597,9 +597,10 @@ def conventions():
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             'savedevents' : savedevents
-        else:
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
             })
+        else:
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name })
+
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
         })
