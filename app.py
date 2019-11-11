@@ -407,8 +407,10 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
         slot_end = slot_start + datetime.timedelta(hours=slot_length)
         for day in day_info:
-            print (type(datetime.date(slot_start.year,slot_start.month,slot_start.day)),type(datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day))
-            if datetime.date(slot_start.year,slot_start.month,slot_start.day) is datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day):
+            print (type(datetime.date(slot_start.year,slot_start.month,slot_start.day)),type(datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day)))
+            slot_date = datetime.date(slot_start.year,slot_start.month,slot_start.day)
+            shift_date = datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day)
+            if slot_date == shift_date :
                 print(day['id'])
         #print (day_id,slot_start,slot_end)
          # API Post to TTE for Volunteer Shifts
