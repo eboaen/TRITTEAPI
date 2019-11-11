@@ -588,8 +588,15 @@ def conventions():
             'savedslots' : savedslots
             })
         if request.form.get('eventsubmit') and session.get('tteconvention_id') is not None:
-
-
+            tteconvention_id = session['tteconvention_id']
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            tteconvention_name = tteconvention_data['data']['result']['name']
+            pushevents = tte_convention_events_api_post(ttesession,tteconvention_id)
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
+            'savedevents' : savedevents
         else:
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
             })
