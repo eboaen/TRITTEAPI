@@ -277,6 +277,11 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions = old_volunteer.tteconventions
         tteconventions.append(tteconvention_id)
         old_volunteer.conventions = ','.join(tteconventions)
+        ttevolunteer_id = tte_user_api_pull(ttesession,old_volunteer.email)
+        if ttevolunteer_id is 'add':
+            old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
+        else:
+            old_volunteer.tteid = ttevolunteer_id
         db.session.merge(old_volunteer)
     try:
         db.session.commit()
@@ -319,6 +324,7 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
     volunteer_id = volunteer_data['result']['items'][0]['id']
+    print(volunteer_email,volunteer_data)
     return(volunteer_data)
 
 # -----------------------------------------------------------------------
