@@ -121,12 +121,10 @@
                 {% for volunteer in all_volunteers %}
                   <tr>
                     <td>{{ volunteer.name }}</td>
-                    <td>{{ volunteer.email }}</td>
                     <td>{{ volunteer.role }}</td>
-                    <td>{{ volunteer.hours }}</td>
                     <td>{{ volunteer.tiers }}</td>
                     <td>{{ volunteer.slots }}</td>
-                    <td>{{ volunteer.sessions }}</td>
+                    <td>{{ volunteer.hours }}</td>
                   </tr>
                 {% endfor %}
               </tbody>
