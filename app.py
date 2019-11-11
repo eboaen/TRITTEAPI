@@ -270,6 +270,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
             volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
         else:
             volunteer.tteid = ttevolunteer_id
+        print(volunteer)
         db.session.merge(volunteer)
     # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
     elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
