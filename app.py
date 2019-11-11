@@ -312,6 +312,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
 def list_volunteers(tteconvention_id):
     volunteer = Volunteers()
     all_volunteers = Volunteers.query.filter(Volunteers.conventions.ilike(tteconvention_id)).all()
+    print(all_volunteers)
     return(all_volunteers)
 
 # -----------------------------------------------------------------------
