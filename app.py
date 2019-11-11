@@ -403,7 +403,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         day_info[item['name']] = {'id' : item['id'], 'day_time' : day_time}
     # Initialize the shifttype of "Slot" for tteid
     shifttype_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': Slot}
-    shifttype_response = requests.post(config.tte_url + /shifttype, params= shifttype_params)
+    shifttype_response = requests.post(config.tte_url + '/shifttype', params= shifttype_params)
     shifttype_data = shift_response.json()
     print(shifttype_data)
     # For each slot, get the information we need to be able to post the slot as a shift
