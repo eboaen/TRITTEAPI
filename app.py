@@ -368,7 +368,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
     for field in slots_info:
         if 'slot' in field:
             slot_num = field.rsplit()
-            new_slot[slot_num[1]] = slots_info[field], new_slot['length']
+            new_slot[slot_num[1]] = slots_info[field], slots_info['length']
     conventions_slots = json.dumps(new_slot)
     new_convention.slots = conventions_slots
     new_convention.tteid = tteconvention_id
