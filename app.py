@@ -485,7 +485,6 @@ def index():
         ttesession = session.get('ttesession')
         return render_template('base.html', logout = logout, **{'name' : name})
     elif request.method == 'DELETE':
-        print(request.form.get())
         if request.form.get('logoutsubmit'):
             session.pop('name')
             delete_session_params = {'session_id': session.get('ttesession')}
