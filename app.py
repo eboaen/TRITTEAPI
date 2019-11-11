@@ -86,6 +86,9 @@ class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
     consubmit = SubmitField(label='Submit')
 
+class LogoutForm(FlaskForm):
+    logoutsubmit = SubmitField(label='Logout')
+
 # -----------------------------------------------------------------------
 # Internal Functions
 # -----------------------------------------------------------------------
@@ -474,16 +477,21 @@ def allowed_file(filename):
 # -----------------------------------------------------------------------
 @app.route('/', methods=['GET', 'POST'])
 def index():
-
+    logout = LogoutForm()
     # Check to see if the user already exists.
     # If it does, pass the user's name to the render_template
     if 'name' in session:
         name = session.get('name')
         ttesession = session.get('ttesession')
-        return render_template('base.html', **{'name' : name})
-    else:
-    #Otherwose, just load the page.  Page has code to detect if name exists
-        return render_template('base.html')
+        return render_template('base.html', 'logout' = logout, **{'name' : name})
+    elif if request.method == 'POST':
+        if request.form.get('logoutsubmit'):
+            session.pop('name')
+            delete_session_params = {'session_id': session.get('ttesession')}
+            delete_session = requests.delete(https://tabletop.events/api/session/ + ttesession, params= delete_session_params}
+            session.pop('ttesession')
+            return render_template('base.html')
+    return render_template('base.html')
 
 # -----------------------------------------------------------------------
 # Upload file Route
