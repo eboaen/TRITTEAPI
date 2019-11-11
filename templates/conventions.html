@@ -47,6 +47,8 @@
                 <div class="input submit">
                   {{ conform.consubmit}}
                 </div>
+              </input>
+            </form>
           </div><!-- /container -->
         </div><!-- /media -->
       </div><!-- /jumbotron -->
@@ -67,7 +69,7 @@
               <div class="input submit">
                 {{ fileform.volunteersave }}
                 {{ fileform.slotsave }}
-
+                {{ fileform.eventsave }}
               </div>
             </form>
           </div> <!-- /container -->
@@ -138,32 +140,7 @@
       </div> <!-- /container -->
     <div class="jumbotron">
       <div class ="main">
-        {% if tteconvention_data is defined %}
-        <div class="container"> <!-- Show Events and Hosts -->
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col" class="col-xs-1">Slot</th>
-                <th scope="col" class="col-xs-1">Volunteer</th>
-            </tr>
-            </thead>
-            <tbody>
-              {% for field in tteconvention_data.event.result['items'] %}
-                  {% for slot in field['event_slots'] %}
-                    <tr>
-                      <td>{{slot.name}}</td>
-                    </tr>
-                  {% endfor %}
-                  {% for host in field['hosts'] %}
-                    <tr>
-                      <td>{{host.name}}</td>
-                    </tr>
-                  {% endfor %}
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% endif %}
+
         </div><!-- /media -->
       </div><!-- /jumbotron -->
     </main>

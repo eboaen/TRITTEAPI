@@ -437,6 +437,95 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     return('saved')
 
 
+
+# -----------------------------------------------------------------------
+# Event Functions
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# Parse Events Matrix
+# -----------------------------------------------------------------------
+def event_parse(location,tteconvention_id,tteconvention_name):
+    #Definitions
+    newheader = []
+    # Open CSV file and verify headers
+    with open(filename, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for header in reader.fieldnames:
+            if 'Event Name' in header:
+                newheader.append('event')
+            elif 'Date' in header:
+                newheader.append('date')
+            elif 'Start Time' in header:
+                newheader.append('preferreddaypart_id')
+            elif 'Duration' in header:
+                newheader.append('duration')
+            elif 'Table Count' in header:
+                newheader.append('tablecount')
+            elif 'Hosts' in header:
+                newheader.append('hosts')
+        reader.fieldnames = newheader
+        for event in reader:
+            saved = event_save(event,tteconvention_id)
+        return(eventsaved)
+
+# -----------------------------------------------------------------------
+# Save Events to Database
+# -----------------------------------------------------------------------
+#def event_save(event,tteconvention_id)
+#    new_event = {}
+#    all_events = {}
+#    convention = Conventions()
+
+
+#    event['name']
+#    event['tteid']
+#    event['duration'] = int(event['duration'])
+#    event['tablecount']
+#    event['hosts']
+#    event['maxtickets'] = 6
+#    event['age_range']
+#    event['alternatedaypart_id'] =
+
+#    event['type_id']
+
+
+# -----------------------------------------------------------------------
+# Push Events to TTE
+# -----------------------------------------------------------------------
+#def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
+#
+#
+#    name
+#    max_tickets
+#    priority
+#    type_id
+
+
+#    event_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+#    event_response = requests.post(config.tte_url + '/shift', params= event_params)
+#    event_data = shift_response.json()
+#    print (event_data)
+#    return(event_data)
+
+# -----------------------------------------------------------------------
+# Get Room and Table Information
+# -----------------------------------------------------------------------
+def bulk_read_tables(ttesession,tteconvention_id):
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    rooms = tteconvention_data['data']['result']['_relationships']['rooms']
+    spaces = tteconvention_data['data']['result']['_relationships']['rooms']
+
+    for room in rooms
+        room_params = {'session_id': ttesession['id']}
+        room_response = requests.get('https://tabletop.events' + rooms, params= room_params)
+        room_data = room_response.json()
+        print(space_data)
+    for space in spaces
+        space_params = {'session_id': ttesession['id']}
+        space_response = requests.get('https://tabletop.events' + spaces, params= space_params)
+        space_data = space_response.json()
+        print(space_data)
+
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -550,6 +639,7 @@ def conventions():
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
+            table_data = bulk_read_tables(ttesession,tteconvention_id)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
@@ -591,7 +681,10 @@ def conventions():
             tteconvention_id = session['tteconvention_id']
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
-            pushevents = tte_convention_events_api_post(ttesession,tteconvention_id)
+            eventselect = request.form.get('selectfile')
+            location = os.path.join(folder,slotselect)
+            # eventssaved = event_parse(location,tteconvention_id,tteconvention_name)
+            pushevents = tte_convention_events_api_post(ttesession,tteconvention_id,eventsaved)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
