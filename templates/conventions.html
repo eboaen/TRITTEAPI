@@ -90,11 +90,8 @@
               <tbody>
                 {% for slot in savedslots|sort %}
                   <tr>
-                    {% if 'length' not in slot %}
                       <td>{{ slot }}</td>
                       <td>{{ savedslots[slot] }}</td>
-                      <td>{{ savedslots['length'] }}</td>
-                    {% endif %}
                   </tr>
                 {% endfor %}
               </tbody>
