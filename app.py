@@ -488,7 +488,7 @@ def index():
         if request.form.get('logoutsubmit'):
             session.pop('name')
             delete_session_params = {'session_id': session.get('ttesession')}
-            delete_session = requests.delete(https://tabletop.events/api/session/ + ttesession, params= delete_session_params}
+            delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession, params= delete_session_params}
             session.pop('ttesession')
             return render_template('base.html')
     else
