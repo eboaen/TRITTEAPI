@@ -45,7 +45,7 @@
 
 	<footer class="container">
     {% if name %}
-      <form id="form1" action="/conventions" method="DELETE" enctype="multipart/form-data">
+      <form id="form1" action="/" method="DELETE" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           <div class="input submit">
           {{ logout.logoutsubmit }}
