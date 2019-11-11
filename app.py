@@ -388,19 +388,24 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
 # Post slots to TTE as Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
-    # API Post to TTE for Volunteer Shifts
+    # Get the data on the convention
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    tteconvention_days_uri = teconvention_data['data']['result']['relationships']['days'])
+    # Pull data in on the convention days
+    day_params = {'session_id': ttesession, 'convention_id': tteconvention_id)
+    day_response = requests.post(config.tte_url + tteconvention_days_uri, params= day_params)
+    day_data = convention_response.json()
+    print(day_data)
     for slot in savedslots:
         slot_name = 'Slot' + str(slot)
         slot_time_s = savedslots[slot][0]
         slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
         slot_length = int(savedslots[slot][1])
         slot_end = slot_start + datetime.timedelta(hours=slot_length)
-        tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-        print(tteconvention_data['data']['result'])
-#        day_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': slot_name, 'quantity_of_volunteers': '255', 'start_time': slot_start, 'end_time': slot_end, 'conventionday_id': slot_day}
-#        shift_response = requests.post(config.tte_url + '/api/shift', params= con_params)
-#        shift_data = convention_response.json()
+
+
 #        print (shift_data)
+         # API Post to TTE for Volunteer Shifts
 #        shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': slot_name, 'quantity_of_volunteers': '255', 'start_time': slot_start, 'end_time': slot_end, 'conventionday_id': slot_day}
 #        shift_response = requests.post(config.tte_url + '/api/shift', params= con_params)
 #        shift_data = convention_response.json()
