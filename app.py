@@ -518,7 +518,7 @@ def bulk_read_tables(ttesession,tteconvention_id):
     room_params = {'session_id': ttesession['id']}
     room_response = requests.get('https://tabletop.events' + rooms_url, params= room_params)
     room_data = room_response.json()
-    print(space_data)
+    print(room_data)
     space_params = {'session_id': ttesession['id']}
     space_response = requests.get('https://tabletop.events' + spaces_url, params= space_params)
     space_data = space_response.json()
