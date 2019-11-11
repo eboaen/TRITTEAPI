@@ -314,7 +314,7 @@ def list_volunteers(tteconvention_id):
     db_volunteers = Volunteers.query.filter(Volunteers.conventions.ilike(tteconvention_id)).all()
     all_volunteers = []
     volunteer = {}
-    for vol in db_volunteers
+    for vol in db_volunteers:
         v['name'] = vol.name
         v['role'] = vol.role
         v['hours'] = vol.hours
