@@ -406,8 +406,8 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         slot_time_s = savedslots[slot][0]
         slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
         slot_end = slot_start + datetime.timedelta(hours=slot_length)
-        print (type(datetime.date(slot_start.year,slot_start.month,slot_start.day),type(datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day))
         for day in day_info:
+            print (type(datetime.date(slot_start.year,slot_start.month,slot_start.day)),type(datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day))
             if datetime.date(slot_start.year,slot_start.month,slot_start.day) is datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day):
                 print(day['id'])
         #print (day_id,slot_start,slot_end)
