@@ -406,8 +406,10 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     shifttypes_get_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
     shifttypes_get_response = requests.get(tteconvention_shifttypes_uri, params= shifttypes_get_params)
     shifttypes_get_data = shifttypes_get_response.json()
-    print(shifttypes_get_data)
-#    If shifttype_get_data
+    for shifttype in shifttypes_get_data['result']['items']:
+            if shifttypes['name'] is 'Slot';
+                shifttype_id = shifttype['id']
+                print(shifttype_id)
 #        shifttype_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': 'Slot'}
 #        shifttype_response = requests.post(config.tte_url + '/shifttype', params= shifttype_params)
 #        shifttype_data = shifttype_response.json()
@@ -427,7 +429,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
                 shift_id = day_info[day]['id']
                 print (shift_name, shift_id,shift_start,shift_end)
                 # API Post to TTE for Volunteer Shifts
-                shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': shift_id, 'shifttype_id': Slot}
+                shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': shift_id, 'shifttype_id': shifttype_id}
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                 shift_data = shift_response.json()
                 print (shift_data)
