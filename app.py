@@ -463,6 +463,8 @@ def event_parse(location,tteconvention_id,tteconvention_name):
                 newheader.append('tablecount')
             elif 'Hosts' in header:
                 newheader.append('hosts')
+            elif 'Type' in header:
+                newheader.append('type')
         reader.fieldnames = newheader
         for event in reader:
             saved = event_save(event,tteconvention_id)
@@ -511,18 +513,13 @@ def event_parse(location,tteconvention_id,tteconvention_name):
 # Get Room and Table Information
 # -----------------------------------------------------------------------
 def bulk_read_tables(ttesession,tteconvention_id):
+    rooms = {}
+    spaces = {}
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    rooms_url = tteconvention_data['data']['result']['_relationships']['rooms']
-    spaces_url = tteconvention_data['data']['result']['_relationships']['rooms']
-
-    room_params = {'session_id': ttesession['id']}
-    room_response = requests.get('https://tabletop.events' + rooms_url, params= room_params)
-    room_data = room_response.json()
-    print(room_data)
+    spaces_url = tteconvention_data['data']['result']['_relationships']['spaces']
     space_params = {'session_id': ttesession['id']}
     space_response = requests.get('https://tabletop.events' + spaces_url, params= space_params)
     space_data = space_response.json()
-    print(space_data)
 
 # -----------------------------------------------------------------------
 # Login to server route
@@ -637,7 +634,7 @@ def conventions():
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
-            table_data = bulk_read_tables(ttesession,session['tteconvention_id'])
+            rooms = bulk_read_tables(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
