@@ -88,7 +88,7 @@
               </tr>
               </thead>
               <tbody>
-                {% for slot in savedslots|dictsort %}
+                {% for slot in savedslots|dictsort(true) %}
                   <tr>
                     {% if 'length' not in slot %}
                       <td>{{ slot }}</td>
