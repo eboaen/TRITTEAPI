@@ -395,7 +395,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         slot_day = slot_s[0]
         slot_start = datetime.strptime(slot_s[1], '%I:%M:%S %p')
         slot_length = datetime.strptime(savedslots[slot][1],'%I')
-        slot_end = slot_start) + slot_length
+        slot_end = slot_start + slot_length
         print (slot_day,slot_start,slot_end)
 
 #        shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': slot_name, 'quantity_of_volunteers': '255', 'start_time': slot_start, 'end_time': slot_end, 'conventionday_id': slot_day}
