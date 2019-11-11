@@ -45,7 +45,13 @@
 
 	<footer class="container">
     {% if name %}
-      {{ logout.logoutsubmit }}
+      <form id="form1" action="/conventions" method="DELETE" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <div class="input submit">
+          {{ logout.logoutsubmit }}
+          </div>
+        </input>
+      </form>
     {% endif %}
 		<a>DEBUGGING</a>
 	</footer>
