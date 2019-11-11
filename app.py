@@ -267,12 +267,17 @@ def volunteer_save(new_volunteer,tteconvention_id):
         volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
         if ttevolunteer_id is 'add':
-            volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
+            try:
+                volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
+                db.session.merge(volunteer)
+            except:
+                logger.exception("Cannot save volunteer")
+                db.session.rollback()
+                saved = 'failed'
+                return (saved)
         else:
             volunteer.tteid = ttevolunteer_id
-        print(volunteer)
-        db.session.merge(volunteer)
-    # If the volunteer exists in the TRI User Database, add the new tteconvention to their conventions list
+    # If the volunteer exists in the TRI User Database already but, add the new tteconvention to their conventions list
     elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
         old_volunteer = all_volunteers[k]
         tteconventions = old_volunteer.tteconventions
@@ -280,10 +285,16 @@ def volunteer_save(new_volunteer,tteconvention_id):
         old_volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,old_volunteer.email)
         if ttevolunteer_id is 'add':
-            old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
+            try:
+                old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
+                db.session.merge(volunteer)
+            except:
+                logger.exception("Cannot save volunteer")
+                db.session.rollback()
+                saved = 'failed'
+                return (saved)
         else:
             old_volunteer.tteid = ttevolunteer_id
-        db.session.merge(old_volunteer)
     try:
         db.session.commit()
         saved = 'saved'
@@ -321,14 +332,16 @@ def tte_user_api_pull(ttesession,volunteer_email):
 # -----------------------------------------------------------------------
 def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     volunteer_name.rsplit()
-    useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_name[0],'lastname' : volunteer_name[1],'phone_number' : '555-555-5555','user_id' : volunteer_email}
+    useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_name[0],'lastname' : volunteer_name[1],'phone_number' : '555-555-5555'}
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
     try:
         volunteer_id = volunteer_data['result']['items'][0]['id']
+        return(volunteer_id)
     except:
         print(volunteer_email,volunteer_data)
-    return(volunteer_data)
+        return()
+
 
 # -----------------------------------------------------------------------
 # Slot Functions
