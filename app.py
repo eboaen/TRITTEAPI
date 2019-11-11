@@ -484,13 +484,13 @@ def index():
         name = session.get('name')
         ttesession = session.get('ttesession')
         return render_template('base.html', logout = logout, **{'name' : name})
-    if request.method == 'DELETE':
-        if request.form.get('logoutsubmit'):
-            session.pop('name')
-            delete_session_params = {'session_id': session.get('ttesession')}
-            delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession, params= delete_session_params)
-            session.pop('ttesession')
-            return render_template('base.html')
+        if request.method == 'DELETE':
+            if request.form.get('logoutsubmit'):
+                session.pop('name')
+                delete_session_params = {'session_id': session.get('ttesession')}
+                delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession, params= delete_session_params)
+                session.pop('ttesession')
+                return render_template('base.html')
     else:
         return render_template('base.html')
 
