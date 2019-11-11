@@ -546,7 +546,7 @@ def conventions():
         else:
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
             })
-    elif request.method == "GET" and session.get('tteconvention_id') is not None:
+    else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
         })
 # -----------------------------------------------------------------------
