@@ -332,8 +332,8 @@ def list_slots(tteconvention_id):
             try:
                 new_slot = int(slot)
                 slots[new_slot] = con_slots[slot]
-    else:
-        slots = None
+            except ValueError:
+                pass
     return(slots)
 
 # -----------------------------------------------------------------------
