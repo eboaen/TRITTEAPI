@@ -81,6 +81,7 @@ class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
     volunteersave = SubmitField(label='Submit File for Volunteers')
     slotsave = SubmitField(label='Submit File for Slots')
+    eventsave = SubmitField(label='Submit File for Events')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
@@ -483,13 +484,16 @@ def index():
     if 'name' in session:
         name = session.get('name')
         ttesession = session.get('ttesession')
-        if request.form.get('logoutsubmit'):
-            session.pop('name')
-            delete_session_params = {'session_id': session.get('ttesession')}
-            delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession, params= delete_session_params)
-            print (delete_session.json())
-            session.pop('ttesession')
-            return render_template('base.html')
+        if request.method == 'POST':
+            if request.form.get('logoutsubmit'):
+                session.pop('name')
+                delete_session_params = {'session_id': session.get('ttesession')}
+                delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession, params= delete_session_params)
+                print (delete_session.json())
+                session.pop('ttesession')
+                return render_template('base.html')
+            else:
+                pass
         else:
             return render_template('base.html', logout = logout, **{'name' : name})
     else:
@@ -583,6 +587,9 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             'savedslots' : savedslots
             })
+        if request.form.get('eventsubmit') and session.get('tteconvention_id') is not None:
+
+
         else:
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name
             })
