@@ -330,11 +330,12 @@ def list_slots(tteconvention_id):
         for slot in con_slots:
             try:
                 slot = int(slot)
+                slots[slot] = con_slots[slot]
             except ValueError:
-                pass
+                slots['length'] = con_slots['length']
     else:
-        con_slots = None
-    return(con_slots)
+        slots = None
+    return(slots)
 
 # -----------------------------------------------------------------------
 # Parse the File for slots
