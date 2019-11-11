@@ -16,7 +16,7 @@ UPLOAD_FOLDER = '/var/www/TRITTEAPI/uploads'
 # TTE defaults configurations
 # ------------------------------------------------------
 tte_url="https://tabletop.events/api"
-tte_api_key_id = '0A4DCD00-ED07-11E9-B27C-43B2D530A4B6'
+tte_api_key_id = 'mvHMoYog5cjjY2.Y6ibhhTWDkNgAkj1yxwW3'
 tte_username = 'eric.boaen@theroleinitiative.o'
 tte_password = 'Unobtainium1'
 tte_group_id = 'B3124686-B852-11E8-AB7F-B79E49AF76B9'
