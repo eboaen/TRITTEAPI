@@ -58,6 +58,7 @@ class Conventions(db.Model):
     name = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
     slots = db.Column(db.String(2048))
+    events = db.Column(db.String(2048))
 
 class Volunteers(db.Model):
     name = db.Column(db.String(255))
@@ -473,10 +474,10 @@ def event_parse(location,tteconvention_id,tteconvention_name):
 # -----------------------------------------------------------------------
 # Save Events to Database
 # -----------------------------------------------------------------------
-#def event_save(event,tteconvention_id)
-#    new_event = {}
-#    all_events = {}
-#    convention = Conventions()
+def event_save(event,tteconvention_id)
+    new_event = {}
+    all_events = {}
+    convention = Conventions()
 
 
 #    event['name']
