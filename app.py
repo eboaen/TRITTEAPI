@@ -267,7 +267,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
         print(ttevolunteer_id)
-        if ttevolunteer_id == 'add':
+        if ttevolunteer_id is None:
             try:
                 volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
                 db.session.merge(volunteer)
@@ -285,7 +285,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions.append(tteconvention_id)
         old_volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,old_volunteer.email)
-        if ttevolunteer_id == 'add':
+        if ttevolunteer_id is None:
             try:
                 old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
                 db.session.merge(volunteer)
@@ -325,7 +325,7 @@ def tte_user_api_pull(ttesession,volunteer_email):
     try:
         volunteer_id = volunteer_data['result']['items'][0]['id']
     except:
-        volunteer_id = 'add'
+        volunteer_id = None
     return(volunteer_id)
 
 # -----------------------------------------------------------------------
