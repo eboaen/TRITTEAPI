@@ -319,7 +319,7 @@ def list_volunteers(tteconvention_id):
         v['role'] = vol.role
         v['hours'] = vol.hours
         v['tiers'] = vol.tiers
-        v['slots'] = vol.volunteer
+        v['slots'] = vol.slots
         all_volunteers.append(v)
     print(all_volunteers)
     return(all_volunteers)
