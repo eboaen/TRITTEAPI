@@ -396,7 +396,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         slot_length = int(savedslots[slot][1])
         slot_end = slot_start + datetime.timedelta(hours=slot_length)
         tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-        print(convention_data['data']['result'])
+        print(tteconvention_data['data']['result'])
 #        day_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': slot_name, 'quantity_of_volunteers': '255', 'start_time': slot_start, 'end_time': slot_end, 'conventionday_id': slot_day}
 #        shift_response = requests.post(config.tte_url + '/api/shift', params= con_params)
 #        shift_data = convention_response.json()
