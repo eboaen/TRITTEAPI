@@ -266,6 +266,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions.append(tteconvention_id)
         volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
+        print(ttevolunteer_id)
         if ttevolunteer_id is 'add':
             try:
                 volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
@@ -499,7 +500,7 @@ def event_parse(location,tteconvention_id,tteconvention_name):
 #def event_save(event,tteconvention_id):
 #    new_event = {}
 #    all_events = {}
-    convention = Conventions()
+#    convention = Conventions()
 
 
 #    event['name']
@@ -596,7 +597,6 @@ def index():
                 session.pop('name')
                 delete_session_params = {'session_id': ttesession['id']}
                 delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession['id'], params= delete_session_params)
-                print (delete_session.json())
                 session.pop('ttesession')
                 return render_template('base.html')
             else:
