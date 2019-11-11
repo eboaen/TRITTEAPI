@@ -483,6 +483,8 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
+            for slot in savedslots:
+                print(type(slot))
             tteconvention_name = tteconvention_data['data']['result']['name']
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
