@@ -327,6 +327,8 @@ def list_slots(tteconvention_id):
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
     if convention.slots is not None:
         con_slots = json.loads(convention.slots)
+        for slot in con_slots
+            slot = int(slot)
     else:
         con_slots = None
     return(con_slots)
