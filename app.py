@@ -394,7 +394,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     # Pull data in on the convention days
     day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
     day_response = requests.post(config.tte_url + tteconvention_days_uri, params= day_params)
-    day_data = convention_response.json()
+    day_data = day_response.json()
     print(day_data)
     for slot in savedslots:
         slot_name = 'Slot' + str(slot)
