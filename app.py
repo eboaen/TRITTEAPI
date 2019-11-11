@@ -337,7 +337,7 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
     try:
-        volunteer_id = volunteer_data['result']['items'][0]['id']
+        volunteer_id = volunteer_data['result']['id']
         return(volunteer_id)
     except:
         print(volunteer_email,volunteer_data)
