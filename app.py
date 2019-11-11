@@ -489,7 +489,7 @@ def index():
             delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession, params= delete_session_params)
             print (delete_session.json())
             session.pop('ttesession')
-            return redirect('base.html')
+            return render_template('base.html')
         else:
             return render_template('base.html', logout = logout, **{'name' : name})
     else:
