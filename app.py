@@ -483,7 +483,7 @@ def index():
     if 'name' in session:
         name = session.get('name')
         ttesession = session.get('ttesession')
-        return render_template('base.html', 'logout' = logout, **{'name' : name})
+        return render_template('base.html', logout = logout, **{'name' : name})
     elif request.method == 'POST':
         if request.form.get('logoutsubmit'):
             session.pop('name')
