@@ -407,6 +407,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     shifttypes_get_response = requests.get(tteconvention_shifttypes_uri, params= shifttypes_get_params)
     shifttypes_get_data = shifttypes_get_response.json()
     for shifttype in shifttypes_get_data['result']['items']:
+            print (shifttype,shifttype['name'])
             if shifttypes_get_data[shifttype]['name'] is 'Slot':
                 shifttype_id = hifttypes_get_data[shifttype]['id']
                 print(shifttype_id)
