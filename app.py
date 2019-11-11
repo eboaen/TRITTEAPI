@@ -416,7 +416,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
                 shift_id = day_info[day]['id']
                 print (shift_name, shift_id,shift_start,shift_end)
                 # API Post to TTE for Volunteer Shifts
-                shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': shift_id}
+                shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': shift_id, 'shifttype_id': Slot}
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                 shift_data = shift_response.json()
                 print (shift_data)
