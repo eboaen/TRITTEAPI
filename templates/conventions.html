@@ -88,9 +88,10 @@
               </tr>
               </thead>
               <tbody>
-                {% for slot in savedslots %}
+                {% for slot,value in savedslots %}
                   <tr>
                     <td>{{ slot }}</td>
+                    <td>{{ value }}</td>
                     <td>{{ slot.length }}</td>
                   </tr>
                 {% endfor %}
