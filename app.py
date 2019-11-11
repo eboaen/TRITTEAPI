@@ -398,7 +398,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     day_response = requests.get(tteconvention_days_uri, params= day_params)
     day_data = day_response.json()
     for item in day_data['result']['items']:
-        day_time = datetime.datetime.strptime(item['start_date'], '%Y/%m/%d %H:%M:%S'])
+        day_time = datetime.datetime.strptime(item['start_date'], '%Y/%m/%d %H:%M:%S')
         day_info[item['name']] = {'id' : item['id'], 'day_time' = day_time}
     print(day_info)
     for slot in savedslots:
