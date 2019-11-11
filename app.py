@@ -311,7 +311,16 @@ def volunteer_save(new_volunteer,tteconvention_id):
 # -----------------------------------------------------------------------
 def list_volunteers(tteconvention_id):
     volunteer = Volunteers()
-    all_volunteers = Volunteers.query.filter(Volunteers.conventions.ilike(tteconvention_id)).all()
+    db_volunteers = Volunteers.query.filter(Volunteers.conventions.ilike(tteconvention_id)).all()
+    all_volunteers = []
+    volunteer = {}
+    for vol in db_volunteers
+        v['name'] = vol.name
+        v['role'] = vol.role
+        v['hours'] = vol.hours
+        v['tiers'] = vol.tiers
+        v['slots'] = vol.volunteer
+        all_volunteers.append(v)
     print(all_volunteers)
     return(all_volunteers)
 
