@@ -328,7 +328,10 @@ def list_slots(tteconvention_id):
     if convention.slots is not None:
         con_slots = json.loads(convention.slots)
         for slot in con_slots:
-            slot = int(slot)
+            try:
+                slot = int(slot)
+            except ValueError:
+                pass
     else:
         con_slots = None
     return(con_slots)
