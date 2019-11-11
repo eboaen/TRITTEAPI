@@ -90,9 +90,11 @@
               <tbody>
                 {% for slot in savedslots %}
                   <tr>
-                    <td>{{ slot }}</td>
-                    <td>{{ savedslots.slot }}</td>
-                    <td>{{ savedslots.length }}</td>
+                    {% if 'length' not in slot %}
+                      <td>{{ slot }}</td>
+                      <td>{{ savedslots[slot] }}</td>
+                    (% endif %)
+                    <td>{{ savedslots['length'] }}</td>
                   </tr>
                 {% endfor %}
               </tbody>
