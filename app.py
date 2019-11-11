@@ -385,6 +385,22 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
         return (saved)
 
 # -----------------------------------------------------------------------
+# Post slots to TTE as Volunteer Shifts
+# -----------------------------------------------------------------------
+def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
+    # API Post to TTE for Volunteer Shifts
+    for slot in savedslots:
+        slot_name = 'Slot' + str(slot)
+        slot_start = datetime.datetime(savedslots[slot][0])
+        slot_end = datetime.datetime(savedslots[slot][0]) + datetime.datetime(savedslots[slot][1])
+        print (slot_start, slot_end)
+
+#        shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': slot_name, 'quantity_of_volunteers': '255', 'start_time': slot_start, 'end_time': slot_end}
+#        shift_response = requests.post(config.tte_url + '/api/shift', params= con_params)
+#        shift_data = convention_response.json()
+
+
+# -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
 # This is a rudimentary authentication scheme.  A more robuest auth setup will be implemented before I do final release.
@@ -469,7 +485,6 @@ def conventions():
     # Declarations
     name = session.get('name')
     ttesession = session.get('ttesession')
-    print(ttesession)
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
     tteconventions = gettteconventions(ttesession)
@@ -517,7 +532,8 @@ def conventions():
             slotselect = request.form.get('selectfile')
             location = os.path.join(folder,slotselect)
             saved = slot_parse(location,tteconvention_id,tteconvention_name)
-            savedslots = list_slots(session['tteconvention_id'])
+            savedslots = list_slots(tteconvention_id)
+            pushslots = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
