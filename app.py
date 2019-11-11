@@ -329,8 +329,8 @@ def list_slots(tteconvention_id):
         con_slots = json.loads(convention.slots)
         for slot in con_slots:
             try:
-                slot = int(slot)
-                slots[slot] = con_slots[slot]
+                new_slot = int(slot)
+                slots[new_slot] = con_slots[slot]
             except ValueError:
                 slots['length'] = con_slots['length']
     else:
