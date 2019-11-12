@@ -496,10 +496,6 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
             elif 'Table Count' in header:
                 newheader.append('tablecount')
             elif 'Hosts' in header:
-                try:
-                    host_l = hosts.rsplit('\n')
-                    newheader.append(host_l)
-                except:
                     newheader.append('hosts')
             elif 'Type' in header:
                 newheader.append('type')
@@ -530,6 +526,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     type_id_data = type_id_response.json()
     event_types = type_id_data['result']['items']
     for event in savedevents:
+        try:
+            event['host'] = event['host'].rsplit('\n')
+        except:
+            pass
         ttename = event['name']
         ttemax_tickets = 6
         priority = 3
