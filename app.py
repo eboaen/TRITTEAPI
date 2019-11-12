@@ -496,7 +496,11 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
             elif 'Table Count' in header:
                 newheader.append('tablecount')
             elif 'Hosts' in header:
-                newheader.append('hosts')
+                try:
+                    host_l = hosts.rsplit('\n')
+                    newheader.append(host_l)
+                except:
+                    newheader.append('hosts')
             elif 'Type' in header:
                 newheader.append('type')
         reader.fieldnames = newheader
