@@ -526,7 +526,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     type_id_data = type_id_response.json()
     event_types = type_id_data['result']['items']
 
-    days_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
+    days_url = tteconvention_data['data']['result']['_relationships']['days']
     days_params = {'session_id': ttesession['id']}
     days_response = requests.get('https://tabletop.events' + days_url, params= days_params)
     days_data = days_response.json()
