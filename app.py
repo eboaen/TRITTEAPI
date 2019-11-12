@@ -565,6 +565,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             print(event['datetime'],dayparts['datetime'])
             if event['datetime'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
+                print('True')
         try:
             if event['day_id'] and event['type_id'] and event['dayparts_id']:
                 # Create the Event
