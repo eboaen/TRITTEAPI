@@ -521,6 +521,7 @@ def event_save(event,tteconvention_id):
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 
     for event in savedevents:
+        print (event)
         ttename = event['name']
         ttemax_tickets = 6
         priority = 3
