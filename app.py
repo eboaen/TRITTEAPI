@@ -477,7 +477,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
 # -----------------------------------------------------------------------
 # Parse Events Matrix
 # -----------------------------------------------------------------------
-def event_parse(location,tteconvention_id,tteconvention_name):
+def event_parse(filename,tteconvention_id,tteconvention_name):
     #Definitions
     newheader = []
     savedevents = []
@@ -650,6 +650,7 @@ def conventions():
     tteconventions = gettteconventions(ttesession)
     savedslots = {}
     savedvolunteers = {}
+    savedevents = {}
     # Function calls
     conform = ConForm(request.form, obj=tteconventions)
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
