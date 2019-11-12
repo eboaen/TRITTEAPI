@@ -529,9 +529,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         ttemax_tickets = 6
         priority = 3
         tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-            for type in event_types:
-                if event['type'] is type['name']:
-                    event['type_id'] = type['id']
+        for type in event_types:
+            if event['type'] is type['name']:
+                event['type_id'] = type['id']
         print(event)
 
 
