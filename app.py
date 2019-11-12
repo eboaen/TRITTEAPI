@@ -556,6 +556,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
             print (event_data)
+
         return()
 
 # -----------------------------------------------------------------------
