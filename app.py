@@ -527,7 +527,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     event_types = type_id_data['result']['items']
     for event in savedevents:
         try:
-            event['host'] = event['host'].rsplit('\n')
+            event['hosts'] = event['hosts'].split('\n')
         except:
             pass
         ttename = event['name']
