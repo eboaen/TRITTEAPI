@@ -548,7 +548,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for host in event_hosts_l:
                 host_id_l = []
                 host_id = tte_user_api_pull(ttesession,host)
-                print (host,host_id)
                 host_id_l.append(host_id)
         except:
             pass
@@ -570,10 +569,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
-            print(event_data)
             event['id'] = event_data['result']['id']
             # Add hosts to the Event
             for host in host_id_l:
+                print (host)
                 host_params = {'session_id': ttesession['id'] }
                 host_response = requests.post('https://tabletop.events/api/event/' + event['id'] + '/host/:' + host, params= host_params)
                 host_data = host_response.json()
