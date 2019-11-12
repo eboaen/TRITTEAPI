@@ -544,13 +544,15 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         event['duration'] = int(event['duration'])
         event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
         event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %I:%M %p')
-        try:
-            event_hosts_l = event['hosts'].split(' ')
-            for host in event_hosts_l:
+        event_hosts_l = event['hosts'].split(' ')
+        for host in event_hosts_l:
+            try:
                 host_id = tte_user_api_pull(ttesession,host)
                 host_id_l.append(host_id)
-        except:
-            pass
+                print(host,host_id)
+            except:
+                print(host,host_id)
+                pass
         for type in event_types:
             if event['type'] == type['name']:
                 event['type_id'] = type['id']
