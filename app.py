@@ -521,21 +521,27 @@ def event_save(event,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 
+    for event in savedevents:
+        ttename = event['name']
+        ttemax_tickets = 6
+        priority = 3
+        tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+        type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
+        type_id_params = {'session_id': ttesession['id']}
+        type_id_response = requests.get('https://tabletop.events' + type_ids_url, params= type_id_params)
+        type_id_data = type_id_response.json()
+        print(type_id_data)
 
-    name
-    max_tickets
-    priority
-    type_id
 
 
-    event_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    event_response = requests.post(config.tte_url + '/shift', params= event_params)
-    event_data = shift_response.json()
-    print (event_data)
-    return(event_data)
+#        event_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+#        event_response = requests.post(config.tte_url + '/shift', params= event_params)
+#        event_data = shift_response.json()
+#        print (event_data)
+#        return(event_data)
 
 # -----------------------------------------------------------------------
-# Get Room and Table Information
+# Get Table Information
 # -----------------------------------------------------------------------
 def bulk_read_tables(ttesession,tteconvention_id):
     rooms = {}
@@ -655,9 +661,10 @@ def conventions():
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
+            tteconvention_name = tteconvention_data['data']['result']['name']
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
-            tteconvention_name = tteconvention_data['data']['result']['name']
+#            savedevents = list_events(session['tteconvention_id'])
             rooms = bulk_read_tables(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
