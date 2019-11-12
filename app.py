@@ -579,7 +579,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     host_response = requests.post(host_url, params= host_params)
                     host_data = host_response.json()
         except:
-
+            print('Failure')
     return()
 
 
