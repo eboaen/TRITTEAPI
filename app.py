@@ -707,7 +707,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             eventselect = request.form.get('selectfile')
-            location = os.path.join(folder,slotselect)
+            location = os.path.join(folder,eventselect)
             savedevents = event_parse(location,tteconvention_id,tteconvention_name)
             pushevents = tte_convention_events_api_post(ttesession,tteconvention_id,savedevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
