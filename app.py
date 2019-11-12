@@ -522,7 +522,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
     days_url = tteconvention_data['data']['result']['_relationships']['days']
-    dayparts_url = days_url = tteconvention_data['data']['result']['_relationships']['dayparts']
+    dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
     #Get the event types
 
     type_id_params = {'session_id': ttesession['id']}
@@ -537,10 +537,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     convention_days = days_data['result']['items']
 
     #Get the dayparts for the convention
-    dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
-
-
-
+    convention_dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
 
     for event in savedevents:
         event['duration'] = int(event['duration'])
@@ -562,7 +559,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 print (event['day_id'],day['id'])
         for dayparts in convention_dayparts:
             if event['datetime'] == dayparts['start_date']:
-                event['dayparts_id'] = dayparts['id']                
+                event['dayparts_id'] = dayparts['id']
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all ages', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
