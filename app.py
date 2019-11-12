@@ -569,7 +569,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 # Get the id for day parts
 # -----------------------------------------------------------------------
 def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url):
-    dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
     dayparts_params = {'session_id': ttesession['id']}
     dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
     dayparts_data = dayparts_response.json()
