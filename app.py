@@ -266,7 +266,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions.append(tteconvention_id)
         volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
-        print(ttevolunteer_id)
         if ttevolunteer_id is None:
             try:
                 volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
@@ -321,7 +320,6 @@ def list_volunteers(tteconvention_id):
         v['tiers'] = vol.tiers
         v['slots'] = vol.slots
         all_volunteers.append(v)
-    print(all_volunteers)
     return(all_volunteers)
 
 # -----------------------------------------------------------------------
@@ -342,15 +340,16 @@ def tte_user_api_pull(ttesession,volunteer_email):
 # Add user to TTE
 # -----------------------------------------------------------------------
 def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
-    volunteer_name.rsplit()
-    useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_name[0],'lastname' : volunteer_name[1],'phone_number' : '555-555-5555'}
+    volunteer_full_name = volunteer_name.rsplit()
+    volunteer_first = volunteer_full_name[0]
+    volunteer_last = volunteer_full_name[1]
+    useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_first,'lastname' : volunteer_last,'phone_number' : '555-555-5555'}
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
     try:
         volunteer_id = volunteer_data['result']['id']
         return(volunteer_id)
     except:
-        print(volunteer_email,volunteer_data)
         return()
 
 
