@@ -502,7 +502,6 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         reader.fieldnames = newheader
         for event in reader:
             savedevents.append(event)
-        print (savedevents)
         return(savedevents)
 
 # -----------------------------------------------------------------------
@@ -759,6 +758,7 @@ def conventions():
             eventselect = request.form.get('selectfile')
             location = os.path.join(folder,eventselect)
             savedevents = event_parse(location,tteconvention_id,tteconvention_name)
+            print(savedevents)
             pushevents = tte_convention_events_api_post(ttesession,tteconvention_id,savedevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
