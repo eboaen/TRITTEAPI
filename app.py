@@ -573,7 +573,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url):
     day_parts_start = 1
     day_parts_total = 100
-    all_dayparts = []
+    all_dayparts = list()
 
     while day_parts_total >= day_parts_start:
         dayparts_params = {'session_id': ttesession['id'], '_page_number': day_parts_start}
