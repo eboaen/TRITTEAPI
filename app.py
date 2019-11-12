@@ -531,7 +531,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         except:
             pass
         for type in event_types:
-            print (eval('if event['type'] is type['name']'))
+            e = event['type']
+            t = type['name']
+            print (eval('if e == t'))
             if event['type'] is type['name']:
                 event['type_id'] = type['id']
                 event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id']}
