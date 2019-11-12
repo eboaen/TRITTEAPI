@@ -531,7 +531,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             for type in event_types:
                 if event['type'] is type['name']:
-                    event['tyde_id'] = type['type_d']
+                    event['type_id'] = type['id']
         print(event)
 
 
