@@ -502,6 +502,7 @@ def event_parse(location,tteconvention_id,tteconvention_name):
                 newheader.append('type')
         reader.fieldnames = newheader
         for event in reader:
+            print (event)
             e = event_save(event,tteconvention_id)
             savedevents.append(e)
         return(savedevents)
@@ -512,7 +513,6 @@ def event_parse(location,tteconvention_id,tteconvention_name):
 def event_save(event,tteconvention_id):
     new_event = {}
     all_events = {}
-    print(event)
     savedevent = event
     return(savedevent)
 
