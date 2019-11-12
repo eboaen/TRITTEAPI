@@ -502,7 +502,6 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         reader.fieldnames = newheader
         for event in reader:
             savedevents.append(event)
-        print(savedevents)
         return(savedevents)
 
 # -----------------------------------------------------------------------
@@ -539,12 +538,11 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     convention_dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
 
     for event in savedevents:
-        print(event['name'])
         event['duration'] = int(event['duration'])
         event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
         event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %H:%M %p')
         try:
-            event['hosts'] = event['hosts'].split('\n')
+            event['hosts'] = event['hosts'].split(' ')
         except:
             pass
         for type in event_types:
