@@ -566,7 +566,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
             if event['datetime'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
-                print(event['datetime'],dayparts['datetime'],(' True'))
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             # Create the Event
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
@@ -575,11 +574,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event['id'] = event_data['result']['id']
             # Add hosts to the Event
             for host in host_id_l:
-                host_params = {'session_id': ttesession['id'] }
-                print ('Event: ', event['id'], ' Host: ', host)
-                host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
-                host_response = requests.post(host_url, params= host_params)
-                host_data = host_response.json()
+                if host is not None:
+                    host_params = {'session_id': ttesession['id'] }
+                    print ('Event: ', event['id'], ' Host: ', host)
+                    host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
+                    host_response = requests.post(host_url, params= host_params)
+                    host_data = host_response.json()
     return()
 
 
