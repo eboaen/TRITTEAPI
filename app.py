@@ -576,7 +576,7 @@ def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,daypa
     dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
     dayparts_data = dayparts_response.json()
     convention_dayparts = dayparts_data['result']['items']
-    return(dayparts)
+    return(convention_dayparts)
 
 # -----------------------------------------------------------------------
 # Get Table Information
