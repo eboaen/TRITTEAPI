@@ -520,21 +520,21 @@ def event_save(event,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    #Get the event types
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
     type_id_params = {'session_id': ttesession['id']}
     type_id_response = requests.get('https://tabletop.events' + type_id_url, params= type_id_params)
     type_id_data = type_id_response.json()
     event_types = type_id_data['result']['items']
-
+    #Get the convention days
     days_url = tteconvention_data['data']['result']['_relationships']['days']
     days_params = {'session_id': ttesession['id']}
     days_response = requests.get('https://tabletop.events' + days_url, params= days_params)
     days_data = days_response.json()
     convention_days = days_data['result']['items']
 
-    print(convention_days)
-
     for event in savedevents:
+        event['duration'] = int(event['duration'])
         try:
             event['hosts'] = event['hosts'].split('\n')
         except:
@@ -552,7 +552,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 event['day_id'] = day['id']
                 print (event['day_id'],day['id'])
         if event['day_id'] and event['type_id']:
-            event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id'], 'conventionday_id' : event['day_id']}
+            event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
             print (event_data)
