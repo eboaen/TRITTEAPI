@@ -534,11 +534,11 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             print (event['type'],type['name'])
             if event['type'] is type['name']:
                 event['type_id'] = type['id']
-        event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id']}
-        event_response = requests.post(config.tte_url + '/shift', params= event_params)
-        event_data = shift_response.json()
-        print (event_data)
-        return(event_data)
+                event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id']}
+                event_response = requests.post(config.tte_url + '/shift', params= event_params)
+                event_data = shift_response.json()
+                print (event_data)
+                return(event_data)
 
 # -----------------------------------------------------------------------
 # Get Table Information
