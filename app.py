@@ -563,7 +563,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
             print (event_data)
-        return()
+    return()
 
 
 # -----------------------------------------------------------------------
@@ -758,7 +758,6 @@ def conventions():
             eventselect = request.form.get('selectfile')
             location = os.path.join(folder,eventselect)
             savedevents = event_parse(location,tteconvention_id,tteconvention_name)
-            print(savedevents)
             pushevents = tte_convention_events_api_post(ttesession,tteconvention_id,savedevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
