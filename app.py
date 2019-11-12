@@ -490,7 +490,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
             elif 'Date' in header:
                 newheader.append('date')
             elif 'Start Time' in header:
-                newheader.append('preferreddaypart_id')
+                newheader.append('starttime')
             elif 'Duration' in header:
                 newheader.append('duration')
             elif 'Table Count' in header:
@@ -525,6 +525,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     type_id_response = requests.get('https://tabletop.events' + type_id_url, params= type_id_params)
     type_id_data = type_id_response.json()
     event_types = type_id_data['result']['items']
+
+    days_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
+    days_params = {'session_id': ttesession['id']}
+    days_response = requests.get('https://tabletop.events' + days_url, params= days_params)
+    days_data = days_response.json()
+    convention_days = days_data['result']['items']
+    print(convention_days)
+
     for event in savedevents:
         try:
             event['hosts'] = event['hosts'].split('\n')
