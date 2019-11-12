@@ -548,7 +548,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for host in event_hosts_l:
                 host_id_l = []
                 host_id = tte_user_api_pull(ttesession,host)
-                print (host_id)
+                print (host,host_id)
                 host_id_l.append(host_id)
         except:
             pass
