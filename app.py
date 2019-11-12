@@ -534,8 +534,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             e = event['type']
             t = type['name']
             if e == t:
-                print('True')
-            if event['type'] is type['name']:
                 event['type_id'] = type['id']
                 event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id']}
                 event_response = requests.post(config.tte_url + '/shift', params= event_params)
