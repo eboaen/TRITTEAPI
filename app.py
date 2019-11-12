@@ -486,7 +486,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         reader = csv.DictReader(csvfile)
         for header in reader.fieldnames:
             if 'Event Name' in header:
-                newheader.append('event')
+                newheader.append('name')
             elif 'Date' in header:
                 newheader.append('date')
             elif 'Start Time' in header:
