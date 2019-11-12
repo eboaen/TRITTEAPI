@@ -540,13 +540,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     convention_dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
 
     for event in savedevents:
+        host_id_l = []
         event['duration'] = int(event['duration'])
         event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
         event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %H:%M %p')
         try:
             event_hosts_l = event['hosts'].split(' ')
             for host in event_hosts_l:
-                host_id_l = []
                 host_id = tte_user_api_pull(ttesession,host)
                 host_id_l.append(host_id)
         except:
@@ -574,7 +574,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for host in host_id_l:
                 host_params = {'session_id': ttesession['id'] }
                 host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/:' + host
-                print(event['id'])
+                print(host_url)
                 host_response = requests.post(host_url, params= host_params)
                 host_data = host_response.json()
                 print(host_data)
