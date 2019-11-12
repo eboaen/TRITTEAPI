@@ -576,7 +576,8 @@ def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,daypa
     dayparts_data = dayparts_response.json()
     convention_dayparts = dayparts_data
     #['result']['items']
-    print(convention_dayparts)
+    for dayparts in convention_dayparts:
+        print(dayparts)
     return(convention_dayparts)
 
 # -----------------------------------------------------------------------
