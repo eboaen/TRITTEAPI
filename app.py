@@ -488,7 +488,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
             if 'Event Name' in header:
                 newheader.append('name')
             elif 'Date' in header:
-                newheader.append('date')
+                newheader.append('date_info')
             elif 'Start Time' in header:
                 newheader.append('starttime')
             elif 'Duration' in header:
@@ -531,6 +531,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     days_response = requests.get('https://tabletop.events' + days_url, params= days_params)
     days_data = days_response.json()
     convention_days = days_data['result']['items']
+
     print(convention_days)
 
     for event in savedevents:
@@ -539,15 +540,20 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         except:
             pass
         for type in event_types:
-            e = event['type']
-            t = type['name']
-            if e == t:
+            if event['type'] == type['name']:
                 event['type_id'] = type['id']
-                event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id']}
-                event_response = requests.post(config.tte_url + '/shift', params= event_params)
-                event_data = event_response.json()
-                print (event_data)
-                return(event_data)
+        for day in convention_days:
+            day['datetime'] = datetime.datetime.strptime(day['start_date'],'%Y-%m-%d %H:%M:%S')
+            day['date_check'] = datetime.date[day['datetime'].year,day['datetime'].month,day['datetime'].day]
+            event['datetime'] = datetime.datetime[event['date_info'],'%m/%d/%y')
+            event['date_check'] = datetime.date[event['datetime'].year,event['datetime'].month,event['datetime'].day]
+            if event['date_check'] == day['date_check']
+                event['day_id'] = day['id']
+        event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id'], conventionday_id : event['day_id']}
+        event_response = requests.post(config.tte_url + '/shift', params= event_params)
+        event_data = event_response.json()
+        print (event_data)
+        return(event_data)
 
 # -----------------------------------------------------------------------
 # Get Table Information
