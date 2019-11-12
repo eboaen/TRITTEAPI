@@ -562,10 +562,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 event['day_id'] = day['id']
         for dayparts in convention_dayparts:
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
-            print(event['datetime'],dayparts['datetime'])
             if event['datetime'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
-                print('True')
+                print(event['datetime'],dayparts['datetime'],(' True')
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             # Create the Event
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
