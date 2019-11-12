@@ -530,8 +530,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event['hosts'] = event['hosts'].split('\n')
         except:
             pass
-        max_tickets : 6
-        priority : 3
         for type in event_types:
             if event['type'] is type['name']:
                 event['type_id'] = type['id']
