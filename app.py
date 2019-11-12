@@ -519,6 +519,7 @@ def event_save(event,tteconvention_id):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
     type_id_params = {'session_id': ttesession['id']}
     type_id_response = requests.get('https://tabletop.events' + type_id_url, params= type_id_params)
@@ -528,7 +529,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         ttename = event['name']
         ttemax_tickets = 6
         priority = 3
-        tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
         for type in event_types:
             if event['type'] is type['name']:
                 event['type_id'] = type['id']
