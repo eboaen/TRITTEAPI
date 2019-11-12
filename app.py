@@ -496,7 +496,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
             elif 'Table Count' in header:
                 newheader.append('tablecount')
             elif 'Hosts' in header:
-                    newheader.append('hosts')
+                newheader.append('hosts')
             elif 'Type' in header:
                 newheader.append('type')
         reader.fieldnames = newheader
@@ -517,6 +517,8 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
+    event_hosts_l = []
+    host_id_l = []
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
     days_url = tteconvention_data['data']['result']['_relationships']['days']
@@ -542,7 +544,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
         event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %H:%M %p')
         try:
-            event['hosts'] = event['hosts'].split(' ')
+            event_hosts_l = event['hosts'].split(' ')
+            for host in event_hosts_l:
+                host_id = tte_user_api_pull(ttesession,host)
+                host_id_l.append(host_id)
         except:
             pass
         for type in event_types:
@@ -564,12 +569,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
             print(event_data)
-            event['id'] = event_data['result']['items']['id']
+            event['id'] = event_data['result']['id']
             # Add hosts to the Event
-            host_params = {'session_id': ttesession['id'] }
-            host_response = requests.post('https://tabletop.events/api/event/' + event['id'] + '/host/:user_id', params= event_params)
-            host_data = host_response.json()
-            print(host_data)
+            for host in host_id_l
+                host_params = {'session_id': ttesession['id'] }
+                host_response = requests.post('https://tabletop.events/api/event/' + event['id'] + '/host/:' + host, params= host_params)
+                host_data = host_response.json()
+                print(host_data)
     return()
 
 
