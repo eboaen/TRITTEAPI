@@ -544,11 +544,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 event['type_id'] = type['id']
         for day in convention_days:
             day['datetime'] = datetime.datetime.strptime(day['start_date'],'%Y-%m-%d %H:%M:%S')
-            day['date_check'] = datetime.date[day['datetime'].year,day['datetime'].month,day['datetime'].day]
-            event['datetime'] = datetime.datetime[event['date_info'],'%m/%d/%y')
-            event['date_check'] = datetime.date[event['datetime'].year,event['datetime'].month,event['datetime'].day]
+            day['date_check'] = datetime.date(day['datetime'].year,day['datetime'].month,day['datetime'].day)
+            event['datetime'] = datetime.datetime.strptime(event['date_info'],'%m/%d/%y')
+            event['date_check'] = datetime.date(event['datetime'].year,event['datetime'].month,event['datetime'].day)
+            print(event['date_check'],day['date_check']) 
             if event['date_check'] == day['date_check']
                 event['day_id'] = day['id']
+                print (event['day_id'],day['id'])
         if event['day_id'] and event['type_id']:
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id'], 'conventionday_id' : event['day_id']}
             event_response = requests.post(config.tte_url + '/shift', params= event_params)
