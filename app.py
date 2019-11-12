@@ -501,19 +501,18 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
                 newheader.append('type')
         reader.fieldnames = newheader
         for event in reader:
-            e = event_save(event,tteconvention_id)
-            savedevents.append(e)
-        print(savedevents)
+            print(event)
+            savedevents.append(event)
         return(savedevents)
 
 # -----------------------------------------------------------------------
 # Save Events to Database
 # -----------------------------------------------------------------------
-def event_save(event,tteconvention_id):
-    new_event = {}
-    all_events = {}
-    savedevent = event
-    return(savedevent)
+#def event_save(event,tteconvention_id):
+#    new_event = {}
+#    all_events = []
+#    savedevent = event
+#    return(savedevent)
 
 # -----------------------------------------------------------------------
 # Push Events to TTE
@@ -559,7 +558,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         for dayparts in convention_dayparts:
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
             if event['datetime'] == dayparts['datetime']:
-                print ('True ',event['datetime'],dayparts['start_date'])
                 event['dayparts_id'] = dayparts['id']
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
