@@ -502,6 +502,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         reader.fieldnames = newheader
         for event in reader:
             savedevents.append(event)
+        print (savedevents)
         return(savedevents)
 
 # -----------------------------------------------------------------------
