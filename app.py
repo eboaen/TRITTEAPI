@@ -702,7 +702,7 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             'savedslots' : savedslots
             })
-        if request.form.get('eventssave') and session.get('tteconvention_id') is not None:
+        if request.form.get('eventsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session['tteconvention_id']
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
