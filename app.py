@@ -537,7 +537,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 
     #Get the dayparts for the convention
     convention_dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
-    print(convention_dayparts)
+
     for event in savedevents:
         event['duration'] = int(event['duration'])
         event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
@@ -556,7 +556,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
         for dayparts in convention_dayparts:
-            #print (event['datetime'],dayparts['start_date'])
+            print (event['datetime'],dayparts['start_date'])
             if event['datetime'] == dayparts['start_date']:
                 event['dayparts_id'] = dayparts['id']
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
@@ -581,13 +581,11 @@ def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,daypa
         dayparts_data = dayparts_response.json()
         convention_dayparts = dayparts_data['result']['items']
         for dayparts in convention_dayparts:
-            print(dayparts)
             all_dayparts.append(dayparts)
         day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
         day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
         if day_parts_start == day_parts_total:
             day_parts_start = day_parts_total + 1
-        print(day_parts_start,day_parts_total)
     return(all_dayparts)
 
 # -----------------------------------------------------------------------
