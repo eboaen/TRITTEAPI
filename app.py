@@ -581,11 +581,13 @@ def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,daypa
         dayparts_data = dayparts_response.json()
         convention_dayparts = dayparts_data['result']['items']
         for dayparts in convention_dayparts:
+            print(dayparts)
             all_dayparts.append(dayparts)
         day_parts_start = int(dayparts_data['result']['paging']['page_number'])
         day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
         if day_parts_start == day_parts_total:
             day_parts_start = day_parts_total + 1
+        print(day_parts_start,day_parts_total)
     return(all_dayparts)
 
 # -----------------------------------------------------------------------
