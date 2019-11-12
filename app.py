@@ -549,11 +549,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event['date_check'] = datetime.date[event['datetime'].year,event['datetime'].month,event['datetime'].day]
             if event['date_check'] == day['date_check']
                 event['day_id'] = day['id']
-        event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id'], conventionday_id : event['day_id']}
-        event_response = requests.post(config.tte_url + '/shift', params= event_params)
-        event_data = event_response.json()
-        print (event_data)
-        return(event_data)
+        if event['day_id'] and event['type_id']:
+            event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'type_id' : event['type_id'], conventionday_id : event['day_id']}
+            event_response = requests.post(config.tte_url + '/shift', params= event_params)
+            event_data = event_response.json()
+            print (event_data)
+        return()
 
 # -----------------------------------------------------------------------
 # Get Table Information
