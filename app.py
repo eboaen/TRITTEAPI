@@ -520,18 +520,24 @@ def event_save(event,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    #Get the event types
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
+    days_url = tteconvention_data['data']['result']['_relationships']['days']
+    dayparts_url = days_url = tteconvention_data['data']['result']['_relationships']['dayparts']
+    #Get the event types
+
     type_id_params = {'session_id': ttesession['id']}
     type_id_response = requests.get('https://tabletop.events' + type_id_url, params= type_id_params)
     type_id_data = type_id_response.json()
     event_types = type_id_data['result']['items']
     #Get the convention days
-    days_url = tteconvention_data['data']['result']['_relationships']['days']
+
     days_params = {'session_id': ttesession['id']}
     days_response = requests.get('https://tabletop.events' + days_url, params= days_params)
     days_data = days_response.json()
     convention_days = days_data['result']['items']
+
+    #Get the dayparts for the convention
+    dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
 
     for event in savedevents:
         event['duration'] = int(event['duration'])
@@ -557,6 +563,22 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_data = event_response.json()
             print (event_data)
         return()
+
+
+# -----------------------------------------------------------------------
+# Get the id for day parts
+# -----------------------------------------------------------------------
+def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url):
+    dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
+    dayparts_params = {'session_id': ttesession['id']}
+    dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
+    dayparts_data = dayparts_response.json()
+    convention_dayparts = dayparts_data['result']['items']
+
+    for dayparts in convention_dayparts:
+        print (dayparts['start_date'],dayparts['id'])
+    return(dayparts)
+
 
 # -----------------------------------------------------------------------
 # Get Table Information
