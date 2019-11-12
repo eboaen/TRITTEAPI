@@ -518,7 +518,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     event_hosts_l = []
-    host_id_l = []
+
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
     days_url = tteconvention_data['data']['result']['_relationships']['days']
@@ -546,7 +546,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         try:
             event_hosts_l = event['hosts'].split(' ')
             for host in event_hosts_l:
+                host_id_l = []
                 host_id = tte_user_api_pull(ttesession,host)
+                print (host_id)
                 host_id_l.append(host_id)
         except:
             pass
