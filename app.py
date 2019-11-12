@@ -571,13 +571,21 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 # Get the id for day parts
 # -----------------------------------------------------------------------
 def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url):
-    dayparts_params = {'session_id': ttesession['id']}
-    dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
-    dayparts_data = dayparts_response.json()
-    convention_dayparts = dayparts_data['result']['items']
-    for dayparts in convention_dayparts:
-        print(dayparts)
-    return(convention_dayparts)
+    day_parts_start = 1
+    day_parts_total = None
+    all_dayparts = []
+    while day_parts_start <= day_parts_total or day_parts_total == None:
+        dayparts_params = {'session_id': ttesession['id']}
+        dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
+        dayparts_data = dayparts_response.json()
+        convention_dayparts = dayparts_data['result']['items']
+        for dayparts in convention_dayparts:
+            all_dayparts = alldayparts.append(dayparts)
+        day_parts_start = dayparts_data['result']['paging']['page_number']
+        day_parts_total = dayparts_data['result']['paging']['total_pages']
+        if day_parts_start == day_parts_total:
+            day_parts_start = day_parts_total + 1
+    return(all_dayparts)
 
 # -----------------------------------------------------------------------
 # Get Table Information
