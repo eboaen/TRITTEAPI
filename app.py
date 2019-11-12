@@ -574,7 +574,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for host in host_id_l:
                 print (host)
                 host_params = {'session_id': ttesession['id'] }
-                host_response = requests.post('https://tabletop.events/api/event/' + event['id'] + '/host/:' + host, params= host_params)
+                host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/:' + host
+                host_response = requests.post(host_url, params= host_params)
                 host_data = host_response.json()
                 print(host_data)
     return()
