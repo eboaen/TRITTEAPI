@@ -546,7 +546,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         except:
             pass
         for type in event_types:
-            print(event['type'],type['name'])
             if event['type'] == type['name']:
                 event['type_id'] = type['id']
         for day in convention_days:
@@ -564,6 +563,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
+            print(event_data)
             event['id'] = event_data['result']['items']['id']
             # Add hosts to the Event
             host_params = {'session_id': ttesession['id'] }
