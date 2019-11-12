@@ -501,7 +501,6 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
                 newheader.append('type')
         reader.fieldnames = newheader
         for event in reader:
-#            print (event)
             e = event_save(event,tteconvention_id)
             savedevents.append(e)
         return(savedevents)
@@ -557,6 +556,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
         for dayparts in convention_dayparts:
+            print (event['datetime'],dayparts['start_date'])
             if event['datetime'] == dayparts['start_date']:
                 event['dayparts_id'] = dayparts['id']
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
