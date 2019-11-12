@@ -561,8 +561,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
         for dayparts in convention_dayparts:
-            print(event['datetime'],dayparts['datetime'])
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
+            print(event['datetime'],dayparts['datetime'])
             if event['datetime'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
         try:
