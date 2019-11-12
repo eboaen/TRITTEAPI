@@ -544,6 +544,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         event['duration'] = int(event['duration'])
         event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
         event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %H:%M %p')
+
         try:
             event_hosts_l = event['hosts'].split(' ')
             for host in event_hosts_l:
@@ -555,13 +556,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['type'] == type['name']:
                 event['type_id'] = type['id']
         for day in convention_days:
-            day['datetime'] = datetime.datetime.strptime(day['start_date'],'%Y-%m-%d %H:%M:%S')
+            day['datetime'] = datetime.datetime.strptime(day['start_date'],'%Y-%m-%d %I:%M:%S')
             day['date_check'] = datetime.date(day['datetime'].year,day['datetime'].month,day['datetime'].day)
             event['date_check'] = datetime.date(event['datetime'].year,event['datetime'].month,event['datetime'].day)
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
         for dayparts in convention_dayparts:
-            dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
+            dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %I:%M:%S')
             print(event['datetime'],dayparts['datetime'])
             if event['datetime'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
