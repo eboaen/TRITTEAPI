@@ -547,8 +547,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             day['date_check'] = datetime.date(day['datetime'].year,day['datetime'].month,day['datetime'].day)
             event['datetime'] = datetime.datetime.strptime(event['date_info'],'%m/%d/%y')
             event['date_check'] = datetime.date(event['datetime'].year,event['datetime'].month,event['datetime'].day)
-            print(event['date_check'],day['date_check']) 
-            if event['date_check'] == day['date_check']
+            print(event['date_check'],day['date_check'])
+            if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
                 print (event['day_id'],day['id'])
         if event['day_id'] and event['type_id']:
