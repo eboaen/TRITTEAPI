@@ -503,6 +503,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         for event in reader:
             e = event_save(event,tteconvention_id)
             savedevents.append(e)
+        print(savedevents)
         return(savedevents)
 
 # -----------------------------------------------------------------------
