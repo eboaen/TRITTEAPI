@@ -424,6 +424,24 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
         return (saved)
 
 # -----------------------------------------------------------------------
+# Delete slots to database
+# -----------------------------------------------------------------------
+def database_slot_delete(tteconvention_id):
+    convention = Conventions()
+
+    convention = Convention.query.filter_by(tteid=tteconvention_id).first()
+    convention.slots = None
+    try:
+        db.session.commit()
+        deleted = 'Deleted all slots'
+        return (deleted)
+    except:
+        logger.exception("Cannot delete slots")
+        db.session.rollback()
+        deleted = 'failed'
+        return (deleted)
+
+# -----------------------------------------------------------------------
 # Post slots to TTE as Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
@@ -509,9 +527,6 @@ def tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,all_sh
         print(shift['id'],shift_delete_data)
     return()
 
-
-
-
 # -----------------------------------------------------------------------
 # Event Functions
 # -----------------------------------------------------------------------
@@ -544,15 +559,6 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         for event in reader:
             savedevents.append(event)
         return(savedevents)
-
-# -----------------------------------------------------------------------
-# Save Events to Database
-# -----------------------------------------------------------------------
-#def event_save(event,tteconvention_id):
-#    new_event = {}
-#    all_events = []
-#    savedevent = event
-#    return(savedevent)
 
 # -----------------------------------------------------------------------
 # Push Events to TTE
@@ -715,7 +721,7 @@ def tte_convention_spaces_id_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Get all events for Convention
 # -----------------------------------------------------------------------
-def get_events(ttesession,tteconvention_id):
+def tte_convention_events_api_get(ttesession,tteconvention_id):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     events_start = 1
     events_total = 100
@@ -909,9 +915,8 @@ def conventions():
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
-            tteevents = get_events(ttesession,tteconvention_id)
+            tteevents = tte_convention_events_api_get(ttesession,tteconvention_id)
             deleteevents = tte_convention_events_api_delete(ttesession,tteconvention_id,tteevents)
-            #events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
@@ -924,7 +929,8 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteshifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
             deleteshifts = tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,tteshifts)
-            #events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
+            savedslots = list_slots(tteconvention_id)
+            databaseslotdelete = database_slot_delete(tteconvention_id)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
