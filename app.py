@@ -85,6 +85,7 @@ class FileForm(FlaskForm):
     eventsave = SubmitField(label='Submit File for Convention Events')
     eventsdelete = SubmitField(label='Delete All Convention Events')
     shiftsdelete = SubmitField(label='Delete All Volunteer Shifts ')
+    daypartsdelete = SubmitField(label='Delete All Convention Day Parts')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
@@ -543,7 +544,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
     days_url = tteconvention_data['data']['result']['_relationships']['days']
-    dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
     #Get the event types
 
     type_id_params = {'session_id': ttesession['id']}
@@ -558,7 +558,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     convention_days = days_data['result']['items']
 
     #Get the dayparts for the convention
-    convention_dayparts = tte_convention_dayparts_id_api_get(ttesession,tteconvention_id,dayparts_url)
+    convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
 
     for event in savedevents:
         # Define the list of hosts for the event
@@ -632,10 +632,12 @@ def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
 # -----------------------------------------------------------------------
 # Get the id for day parts
 # -----------------------------------------------------------------------
-def tte_convention_dayparts_id_api_get(ttesession,tteconvention_id,dayparts_url):
+def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
     day_parts_start = 1
     day_parts_total = 100
     all_dayparts = list()
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
 
     while day_parts_total >= day_parts_start:
         dayparts_params = {'session_id': ttesession['id'], '_page_number': day_parts_start}
@@ -655,6 +657,18 @@ def tte_convention_dayparts_id_api_get(ttesession,tteconvention_id,dayparts_url)
     return(all_dayparts)
 
 # -----------------------------------------------------------------------
+# Delete all dayparts from TTE
+# -----------------------------------------------------------------------
+def tte_convention_volunteer_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts):
+    for daypart in all_dayparts:
+        daypart_delete_params = {'session_id': ttesession['id']}
+        daypart_delete_url = 'https://tabletop.events/api/daypart/' + daypart['id']
+        daypart_delete_response = requests.delete(daypart_delete_url, params= daypart_delete_params)
+        daypart_delete_data = daypart_delete_response.json()
+        print(daypart['id'],daypart_delete_data)
+    return()
+
+# -----------------------------------------------------------------------
 # Get Table Information
 # -----------------------------------------------------------------------
 def tte_convention_spaces_id_api_get(ttesession,tteconvention_id):
@@ -666,6 +680,7 @@ def tte_convention_spaces_id_api_get(ttesession,tteconvention_id):
     space_response = requests.get('https://tabletop.events' + spaces_url, params= space_params)
     space_data = space_response.json()
     return(space_data)
+
 # -----------------------------------------------------------------------
 # Get all events for Convention
 # -----------------------------------------------------------------------
@@ -882,7 +897,17 @@ def conventions():
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
-            'savedevents' : savedevents
+            })
+        if request.form.get('daypartsdelete') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            tteconvention_name = tteconvention_data['data']['result']['name']
+            ttedayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
+            deletedayparts = tte_convention_volunteer_dayparts_api_delete(ttesession,tteconvention_id,ttedayparts)
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
             })
         else:
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name })
