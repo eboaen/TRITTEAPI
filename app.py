@@ -575,8 +575,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # Then compare to see if they are equal to determine the TTE ID of the time
         for dayparts in convention_dayparts:
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
-            print (event['datetime'], dayparts['datetime'])
             if event['datetime'] == dayparts['datetime']:
+                print (event['datetime'], dayparts['datetime'])
                 event['dayparts_id'] = dayparts['id']
 
 
