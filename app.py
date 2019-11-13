@@ -632,7 +632,7 @@ def bulk_read_tables(ttesession,tteconvention_id):
     space_params = {'session_id': ttesession['id']}
     space_response = requests.get('https://tabletop.events' + spaces_url, params= space_params)
     space_data = space_response.json()
-
+    return(space_data)
 # -----------------------------------------------------------------------
 # Get all events for Convention
 # -----------------------------------------------------------------------
@@ -646,6 +646,7 @@ def get_events(ttesession,tteconvention_id):
         events_url = tteconvention_data['data']['result']['_relationships']['events']
         events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id}
         events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
+        events_data = events_response.json()
         convention_events = events_data['result']['items']
         for events in convention_events:
             all_events.append(events)
