@@ -428,8 +428,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
 # -----------------------------------------------------------------------
 def database_slot_delete(tteconvention_id):
     convention = Conventions()
-
-    convention = Convention.query.filter_by(tteid=tteconvention_id).first()
+    convention = Conventions.query.filter_by(tteid=tteconvention_id).first()
     convention.slots = None
     try:
         db.session.commit()
