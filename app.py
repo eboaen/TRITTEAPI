@@ -552,7 +552,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 host_id_l.append(host_id)
                 print(host,host_id)
             except:
-                print(host,host_id)
+                print(host,host_id,' Failure')
                 pass
         for type in event_types:
             if event['type'] == type['name']:
