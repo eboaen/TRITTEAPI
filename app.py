@@ -355,7 +355,6 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     except:
         return()
 
-
 # -----------------------------------------------------------------------
 # Slot Functions
 # -----------------------------------------------------------------------
@@ -428,19 +427,9 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
 # Post slots to TTE as Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
-    #Declarations
-    day_info = []
-    # Get the data on the convention
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    tteconvention_days_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
-    # Use the day url to get data on the days
-    day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    day_response = requests.get(tteconvention_days_uri, params= day_params)
-    day_data = day_response.json()
-    # Create a datetime value for each day, add to a new dict
-    for item in day_data['result']['items']:
-         dt = datetime.datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
-         day_info.append({'id' : item['id'], 'day_time' : dt})
+    # Get the information on Convention Days
+    day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
     # Verify if the shift "Slot" exists, if it doesn't, initialize the shifttype of "Slot" for tteid
     shifttypes_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
     shifttypes_get_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
@@ -545,18 +534,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     type_id_url = tteconvention_data['data']['result']['_relationships']['eventtypes']
     days_url = tteconvention_data['data']['result']['_relationships']['days']
     #Get the event types
-
     type_id_params = {'session_id': ttesession['id']}
     type_id_response = requests.get('https://tabletop.events' + type_id_url, params= type_id_params)
     type_id_data = type_id_response.json()
     event_types = type_id_data['result']['items']
     #Get the convention days
-
-    days_params = {'session_id': ttesession['id']}
-    days_response = requests.get('https://tabletop.events' + days_url, params= days_params)
-    days_data = days_response.json()
-    convention_days = days_data['result']['items']
-
+    convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
     #Get the dayparts for the convention
     convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
 
@@ -585,8 +568,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 
         # Identify the Day Id for the convention
         for day in convention_days:
-            day['datetime'] = datetime.datetime.strptime(day['start_date'],'%Y-%m-%d %H:%M:%S')
-            day['date_check'] = datetime.date(day['datetime'].year,day['datetime'].month,day['datetime'].day)
+            day['date_check'] = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
             event['date_check'] = datetime.date(event['datetime'].year,event['datetime'].month,event['datetime'].day)
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
@@ -628,6 +610,25 @@ def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
         event_delete_data = event_delete_response.json()
         print(event['id'],event_delete_data)
     return()
+
+# -----------------------------------------------------------------------
+# Get days of the convention
+# -----------------------------------------------------------------------
+def tte_convention_days_api_get(ttesession,tteconvention_id):
+    #Declarations
+    day_info = []
+    # Get the data on the convention
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    tteconvention_days_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
+    # Use the day url to get data on the days
+    day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+    day_response = requests.get(tteconvention_days_uri, params= day_params)
+    day_data = day_response.json()
+    # Create a datetime value for each day, add to a new dict
+    for item in day_data['result']['items']:
+         dt = datetime.datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
+         day_info.append({'id' : item['id'], 'day_time' : dt})
+    return(day_info)
 
 # -----------------------------------------------------------------------
 # Get the id for day parts
@@ -852,7 +853,9 @@ def conventions():
             location = os.path.join(folder,slotselect)
             saved = slot_parse(location,tteconvention_id,tteconvention_name)
             savedslots = list_slots(tteconvention_id)
+            pushdayparts =
             pushslots = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
+            pushdayparts = tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
