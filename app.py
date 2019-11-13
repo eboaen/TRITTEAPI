@@ -502,7 +502,7 @@ def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,saved
         daypart_time = day_start
         while daypart_time < day_end:
             for slot in slots:
-                if daypart_time == slot['slot_time']:
+                if daypart_time == slots[slot]['slot_time']:
                     daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(daypart_time, '%a %I:%M %p')
                     slot_start = daypart_time
                     daypart_time = daypart_time + datetime.timedelta(minutes='30')
