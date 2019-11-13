@@ -644,7 +644,7 @@ def get_events(ttesession,tteconvention_id):
 
     while events_total >= events_start:
         events_url = tteconvention_data['data']['result']['_relationships']['events']
-        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id}
+        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id, '_page_number': events_start}
         events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
         events_data = events_response.json()
         convention_events = events_data['result']['items']
