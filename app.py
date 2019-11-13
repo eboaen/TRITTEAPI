@@ -404,6 +404,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
     new_convention = Conventions()
     new_slot = {}
     # Check the database to see if the slot already exists for the convention
+    # Create the dict of slot time and length of each slot
     for field in slots_info:
         if 'slot' in field:
             slot_num = field.rsplit()
@@ -447,12 +448,14 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     # Get the information on Convention Days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
-    # Verify if the shift "Slot" exists, if it doesn't, initialize the shifttype of "Slot" for tteid
+
+    # Verify if the "Slot Type" exists, if it doesn't, initialize the shifttype of "Slot" for tteid
     shifttypes_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
     shifttypes_get_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
     shifttypes_get_response = requests.get(shifttypes_uri, params= shifttypes_get_params)
     shifttypes_get_data = shifttypes_get_response.json()
     shifttype_id = shifttypes_get_data['result']['items'][0]['id']
+
     # For each slot, get the information we need to be able to post the slot as a shift
     for slot in savedslots:
         slot_length = int(savedslots[slot][1])
@@ -460,46 +463,59 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         shift_time_s = savedslots[slot][0]
         shift_start = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
         shift_end = shift_start + datetime.timedelta(hours=slot_length)
-        # Compare the dates of the slot and the shift to get the tteid to use to post the shift
         for day in day_info:
             slot_date = datetime.date(shift_start.year,shift_start.month,shift_start.day)
             shift_date = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
             print(slot_date, shift_date)
+            # Compare the dates of the slot and the shift to get the tteid to use to post the shift
             if slot_date == shift_date:
                 shift_id = day['id']
                 print ('True')
-                # API Post to TTE for Volunteer Shifts
+                def tte_convention_volunteer_dayparts_api_post
                 shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': shift_id, 'shifttype_id': shifttype_id}
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                 shift_data = shift_response.json()
                 print (shift_data)
     return('saved')
+# -----------------------------------------------------------------------
+# API Post to TTE for Volunteer Shifts
+# -----------------------------------------------------------------------
 
 # -----------------------------------------------------------------------
 # Post slots to TTE as Day Parts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,savedslots):
     #Declarations
-
+    slots = {}
     # Get data on the days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
 
-    # For each slot, get the information we need to be able to post the slot as a day part
+    # Convert slots data to datetime
     for slot in savedslots:
-        slot_time = savedslots[slot][0]
-        slot_start = datetime.datetime.strptime(slot_time, '%m/%d/%y %I:%M:%S %p')
-        daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(slot_start, '%a %I:%M %p')
-        # Compare the dates of the slot and the shift to get the tteid of the day to use to post the shift
-        for day in day_info:
-            slot_day = datetime.date(slot_start.year,slot_start.month,slot_start.day)
-            day_day = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
-            if slot_day == day_day:
-                day_id = day['id']
-                # API Post to TTE (Day Parts)
-                daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
-                daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
-                daypart_data = daypart_response.json()
-                print (daypart_data)
+        slot_time_s = savedslots[slot][0]
+        slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
+        slots[slot]= {'slot_time': slot_start, 'slot_length': slot_length}
+
+    # Loop through the day in 30 minute increments
+    for day in day_info:
+        day_id = day['id']
+        day_start = day['day_time']
+        day_end = day['end_time']
+        daypart_time = day_start
+        while daypart_time < day_end:
+            if day_time in savedslots:
+                daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(daypart_time, '%a %I:%M %p')
+                slot_start = day_time
+                daypart_time = daypart_time + datetime.timedelta(minutes='30')
+            else:
+                daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')'
+                slot_start = day_time
+                day_time = daypart_time + datetime.timedelta(minutes='30')
+            # API Post to TTE (Day Parts)
+            daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
+            daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
+            daypart_data = daypart_response.json()
+            print (daypart_data)
     return('saved')
 
 # -----------------------------------------------------------------------
@@ -662,7 +678,8 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
     # Create a datetime value for each day, add to a new dict
     for item in day_data['result']['items']:
          dt = datetime.datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
-         day_info.append({'id' : item['id'], 'day_time' : dt})
+         et = datetime.datetime.strptime(item['end_date'], '%Y-%m-%d %H:%M:%S')
+         day_info.append({'id' : item['id'], 'day_time' : dt, 'end_time': et})
     return(day_info)
 
 # -----------------------------------------------------------------------
@@ -888,7 +905,7 @@ def conventions():
             location = os.path.join(folder,slotselect)
             saved = slot_parse(location,tteconvention_id,tteconvention_name)
             savedslots = list_slots(tteconvention_id)
-            pushslots = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
+            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
             pushdayparts = tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
