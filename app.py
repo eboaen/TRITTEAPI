@@ -478,8 +478,7 @@ def tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id):
     shift_get_response = requests.get(tteconvention_shift_uri, params= shift_get_params)
     shift_get_data = shift_get_response.json()
     all_shifts = shift_get_data['result']['items']
-    print(all_shifts)
-    return(h)
+    return(all_shifts)
 
 # -----------------------------------------------------------------------
 # Delete all shifts from TTE
