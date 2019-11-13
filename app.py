@@ -588,10 +588,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 # -----------------------------------------------------------------------
 def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    for event in allevents
+    for event in allevents:
         event_delete_params = {'session_id': ttesession['id']}
         event_delete_url = 'https://tabletop.events/api/event/' + event['id']
-        event_delete_response = requests.get('https://tabletop.events' + dayparts_url, params= event_delete_params)
+        event_delete_response = requests.delete(event_delete_url, params= event_delete_params)
         event_delete_data = event_delete_response.json()
         print(event['id'],event_delete_data)
     return()
