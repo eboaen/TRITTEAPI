@@ -84,6 +84,7 @@ class FileForm(FlaskForm):
     slotsave = SubmitField(label='Submit File for Slots')
     eventsave = SubmitField(label='Submit File for Events')
     eventsdelete = SubmitField(label='Delete All Events')
+    shiftsdelete = SubmitField(label='Delete All Events')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
@@ -482,8 +483,7 @@ def tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Delete all shifts from TTE
 # -----------------------------------------------------------------------
-def tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id):
-    all_shifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
+def tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,all_shifts):
     for shift in allshifts:
         shift_delete_params = {'session_id': ttesession['id']}
         shift_delete_url = 'https://tabletop.events/api/shift/' + shift['id']
@@ -864,6 +864,19 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteevents = get_events(ttesession,tteconvention_id)
             deleteevents = tte_convention_events_api_delete(ttesession,tteconvention_id,tteevents)
+            #events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
+            'savedevents' : savedevents
+            })
+        if request.form.get('shiftsdelete') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            tteconvention_name = tteconvention_data['data']['result']['name']
+            tteshifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
+            deleteshifts = tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,tteshifts)
             #events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
