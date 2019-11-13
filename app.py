@@ -88,7 +88,7 @@ class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
     consubmit = SubmitField(label='Submit')
 
-class DeleteEvents(FlaskForm):
+class EventForm(FlaskForm):
     eventsdelete = SubmitField(label='Delete All Events')
 
 class LogoutForm(FlaskForm):
@@ -738,6 +738,7 @@ def conventions():
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
+    eventform =
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
@@ -748,7 +749,7 @@ def conventions():
             savedslots = list_slots(session['tteconvention_id'])
 #            savedevents = list_events(session['tteconvention_id'])
             rooms = bulk_read_tables(ttesession,session['tteconvention_id'])
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', eventform= eventform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -803,7 +804,8 @@ def conventions():
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
-            tte_events = get_events(ttesession,tteconvention_id)
+            tteevents = get_events(ttesession,tteconvention_id)
+            events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
