@@ -158,6 +158,7 @@ def get_slot_info(ttesession,slot_url):
     slot_params = {'session_id': ttesession['id']}
     slot_response = requests.get('https://tabletop.events' + slot_url, params= slot_params)
     slot_data = slot_response.json()
+    print (slot_data)
     slot_data = slot_data['result']['items']
     return(slot_data)
 
