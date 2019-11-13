@@ -427,7 +427,7 @@ def slot_save(slots_info,tteconvention_id,tteconvention_name):
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
     #Declarations
-    day_info = {}
+    day_info = []
     # Get the data on the convention
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     tteconvention_days_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
