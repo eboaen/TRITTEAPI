@@ -437,8 +437,8 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     day_data = day_response.json()
     # Create a datetime value for each day, add to a new dict
     for item in day_data['result']['items']:
-        day_time = datetime.datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
-        day_info[item['name']] = {'id' : item['id'], 'day_time' : day_time}
+         dt = datetime.datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
+         day_info.append({'id' : item['id'], 'day_time' : dt})
     # Verify if the shift "Slot" exists, if it doesn't, initialize the shifttype of "Slot" for tteid
     shifttypes_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
     shifttypes_get_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
@@ -455,10 +455,11 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
         # Compare the dates of the slot and the shift to get the tteid to use to post the shift
         for day in day_info:
             slot_date = datetime.date(shift_start.year,shift_start.month,shift_start.day)
-            shift_date = datetime.date(day_info[day]['day_time'].year,day_info[day]['day_time'].month,day_info[day]['day_time'].day)
-            if slot_date == shift_date :
-                shift_id = day_info[day]['id']
-                print (shift_name, shift_id,shift_start,shift_end)
+            shift_date = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
+            print(slot_date, shift_date)
+            if slot_date == shift_date:
+                shift_id = day['id']
+                print ('True')
                 # API Post to TTE for Volunteer Shifts
                 shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': shift_id, 'shifttype_id': shifttype_id}
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
