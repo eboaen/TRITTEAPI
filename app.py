@@ -491,7 +491,7 @@ def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,saved
         daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(slot_start, '%a %I:%M')
         # Compare the dates of the slot and the shift to get the tteid of the day to use to post the shift
         for day in day_info:
-            slot_day = datetime.date(shift_start.year,shift_start.month,shift_start.day)
+            slot_day = datetime.date(slot_start.year,slot_start.month,slot_start.day)
             day_day = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
             if slot_day == day_day:
                 day_id = day['id']
