@@ -642,19 +642,19 @@ def get_events(ttesession,tteconvention_id):
     events_total = 100
     all_events = list()
 
-    while event_total >= event_start:
+    while events_total >= events_start:
         events_url = tteconvention_data['data']['result']['_relationships']['events']
         events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id}
         events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
         convention_events = events_data['result']['items']
         for events in convention_events:
             all_events.append(events)
-        if event_start < event_total:
-            event_start = int(events_data['result']['paging']['next_page_number'])
-            event_total = int(events_data['result']['paging']['total_pages'])
-        elif event_start == event_total:
-            event_total = int(events_data['result']['paging']['total_pages'])
-            event_start = event_total + 1
+        if events_start < events_total:
+            events_start = int(events_data['result']['paging']['next_page_number'])
+            events_total = int(events_data['result']['paging']['total_pages'])
+        elif events_start == events_total:
+            events_total = int(events_data['result']['paging']['total_pages'])
+            events_start = events_total + 1
         else:
             pass
     return(all_events)
