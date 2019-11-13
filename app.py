@@ -81,10 +81,10 @@ class LoginForm(FlaskForm):
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
     volunteersave = SubmitField(label='Submit File for Volunteers')
-    slotsave = SubmitField(label='Submit File for Slots')
-    eventsave = SubmitField(label='Submit File for Events')
-    eventsdelete = SubmitField(label='Delete All Events')
-    shiftsdelete = SubmitField(label='Delete All Events')
+    slotsave = SubmitField(label='Submit File for Volunteer Shifts')
+    eventsave = SubmitField(label='Submit File for Convention Events')
+    eventsdelete = SubmitField(label='Delete All Convention Events')
+    shiftsdelete = SubmitField(label='Delete All Volunteer Shifts ')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
