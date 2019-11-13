@@ -734,12 +734,12 @@ def conventions():
     savedslots = {}
     savedvolunteers = {}
     savedevents = {}
-    # Function calls
+    # Form Function calls
     conform = ConForm(request.form, obj=tteconventions)
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
-    eventform = Eventform(request.form, obj=tteconventions)
+    eventform = Eventform(request.form)
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
