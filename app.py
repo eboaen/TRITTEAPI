@@ -467,6 +467,30 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
                 print (shift_data)
     return('saved')
 
+# -----------------------------------------------------------------------
+# Pull TTE Volunteer Shifts
+# -----------------------------------------------------------------------
+def tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id):
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    tteconvention_shift_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifts']
+    shift_get_params = {'session_id': ttesession['id']}
+    shift_get_response = requests.get(tteconvention_shift_uri, params= shift_get_params)
+    shift_get_data = shift_get_response.json()
+    print(shift_get_data)
+    return()
+
+# -----------------------------------------------------------------------
+# Delete all shifts from TTE
+# -----------------------------------------------------------------------
+def tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id):
+    all_shifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
+    for shift in allshifts:
+        shift_delete_params = {'session_id': ttesession['id']}
+        shift_delete_url = 'https://tabletop.events/api/shift/' + shift['id']
+        shift_delete_response = requests.delete(shift_delete_url, params= shift_delete_params)
+        shift_delete_data = shift_delete_response.json()
+        print(shift['id'],shift_delete_data)
+    return()
 
 # -----------------------------------------------------------------------
 # Event Functions
