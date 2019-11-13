@@ -445,10 +445,6 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     shifttypes_get_response = requests.get(tteconvention_shifttypes_uri, params= shifttypes_get_params)
     shifttypes_get_data = shifttypes_get_response.json()
     shifttype_id = shifttypes_get_data['result']['items'][0]['id']
-#        shifttype_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'name': 'Slot'}
-#        shifttype_response = requests.post(config.tte_url + '/shifttype', params= shifttype_params)
-#        shifttype_data = shifttype_response.json()
-#        print(shifttype_data)
     # For each slot, get the information we need to be able to post the slot as a shift
     for slot in savedslots:
         slot_length = int(savedslots[slot][1])
@@ -538,7 +534,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     convention_days = days_data['result']['items']
 
     #Get the dayparts for the convention
-    convention_dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
+    convention_dayparts = tte_convention_dayparts_id_api_get(ttesession,tteconvention_id,dayparts_url)
 
     for event in savedevents:
         # Define the list of hosts for the event
@@ -612,7 +608,7 @@ def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
 # -----------------------------------------------------------------------
 # Get the id for day parts
 # -----------------------------------------------------------------------
-def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url):
+def tte_convention_dayparts_id_api_get(ttesession,tteconvention_id,dayparts_url):
     day_parts_start = 1
     day_parts_total = 100
     all_dayparts = list()
@@ -637,7 +633,7 @@ def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,daypa
 # -----------------------------------------------------------------------
 # Get Table Information
 # -----------------------------------------------------------------------
-def bulk_read_tables(ttesession,tteconvention_id):
+def tte_convention_spaces_id_api_get(ttesession,tteconvention_id):
     rooms = {}
     spaces = {}
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
@@ -786,7 +782,7 @@ def conventions():
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
 #            savedevents = list_events(session['tteconvention_id'])
-            rooms = bulk_read_tables(ttesession,session['tteconvention_id'])
+            rooms = tte_convention_spaces_id_api_get(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
