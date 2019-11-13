@@ -501,23 +501,15 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
         daypart_time = day_start
         print (day_start,day_end)
         while daypart_time < day_end:
-            #if daypart_time in slots:
-            #    for slot in slots:
-            #        if daypart_time == slots[slot]['slot_time']:
-            #            daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(daypart_time, '%a %I:%M %p')
-            #            slot_start = daypart_time
-            #            print(slot_start,daypart_name)
-            #            daypart_time = daypart_time + datetime.timedelta(minutes= 30)
-            #else:
             daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')
             slot_start = daypart_time
             print(slot_start,daypart_name)
             daypart_time = daypart_time + datetime.timedelta(minutes= 30)
             # API Post to TTE (Day Parts)
-            #daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
-            #daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
-            #daypart_data = daypart_response.json()
-            #print (daypart_data)
+            daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
+            daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
+            daypart_data = daypart_response.json()
+            print (daypart_data)
     return('saved')
 
 # -----------------------------------------------------------------------
