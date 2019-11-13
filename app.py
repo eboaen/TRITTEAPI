@@ -505,7 +505,7 @@ def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,saved
                 if daypart_time == slots[slot]['slot_time']:
                     daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(daypart_time, '%a %I:%M %p')
                     slot_start = daypart_time
-                    daypart_time = daypart_time + datetime.timedelta(minutes='30')
+                    daypart_time = daypart_time + datetime.timedelta(minutes=30)
                 else:
                     daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')
                     slot_start = daypart_time
@@ -904,7 +904,7 @@ def conventions():
             location = os.path.join(folder,slotselect)
             saved = slot_parse(location,tteconvention_id,tteconvention_name)
             savedslots = list_slots(tteconvention_id)
-            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
+            # pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
             pushdayparts = tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
