@@ -477,14 +477,15 @@ def tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id):
     shift_get_params = {'session_id': ttesession['id']}
     shift_get_response = requests.get(tteconvention_shift_uri, params= shift_get_params)
     shift_get_data = shift_get_response.json()
-    print(shift_get_data)
-    return()
+    all_shifts = shift_get_data['result']['items']
+    print(all_shifts)
+    return(h)
 
 # -----------------------------------------------------------------------
 # Delete all shifts from TTE
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,all_shifts):
-    for shift in allshifts:
+    for shift in all_shifts:
         shift_delete_params = {'session_id': ttesession['id']}
         shift_delete_url = 'https://tabletop.events/api/shift/' + shift['id']
         shift_delete_response = requests.delete(shift_delete_url, params= shift_delete_params)
