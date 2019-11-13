@@ -459,6 +459,33 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     return('saved')
 
 # -----------------------------------------------------------------------
+# Post slots to TTE as Day Parts
+# -----------------------------------------------------------------------
+def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,savedslots):
+    #Declarations
+
+    # Get data on the days
+    day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
+
+    # For each slot, get the information we need to be able to post the slot as a day part
+    for slot in savedslots:
+        slot_time = savedslots[slot][0]
+        slot_start = datetime.datetime.strptime(slot_time, '%m/%d/%y %I:%M:%S %p')
+        daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(shift_start, '%a %I:%M')
+        # Compare the dates of the slot and the shift to get the tteid of the day to use to post the shift
+        for day in day_info:
+            slot_day = datetime.date(shift_start.year,shift_start.month,shift_start.day)
+            day_day = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
+            if slot_day == day_day
+                day_id = day['id']
+                # API Post to TTE (Day Parts)
+                daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id)
+                daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
+                daypart_data = daypart_response.json()
+                print (daypart_data)
+    return('saved')
+
+# -----------------------------------------------------------------------
 # Pull TTE Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id):
@@ -481,6 +508,9 @@ def tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,all_sh
         shift_delete_data = shift_delete_response.json()
         print(shift['id'],shift_delete_data)
     return()
+
+
+
 
 # -----------------------------------------------------------------------
 # Event Functions
