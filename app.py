@@ -83,13 +83,14 @@ class FileForm(FlaskForm):
     volunteersave = SubmitField(label='Submit File for Volunteers')
     slotsave = SubmitField(label='Submit File for Slots')
     eventsave = SubmitField(label='Submit File for Events')
+    eventsdelete = SubmitField(label='Delete All Events')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
     consubmit = SubmitField(label='Submit')
 
-class EventForm(FlaskForm):
-    eventsdelete = SubmitField(label='Delete All Events')
+
+
 
 class LogoutForm(FlaskForm):
     logoutsubmit = SubmitField(label='Logout')
@@ -739,7 +740,6 @@ def conventions():
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
-    eventform = EventForm(request.form, obj=None)
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
@@ -750,7 +750,7 @@ def conventions():
             savedslots = list_slots(session['tteconvention_id'])
 #            savedevents = list_events(session['tteconvention_id'])
             rooms = bulk_read_tables(ttesession,session['tteconvention_id'])
-            return render_template('conventions.html', eventform= eventform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
