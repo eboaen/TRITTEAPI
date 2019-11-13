@@ -505,7 +505,7 @@ def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,saved
                 slot_start = day_time
                 daypart_time = daypart_time + datetime.timedelta(minutes='30')
             else:
-                daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')'
+                daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')
                 slot_start = day_time
                 day_time = daypart_time + datetime.timedelta(minutes='30')
             # API Post to TTE (Day Parts)
