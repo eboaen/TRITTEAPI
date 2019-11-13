@@ -497,7 +497,7 @@ def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,saved
             if slot_day == day_day:
                 day_id = day['id']
                 # API Post to TTE (Day Parts)
-                daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id)
+                daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
                 daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
                 daypart_data = daypart_response.json()
                 print (daypart_data)
