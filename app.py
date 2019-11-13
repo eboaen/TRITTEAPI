@@ -541,10 +541,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     convention_dayparts = tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url)
 
     for event in savedevents:
+        # Define the list of hosts for the event
         host_id_l = []
-        event['duration'] = int(event['duration'])
-        event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
-        event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %I:%M %p')
         event_hosts_l = event['hosts'].split(' ')
         for host in event_hosts_l:
             try:
@@ -554,19 +552,34 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             except:
                 print(host,host_id,' Failure')
                 pass
+        # Compare the Name of the type with the provided Event Type
+        # If they match, return the TTE ID of the Type
         for type in event_types:
             if event['type'] == type['name']:
                 event['type_id'] = type['id']
+
+        # Calculate the datetime value of the event
+        event['duration'] = int(event['duration'])
+        event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
+        event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %I:%M %p')
+
+        # Identify the Day Id for the convention
         for day in convention_days:
             day['datetime'] = datetime.datetime.strptime(day['start_date'],'%Y-%m-%d %H:%M:%S')
             day['date_check'] = datetime.date(day['datetime'].year,day['datetime'].month,day['datetime'].day)
             event['date_check'] = datetime.date(event['datetime'].year,event['datetime'].month,event['datetime'].day)
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
+
+        # Identify the datetime value of the dayparts
+        # Then compare to see if they are equal to determine the TTE ID of the time
         for dayparts in convention_dayparts:
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
+            print (event['datetime'], dayparts['datetime'])
             if event['datetime'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
+
+
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             # Create the Event
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
