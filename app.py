@@ -477,11 +477,10 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
 # -----------------------------------------------------------------------
 # API Post to TTE for Volunteer Shifts
 # -----------------------------------------------------------------------
-
 # -----------------------------------------------------------------------
 # Post slots to TTE as Day Parts
 # -----------------------------------------------------------------------
-def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,savedslots):
+def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
     #Declarations
     slots = {}
     # Get data on the days
@@ -505,11 +504,11 @@ def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,saved
                 if daypart_time == slots[slot]['slot_time']:
                     daypart_name = 'Slot ' + str(slot) + ': ' + datetime.datetime.strftime(daypart_time, '%a %I:%M %p')
                     slot_start = daypart_time
-                    daypart_time = daypart_time + datetime.timedelta(minutes=30)
+                    daypart_time = daypart_time + datetime.timedelta(minutes= 30)
                 else:
                     daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')
                     slot_start = daypart_time
-                    day_time = daypart_time + datetime.timedelta(minutes='30')
+                    day_time = daypart_time + datetime.timedelta(minutes= 30)
             # API Post to TTE (Day Parts)
             daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
             daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
@@ -711,7 +710,7 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Delete all dayparts from TTE
 # -----------------------------------------------------------------------
-def tte_convention_volunteer_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts):
+def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts):
     for daypart in all_dayparts:
         daypart_delete_params = {'session_id': ttesession['id']}
         daypart_delete_url = 'https://tabletop.events/api/daypart/' + daypart['id']
@@ -905,7 +904,7 @@ def conventions():
             saved = slot_parse(location,tteconvention_id,tteconvention_name)
             savedslots = list_slots(tteconvention_id)
             pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
-            pushdayparts = tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,savedslots)
+            pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
@@ -956,7 +955,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             ttedayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
-            deletedayparts = tte_convention_volunteer_dayparts_api_delete(ttesession,tteconvention_id,ttedayparts)
+            deletedayparts = tte_convention_dayparts_api_delete(ttesession,tteconvention_id,ttedayparts)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
