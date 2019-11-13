@@ -602,7 +602,7 @@ def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,daypa
         if day_parts_start < day_parts_total:
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
             day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
-        elif day_parts_start = day_parts_total:
+        elif day_parts_start == day_parts_total:
             day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
             day_parts_start = day_parts_total + 1
         else:
