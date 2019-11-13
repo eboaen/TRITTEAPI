@@ -508,7 +508,7 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
                 else:
                     daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')
                     slot_start = daypart_time
-                    day_time = daypart_time + datetime.timedelta(minutes= 30)
+                    daypart_time = daypart_time + datetime.timedelta(minutes= 30)
             # API Post to TTE (Day Parts)
             daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
             daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
