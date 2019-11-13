@@ -492,7 +492,7 @@ def tte_convention_volunteer_dayparts_api_post(ttesession,tteconvention_id,saved
         slot_time_s = savedslots[slot][0]
         slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
         slot_length = savedslots[slot][1]
-        slots[slot]= {'slot_time': slot_start, 'slot_length': }
+        slots[slot]= {'slot_time': slot_start, 'slot_length': slot_length}
 
     # Loop through the day in 30 minute increments
     for day in day_info:
