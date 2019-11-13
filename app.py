@@ -499,6 +499,7 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
         day_start = day['day_time']
         day_end = day['end_time']
         daypart_time = day_start
+        print (day_start,day_end)
         while daypart_time < day_end:
             #if daypart_time in slots:
             #    for slot in slots:
