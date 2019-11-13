@@ -585,6 +585,19 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     return()
 
 # -----------------------------------------------------------------------
+# Delete all Events for the Convention
+# -----------------------------------------------------------------------
+def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    for event in allevents
+        event_delete_params = {'session_id': ttesession['id']}
+        event_delete_url = 'https://tabletop.events/api/event/' + event['id']
+        event_delete_response = requests.get('https://tabletop.events' + dayparts_url, params= event_delete_params)
+        event_delete_data = event_delete_response.json()
+        print(event['id'],event_delete_data)
+    return()
+
+# -----------------------------------------------------------------------
 # Get the id for day parts
 # -----------------------------------------------------------------------
 def tte_convention_preferreddaypart_id_api_get(ttesession,tteconvention_id,dayparts_url):
@@ -817,6 +830,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteevents = get_events(ttesession,tteconvention_id)
+            deleteevents = tte_convention_events_api_delete(ttesession,tteconvention_id,tteevents)
             #events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
