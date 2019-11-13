@@ -89,9 +89,6 @@ class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
     consubmit = SubmitField(label='Submit')
 
-
-
-
 class LogoutForm(FlaskForm):
     logoutsubmit = SubmitField(label='Logout')
 
