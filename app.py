@@ -633,6 +633,7 @@ def get_events(ttesession,tteconvention_id):
     events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
     events_data = events_response.json()
     print(events_data)
+    return(events_data)
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -805,7 +806,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteevents = get_events(ttesession,tteconvention_id)
-            events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
+            #events_deleted = delete_events(ttesession,tteconvention_id,tteevents)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
