@@ -88,6 +88,9 @@ class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
     consubmit = SubmitField(label='Submit')
 
+class DeleteEvents(FlaskForm):
+    eventsdelete = SubmitField(label='Delete All Events')
+
 class LogoutForm(FlaskForm):
     logoutsubmit = SubmitField(label='Logout')
 
@@ -583,7 +586,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     host_data = host_response.json()
     return()
 
-
 # -----------------------------------------------------------------------
 # Get the id for day parts
 # -----------------------------------------------------------------------
@@ -621,6 +623,16 @@ def bulk_read_tables(ttesession,tteconvention_id):
     space_response = requests.get('https://tabletop.events' + spaces_url, params= space_params)
     space_data = space_response.json()
 
+# -----------------------------------------------------------------------
+# Get all events for Convention
+# -----------------------------------------------------------------------
+def get_events(ttesession,tteconvention_id):
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    events_url = tteconvention_data['data']['result']['_relationships']['events']
+    events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id}
+    events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
+    events_data = events_response.json()
+    print(events_data)
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -744,7 +756,7 @@ def conventions():
             'savedslots' : savedslots
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
-            tteconvention_id = session['tteconvention_id']
+            tteconvention_id = session.get('tteconvention_id')
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Volunteer Management
@@ -758,7 +770,7 @@ def conventions():
             'savedvolunteers' : savedvolunteers
             })
         if request.form.get('slotsave') and session.get('tteconvention_id') is not None:
-            tteconvention_id = session['tteconvention_id']
+            tteconvention_id = session.get('tteconvention_id')
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Slot Management
@@ -774,13 +786,24 @@ def conventions():
             'savedslots' : savedslots
             })
         if request.form.get('eventsave') and session.get('tteconvention_id') is not None:
-            tteconvention_id = session['tteconvention_id']
+            tteconvention_id = session.get('tteconvention_id')
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             eventselect = request.form.get('selectfile')
             location = os.path.join(folder,eventselect)
             savedevents = event_parse(location,tteconvention_id,tteconvention_name)
             pushevents = tte_convention_events_api_post(ttesession,tteconvention_id,savedevents)
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
+            'savedevents' : savedevents
+            })
+        if request.form.get('eventsdelete') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            tteconvention_name = tteconvention_data['data']['result']['name']
+            tte_events = get_events(ttesession,tteconvention_id)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
