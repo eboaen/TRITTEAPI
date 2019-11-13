@@ -739,7 +739,7 @@ def conventions():
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
-    eventform = Eventform(request.form, obj=None)
+    eventform = EventForm(request.form, obj=None)
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
