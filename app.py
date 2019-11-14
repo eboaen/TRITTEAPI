@@ -185,6 +185,17 @@ def save_convention(convention):
         saved = 'exists'
         return (saved)
 
+
+# -----------------------------------------------------------------------
+# Get the Geolocation data (for the time zone of the con)
+# -----------------------------------------------------------------------
+def tte_convention_geolocation_api_get(ttesession,tteconvention_id):
+  geolocation_params = {'session_id': ttesession['id'], "_include_related_objects": geolocation}
+  geolocation_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= geolocation_params)
+  geolocation_data = geolocation_response.json()
+  print (geolocation_data)
+
+
 # -----------------------------------------------------------------------
 # Volunteer Functions
 # -----------------------------------------------------------------------
@@ -865,6 +876,7 @@ def conventions():
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
+            ttegeoinfo = tte_convention_geolocation_api_get(ttesession,session['tteconvention_id'])
 #            savedevents = list_events(session['tteconvention_id'])
             rooms = tte_convention_spaces_id_api_get(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
