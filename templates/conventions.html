@@ -145,14 +145,14 @@
               <thead>
                 <tr>
                   <th scope="col" class="col-xs-1">Name</th>
-                  <th scope="col" class="col-xs-1">Datetime</th>
+                  <th scope="col" class="col-xs-1">Start Time</th>
               </tr>
               </thead>
               <tbody>
                 {% for daypart in ttdedayparts %}
                   <tr>
-                    <td>{{ daypart.name }}</td>
-                    <td>{{ daypart.datetime }}</td>
+                    <td>{{ daypart['name'] }}</td>
+                    <td>{{ daypart['datetime'] }}</td>
                   </tr>
                 {% endfor %}
               </tbody>
