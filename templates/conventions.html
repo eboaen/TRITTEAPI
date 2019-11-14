@@ -137,6 +137,30 @@
       </div><!-- /media -->
     </div><!-- /jumbotron -->
     {% endif %}
+    {% if ttedayparts %}
+    <div class="jumbotron">
+        <div class ="main">
+          <div class="container">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-xs-1">Name</th>
+                  <th scope="col" class="col-xs-1">Datetime</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% for daypart in ttdedayparts %}
+                  <tr>
+                    <td>{{ daypart.name }}</td>
+                    <td>{{ daypart.datetime }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div><!-- /container -->
+      </div><!-- /media -->
+    </div><!-- /jumbotron -->
+    {% endif %}
   {% endif %}
       <div class="container">
       </div> <!-- /container -->
