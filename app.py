@@ -487,11 +487,11 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
 
     # Convert slots data to datetime
-    for slot in savedslots:
-        slot_time_s = savedslots[slot][0]
-        slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
-        slot_length = savedslots[slot][1]
-        slots[slot]= {'slot_time': slot_start, 'slot_length': slot_length}
+    #for slot in savedslots:
+    #    slot_time_s = savedslots[slot][0]
+    #    slot_start = datetime.datetime.strptime(slot_time_s, '%m/%d/%y %I:%M:%S %p')
+    #    slot_length = savedslots[slot][1]
+    #    slots[slot]= {'slot_time': slot_start, 'slot_length': slot_length}
 
     # Loop through the day in 30 minute increments
     for day in day_info:
@@ -501,14 +501,13 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
         daypart_time = day_start
         print (day_start,day_end)
         while daypart_time < day_end:
-            daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')
-            print(slot_start,daypart_name)
-            slot_start = daypart_time
+            daypart_name = datetime.datetime.strftime(daypart_time, '%a %I:%M %p')
+            print(daypart_time,daypart_name)
             # API Post to TTE (Day Parts)
-            daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
+            daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': daypart_time, 'conventionday_id': day_id}
             daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
             daypart_data = daypart_response.json()
-            print (daypart_data)
+            print (daypart_data['result']['name'],daypart_data['result']['start_date'])
             daypart_time = daypart_time + datetime.timedelta(minutes= 30)
     return('saved')
 
