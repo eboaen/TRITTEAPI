@@ -681,9 +681,8 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
     all_dayparts = list()
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
-    day_parts_total = None
 
-    while day_parts_total >= day_parts_start or day_parts_total == None:
+    while day_parts_total >= day_parts_start:
         dayparts_params = {'session_id': ttesession['id'], '_page_number': day_parts_start}
         dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
         dayparts_data = dayparts_response.json()
