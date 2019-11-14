@@ -190,7 +190,7 @@ def save_convention(convention):
 # Get the Geolocation data (for the time zone of the con)
 # -----------------------------------------------------------------------
 def tte_convention_geolocation_api_get(ttesession,tteconvention_id):
-  geolocation_params = {'session_id': ttesession['id'], "_include_related_objects": geolocation}
+  geolocation_params = {'session_id': ttesession['id'], '_include_related_objects': 'geolocation'}
   geolocation_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= geolocation_params)
   geolocation_data = geolocation_response.json()
   print (geolocation_data)
