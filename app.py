@@ -502,14 +502,14 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
         print (day_start,day_end)
         while daypart_time < day_end:
             daypart_name = datetime.datetime.strftime(slot_start, '%a %I:%M %p')
-            slot_start = daypart_time
             print(slot_start,daypart_name)
-            daypart_time = daypart_time + datetime.timedelta(minutes= 30)
+            slot_start = daypart_time
             # API Post to TTE (Day Parts)
             daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': slot_start, 'conventionday_id': day_id}
             daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
             daypart_data = daypart_response.json()
             print (daypart_data)
+            daypart_time = daypart_time + datetime.timedelta(minutes= 30)
     return('saved')
 
 # -----------------------------------------------------------------------
@@ -682,8 +682,9 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
     all_dayparts = list()
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
+    day_parts_total = None
 
-    while day_parts_total >= day_parts_start:
+    while day_parts_total >= day_parts_start or day_parts_total == None:
         dayparts_params = {'session_id': ttesession['id'], '_page_number': day_parts_start}
         dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
         dayparts_data = dayparts_response.json()
@@ -691,13 +692,12 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
         for dayparts in convention_dayparts:
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
             all_dayparts.append(dayparts)
-            print(dayparts['name'],dayparts['datetime'])
-        if day_parts_start < day_parts_total:
+        if day_parts_start < day_parts_total or day_parts_total == None:
+            day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
-            day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
         elif day_parts_start == day_parts_total:
-            day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
             day_parts_start = day_parts_total + 1
+            day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
         else:
             pass
     return(all_dayparts)
