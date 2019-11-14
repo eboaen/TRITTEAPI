@@ -621,11 +621,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # Identify the datetime value of the dayparts
         # Then compare to see if they are equal to determine the TTE ID of the time
         for dayparts in convention_dayparts:
-            print (dayparts)
-            dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
             if event['datetime'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
-
 
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             # Create the Event
@@ -692,6 +689,7 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
         dayparts_data = dayparts_response.json()
         convention_dayparts = dayparts_data['result']['items']
         for dayparts in convention_dayparts:
+            dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
             all_dayparts.append(dayparts)
         if day_parts_start < day_parts_total:
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
@@ -867,12 +865,14 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             savedslots = list_slots(session['tteconvention_id'])
+            ttedayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
 #            savedevents = list_events(session['tteconvention_id'])
             rooms = tte_convention_spaces_id_api_get(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
+            'ttedayparts' : ttedayparts,
             'savedvolunteers' : savedvolunteers,
             'savedslots' : savedslots
             })
