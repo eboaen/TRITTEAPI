@@ -701,7 +701,7 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
         for dayparts in convention_dayparts:
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
             all_dayparts.append(dayparts)
-            print (dayparts['datetime'],dayparts['name']
+            print (dayparts['datetime'],dayparts['name'])
         if day_parts_start < day_parts_total or day_parts_total == None:
             day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
