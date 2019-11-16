@@ -804,7 +804,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
             all_spaces.append(spaces)
         if spaces_start < spaces_total or spaces_total == 0:
             space_start = int(spaces_data['result']['paging']['next_page_number'])
-        elif spaces_start == spaces_start and spaces_total != 0:
+        elif spaces_start == spaces_total and spaces_total != 0:
             break
       return(all_spaces)
 
