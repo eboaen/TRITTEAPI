@@ -856,7 +856,7 @@ def tte_convention_events_api_get(ttesession,tteconvention_id):
             events_start = int(events_data['result']['paging']['next_page_number'])
         elif events_start == events_total and events_start != 0:
             break
-            print( Events Break out)
+            print('Events break')
     return(all_events)
 # -----------------------------------------------------------------------
 # Login to server route
