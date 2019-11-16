@@ -681,7 +681,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 # -----------------------------------------------------------------------
 def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
       eventtypes_start = 0
-      eventtypes_total = 1
+      eventtypes_total = 1000
       all_eventtypes = list()
       # Get the data on the convention
       tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
@@ -695,9 +695,9 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
         eventtypes_total = int(eventtypes_data['result']['paging']['total_pages'])
         for eventtypes in convention_eventtypes:
             all_eventtypes.append(eventtypes)
-        if eventtypes_start < eventtypes_total or eventtypes_total == 0:
+        if eventtypes_start < eventtypes_total:
             eventtypes_start = int(eventtypes_data['result']['paging']['next_page_number'])
-        elif day_parts_start == day_parts_total and day_parts_total != 0:
+        elif day_parts_start == day_parts_total:
             break
       return(all_eventtypes)
 
@@ -750,7 +750,7 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
     day_parts_start = 0
-    day_parts_total = 1
+    day_parts_total = 1000
     all_dayparts = list()
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
@@ -765,9 +765,9 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
             dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
             all_dayparts.append(dayparts)
             print (dayparts['datetime'],dayparts['name'])
-        if day_parts_start < day_parts_total or day_parts_total == 0:
+        if day_parts_start < day_parts_total:
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
-        elif day_parts_start == day_parts_total and day_parts_total != 0:
+        elif day_parts_start == day_parts_total:
             break
     return(all_dayparts)
 
@@ -788,7 +788,7 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_get(ttesession,tteconvention_id):
       spaces_start = 0
-      spaces_total = 1
+      spaces_total = 1000
       all_spaces = list()
       # Get the data on the convention
       tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
@@ -802,9 +802,9 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
         spaces_total = int(spaces_data['result']['paging']['total_pages'])
         for spaces in convention_spaces:
             all_spaces.append(spaces)
-        if spaces_start < spaces_total or spaces_total == 0:
+        if spaces_start < spaces_total:
             space_start = int(spaces_data['result']['paging']['next_page_number'])
-        elif spaces_start == spaces_total and spaces_total != 0:
+        elif spaces_start == spaces_total:
             break
       return(all_spaces)
 
@@ -813,7 +813,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_rooms_api_get(ttesession,tteconvention_id):
       rooms_start = 0
-      rooms_total = 1
+      rooms_total = 1000
       all_rooms = list()
       # Get the data on the convention
       tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
@@ -827,9 +827,9 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
         rooms_total = int(rooms_data['result']['paging']['total_pages'])
         for rooms in convention_rooms:
             all_rooms.append(rooms)
-        if rooms_start < rooms_total or rooms_total == 0:
+        if rooms_start < rooms_total:
             rooms_start = int(rooms_data['result']['paging']['next_page_number'])
-        elif rooms_start == rooms_total and rooms_total != 0:
+        elif rooms_start == rooms_total and rooms_total:
             break
         else:
           break
@@ -841,7 +841,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
 def tte_convention_events_api_get(ttesession,tteconvention_id):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     events_start = 0
-    events_total = 1
+    events_total = 1000
     all_events = list()
 
     while events_total >= events_start:
@@ -853,9 +853,9 @@ def tte_convention_events_api_get(ttesession,tteconvention_id):
         events_total = int(events_data['result']['paging']['total_pages'])
         for events in convention_events:
             all_events.append(events)
-        if events_start < events_total or events_total == 0:
+        if events_start < events_total:
             events_start = int(events_data['result']['paging']['next_page_number'])
-        elif events_start == events_total and events_start != 0:
+        elif events_start == events_total:
             break
             print('Events break')
     return(all_events)
