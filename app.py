@@ -768,7 +768,6 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
         if day_parts_start < day_parts_total or day_parts_total == 0:
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
         elif day_parts_start == day_parts_total and day_parts_total != 0:
-            print ('Breaking out')
             break
     return(all_dayparts)
 
@@ -853,10 +852,11 @@ def tte_convention_events_api_get(ttesession,tteconvention_id):
         events_total = int(events_data['result']['paging']['total_pages'])
         for events in convention_events:
             all_events.append(events)
-        if events_start < events_total or events_total != 0:
+        if events_start < events_total or events_total == 0:
             events_start = int(events_data['result']['paging']['next_page_number'])
         elif events_start == events_total and events_start != 0:
             break
+            print( Events Break out)
     return(all_events)
 # -----------------------------------------------------------------------
 # Login to server route
