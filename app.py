@@ -113,15 +113,12 @@ def tte_session():
 # -----------------------------------------------------------------------
 # Convert a given datetime object to a UTC time
 # -----------------------------------------------------------------------
-def datetime_utc_convert(timezone,unconverted_datetime):
-    utc = pytz.utc
-    current_tz = timezone(timezone)
-
-
+def datetime_utc_convert(current_timezone,unconverted_datetime):
+    current_tz = timezone(current_timezone)
+    utc_delta = current_tz.utcoffset(normal, is_dst=False)
+    converted_time = unconverted_datetime - utc_delta
+    print(current_tz, unconverted_datetime, utc_delta, converted_datetime)
     
-    utc_dt = datetime(2002, 10, 27, 6, 0, 0, tzinfo=utc)
-
-
 # -----------------------------------------------------------------------
 # Pull Convention listing from TTE
 # -----------------------------------------------------------------------
