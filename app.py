@@ -803,8 +803,8 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
         space_response = requests.get(tteconvention_space_uri, params= space_params)
         space_data = space_response.json()
         convention_spaces = spaces_data['result']['items']
-            for spaces in convention_spaces:
-                all_spaces.append(spaces)
+        for spaces in convention_spaces:
+            all_spaces.append(spaces)
         if space_start < space_total or space_total == 0:
             space_total = int(spaces_data['result']['paging']['total_pages'])
             space_start = int(spaces_data['result']['paging']['next_page_number'])
