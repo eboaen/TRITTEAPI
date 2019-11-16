@@ -410,6 +410,7 @@ def list_slots(tteconvention_id):
                 slots[new_slot] = con_slots[slot]
             except ValueError:
                 pass
+        slots['tables'] = convention.tables
     return(slots)
 
 # -----------------------------------------------------------------------
@@ -983,7 +984,7 @@ def conventions():
             savedslots = list_slots(session['tteconvention_id'])
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
             # ttegeoinfo = tte_convention_geolocation_api_get(ttesession,session['tteconvention_id'])
-#            savedevents = list_events(session['tteconvention_id'])
+            savedevents = tte_convention_events_api_get(session['tteconvention_id'],session['tteconvention_id'])
             spaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
@@ -991,6 +992,7 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             'ttedayparts' : ttedayparts,
             'savedvolunteers' : savedvolunteers,
+            'savedevents' : savedevents,
             'savedslots' : savedslots
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:

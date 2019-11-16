@@ -161,6 +161,32 @@
       </div><!-- /media -->
     </div><!-- /jumbotron -->
     {% endif %}
+    {% if savedevents %}
+    <div class="jumbotron">
+        <div class ="main">
+          <div class="container">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-xs-1">Event</th>
+                  <th scope="col" class="col-xs-1">Start Time</th>
+                  <th scope="col" class="col-xs-1">Length</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% for events in savedevents|sort %}
+                  <tr>
+                      <td>{{ events.name }}</td>
+                      <td>{{ events.startdaypart_name }}</td>
+                      <td>{{ events.duration }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div><!-- /container -->
+      </div><!-- /media -->
+    </div><!-- /jumbotron -->
+    {% endif %}
   {% endif %}
       <div class="container">
       </div> <!-- /container -->
