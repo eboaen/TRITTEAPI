@@ -799,7 +799,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
       # Loop through the spaces for the convention
       while space_total >= space_start:
         space_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-        space_response = requests.get(tteconvention_spacse_url, params= space_params)
+        space_response = requests.get(tteconvention_spaces_url, params= space_params)
         space_data = space_response.json()
         convention_spaces = spaces_data['result']['items']
         for spaces in convention_spaces:
