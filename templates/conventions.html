@@ -14,73 +14,74 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
-	<nav class="navbar navbar-expand-sm navbar-warning bg-warning">
-		<a class="navbar-brand mb-0 h2">Welcome to The Role Initiative Scheduling Tool</a>
-	</nav>
-  <div class="container"><!-- Introduction -->
-    <main role="main">
-      <div class="jumbotron">
-        <div class ="media">
-          <div class="media-body" >
-            <p class="lead text-left">Hello {{ name }}</p>
-            {% if tteconvention_data is defined %}
-              <p class='text-center'> You are working on {{ tteconvention_data.data.result['name'] }} </p>
-            {% else %}
-              <p class='text-center'> Please select a convention below </p>
-            {% endif %}
+  <main>
+  	<nav class="navbar navbar-expand-sm navbar-warning bg-warning">
+  		<a class="navbar-brand mb-0 h2">Welcome to The Role Initiative Scheduling Tool</a>
+  	</nav>
+    <div class="container"><!-- Introduction -->
+      <main role="main">
+        <div class="jumbotron">
+          <div class ="media">
+            <div class="media-body" >
+              <p class="lead text-left">Hello {{ name }}</p>
+              {% if tteconvention_data is defined %}
+                <p class='text-center'> You are working on {{ tteconvention_data.data.result['name'] }} </p>
+              {% else %}
+                <p class='text-center'> Please select a convention below </p>
+              {% endif %}
+            </div>
           </div>
         </div>
-      </div>
-    </main>
-  </div> <!-- /container -->
+      </main>
+    </div> <!-- /container -->
 
-  <div class="container"> <!-- Select a convention to work on -->
-    <main role="main">
-      <div class="jumbotron">
-        <div class ="media">
-          <div class="container">
-            <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class="container"> <!-- Select a convention to work on -->
+      <main role="main">
+        <div class="jumbotron">
+          <div class ="media">
+            <div class="container">
+              <form id="form1" action="/conventions" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <div class="form-group">
+                    {{ conform.selectcon }}
+                  </div>
+                  <div class="input submit">
+                    {{ conform.consubmit}}
+                  </div>
+                </input>
+              </form>
+            </div><!-- /container -->
+          </div><!-- /media -->
+        </div><!-- /jumbotron -->
+      </main>
+    </div> <!-- /container -->
+    {% if tteconvention_data is defined %}
+    <div class="container"> <!-- Import Volunteers -->
+      <div class ="main">
+        <div class="jumbotron">
+          <div class ="media">
+            <div class="container">
+              <form action="" method="post" role="form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <label form="sel1">Select a File to use:</label>
                 <div class="form-group">
-                  {{ conform.selectcon }}
+                  {{ fileform.selectfile }}
                 </div>
                 <div class="input submit">
-                  {{ conform.consubmit}}
+                  {{ fileform.volunteersave }}
+                  {{ fileform.conventionsave }}
+                  {{ fileform.eventsave }}
+                  <p></p>
+                  {{ fileform.eventsdelete }}
+                  {{ fileform.shiftsdelete }}
+                  {{ fileform.daypartsdelete }}
                 </div>
-              </input>
-            </form>
-          </div><!-- /container -->
-        </div><!-- /media -->
-      </div><!-- /jumbotron -->
-    </main>
-  </div> <!-- /container -->
-  {% if tteconvention_data is defined %}
-  <div class="container"> <!-- Import Volunteers -->
-    <div class ="main">
-      <div class="jumbotron">
-        <div class ="media">
-          <div class="container">
-            <form action="" method="post" role="form">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <label form="sel1">Select a File to use:</label>
-              <div class="form-group">
-                {{ fileform.selectfile }}
-              </div>
-              <div class="input submit">
-                {{ fileform.volunteersave }}
-                {{ fileform.conventionsave }}
-                {{ fileform.eventsave }}
-                <p></p>
-                {{ fileform.eventsdelete }}
-                {{ fileform.shiftsdelete }}
-                {{ fileform.daypartsdelete }}
-              </div>
-            </form>
-          </div> <!-- /container -->
-        </div><!-- /media -->
-      </div><!-- /jumbotron -->
-    </div><!-- main -->
-  </div> <!-- /container -->
+              </form>
+            </div> <!-- /container -->
+          </div><!-- /media -->
+        </div><!-- /jumbotron -->
+      </div><!-- main -->
+    </div> <!-- /container -->
     {% if convention_info %}
     <div class="jumbotron">
         <div class ="main">
@@ -188,20 +189,11 @@
     </div><!-- /jumbotron -->
     {% endif %}
   {% endif %}
-      <div class="container">
-      </div> <!-- /container -->
-    <div class="jumbotron">
-      <div class ="main">
-
-        </div><!-- /media -->
-      </div><!-- /jumbotron -->
-    </main>
-  </div> <!-- /container -->
+</main>
 <footer class="container">
   <p class="lead text-left"><a href="{{ url_for('index') }}">Return</a></p>
 	<a>DEBUGGING</a>
 </footer>
-
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
