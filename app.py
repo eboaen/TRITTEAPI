@@ -982,8 +982,7 @@ def conventions():
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             convention_info = list_convention_info(session['tteconvention_id'])
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
-            # ttegeoinfo = tte_convention_geolocation_api_get(ttesession,session['tteconvention_id'])
-            savedevents = tte_convention_events_api_get(session['tteconvention_id'],session['tteconvention_id'])
+            savedevents = tte_convention_events_api_get(ttesession,session['tteconvention_id'])
             spaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
