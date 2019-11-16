@@ -795,11 +795,11 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
       all_spaces = list()
       # Get the data on the convention
       tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-      tteconvention_space_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['space']
+      tteconvention_spaces_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['spaces']
       # Loop through the spaces for the convention
       while space_total >= space_start:
         space_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-        space_response = requests.get(tteconvention_space_uri, params= space_params)
+        space_response = requests.get(tteconvention_spacse_url, params= space_params)
         space_data = space_response.json()
         convention_spaces = spaces_data['result']['items']
         for spaces in convention_spaces:
