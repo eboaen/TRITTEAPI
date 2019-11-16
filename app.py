@@ -437,7 +437,7 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
         reader.fieldnames = newheader
         for convention_info in reader:
             convention_saved = convention_save(convention_info,tteconvention_id,tteconvention_name)
-            convention.append[convention_saved]
+            convention.append(convention_saved)
         return(convention)
 
 # -----------------------------------------------------------------------
