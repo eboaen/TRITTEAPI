@@ -398,29 +398,29 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
 # -----------------------------------------------------------------------
 # List all volunteer shifts in database for the convention
 # -----------------------------------------------------------------------
-def list_slots(tteconvention_id):
+def list_convention_info(tteconvention_id):
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
-    slots = {}
+    convention_data = {}
     if convention.slots is not None:
         con_slots = json.loads(convention.slots)
         for slot in con_slots:
             try:
                 new_slot = int(slot)
-                slots[new_slot] = con_slots[slot]
+                convention_data[new_slot] = con_slots[slot]
             except ValueError:
                 pass
-        slots['tables'] = convention.tables
-    return(slots)
+        convention_data['tables'] = convention.tables
+    return(convention_data)
 
 # -----------------------------------------------------------------------
 # Parse a File for shifts
 # -----------------------------------------------------------------------
-def slots_parse(filename,tteconvention_id,tteconvention_name):
+def convention_parse(filename,tteconvention_id,tteconvention_name):
     # Definitions
     slot = {}
     newheader = []
-    all_slots = []
+    convention = []
     # Open CSV file and verify headers
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -433,16 +433,16 @@ def slots_parse(filename,tteconvention_id,tteconvention_name):
             if 'Tables' in header:
                 newheader.append('tables')
         reader.fieldnames = newheader
-        for slots_info in reader:
-            slot_saved = slot_save(slot_info,tteconvention_id,tteconvention_name)
-            all_slots.append[slot_saved]
-        return(all_slots)
+        for convention_info in reader:
+            convention_saved = convention_save(convention_info,tteconvention_id,tteconvention_name)
+            convention.append[convention_saved]
+        return(convention)
 
 # -----------------------------------------------------------------------
 # Save shifts to database
 # -----------------------------------------------------------------------
-def slot_save(slot_info,tteconvention_id,tteconvention_name):
-    all_slots = list_slots(tteconvention_id)
+def convention_save(convention_info,tteconvention_id,tteconvention_name):
+    all_slots = list_convention_info(tteconvention_id)
     new_convention = Conventions()
     new_slot = {}
     # Check the database to see if the slot already exists for the convention
@@ -981,7 +981,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
             savedvolunteers = list_volunteers(session['tteconvention_id'])
-            savedslots = list_slots(session['tteconvention_id'])
+            savedslots = list_convention_info(session['tteconvention_id'])
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
             # ttegeoinfo = tte_convention_geolocation_api_get(ttesession,session['tteconvention_id'])
             savedevents = tte_convention_events_api_get(session['tteconvention_id'],session['tteconvention_id'])
@@ -1016,8 +1016,8 @@ def conventions():
             # Slot Management
             slotselect = request.form.get('selectfile')
             location = os.path.join(folder,slotselect)
-            saved = slots_parse(location,tteconvention_id,tteconvention_name)
-            savedslots = list_slots(tteconvention_id)
+            saved = convention_parse(location,tteconvention_id,tteconvention_name)
+            savedslots = list_convention_info(tteconvention_id)
             #pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
             pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
@@ -1058,7 +1058,7 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteshifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
             deleteshifts = tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,tteshifts)
-            savedslots = list_slots(tteconvention_id)
+            savedslots = list_convention_info(tteconvention_id)
             databaseslotdelete = database_slot_delete(tteconvention_id)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
