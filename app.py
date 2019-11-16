@@ -409,7 +409,10 @@ def list_convention_info(tteconvention_id):
                 convention_data[new_slot] = con_slots[slot]
             except ValueError:
                 pass
-        convention_data['tables'] = convention.tables
+        try:
+            convention_data['tables'] = convention.tables
+        except:
+            pass
     return(convention_data)
 
 # -----------------------------------------------------------------------
@@ -964,7 +967,6 @@ def conventions():
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
-            tteconvention_name = tteconvention_data['data']['result']['name']
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             convention_info = list_convention_info(session['tteconvention_id'])
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
@@ -972,7 +974,6 @@ def conventions():
             spaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
-            'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             'ttedayparts' : ttedayparts,
             'savedvolunteers' : savedvolunteers,
