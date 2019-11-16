@@ -824,6 +824,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
         rooms_response = requests.get(tteconvention_rooms_uri, params= rooms_params)
         rooms_data = rooms_response.json()
         convention_rooms = rooms_data['result']['items']
+        rooms_total = int(rooms_data['result']['paging']['total_pages'])
         for rooms in convention_rooms:
             all_rooms.append(rooms)
         if rooms_start < rooms_total or rooms_total == 0:
