@@ -449,10 +449,10 @@ def convention_save(convention_info,tteconvention_id,tteconvention_name):
     new_slot = {}
     # Check the database to see if the slot already exists for the convention
     # Create the dict of slot time and length of each slot
-    for field in slot_info:
+    for field in convention_info:
         if 'slot' in field:
             slot_num = field.rsplit()
-            new_slot[slot_num[1]] = slots_info[field], slots_info['length']
+            new_slot[slot_num[1]] = convention_info[field], convention_info['length']
     conventions_slots = json.dumps(new_slot)
     new_convention.slots = conventions_slots
     new_convention.tteid = tteconvention_id
