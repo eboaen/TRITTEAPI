@@ -415,7 +415,7 @@ def list_slots(tteconvention_id):
 # -----------------------------------------------------------------------
 # Parse a File for shifts
 # -----------------------------------------------------------------------
-def slot_parse(filename,tteconvention_id,tteconvention_name):
+def slots_parse(filename,tteconvention_id,tteconvention_name):
     # Definitions
     slot = {}
     newheader = []
@@ -1014,7 +1014,7 @@ def conventions():
             # Slot Management
             slotselect = request.form.get('selectfile')
             location = os.path.join(folder,slotselect)
-            saved = slot_parse(location,tteconvention_id,tteconvention_name)
+            saved = slots_parse(location,tteconvention_id,tteconvention_name)
             savedslots = list_slots(tteconvention_id)
             #pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
             pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
