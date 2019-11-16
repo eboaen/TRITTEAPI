@@ -976,6 +976,7 @@ def conventions():
             savedevents = tte_convention_events_api_get(ttesession,session['tteconvention_id'])
             print ('Getting Tables')
             spaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
+            print ('Done')
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
