@@ -144,7 +144,6 @@ def gettteconventions(ttesession):
     conventions = {}
     for convention in data['result']['items']:
         toadd = {'name': convention['name'], 'id': convention['id']}
-        save_convention(toadd)
         conventions[convention_count]= toadd
         convention_count = convention_count + 1
     return(conventions)
@@ -981,7 +980,7 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             tteconvention_name = tteconvention_data['data']['result']['name']
             savedvolunteers = list_volunteers(session['tteconvention_id'])
-            savedslots = list_convention_info(session['tteconvention_id'])
+            convention_info = list_convention_info(session['tteconvention_id'])
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
             # ttegeoinfo = tte_convention_geolocation_api_get(ttesession,session['tteconvention_id'])
             savedevents = tte_convention_events_api_get(session['tteconvention_id'],session['tteconvention_id'])
@@ -993,7 +992,7 @@ def conventions():
             'ttedayparts' : ttedayparts,
             'savedvolunteers' : savedvolunteers,
             'savedevents' : savedevents,
-            'savedslots' : savedslots
+            'convention_info' : convention_info
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
@@ -1009,22 +1008,22 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             'savedvolunteers' : savedvolunteers
             })
-        if request.form.get('slotsave') and session.get('tteconvention_id') is not None:
+        if request.form.get('conventionsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Slot Management
-            slotselect = request.form.get('selectfile')
+            convention_info = request.form.get('selectfile')
             location = os.path.join(folder,slotselect)
             saved = convention_parse(location,tteconvention_id,tteconvention_name)
-            savedslots = list_convention_info(tteconvention_id)
-            #pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
+            convention_info = list_convention_info(tteconvention_id)
+            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
             pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
-            'savedslots' : savedslots
+            'convention_info' : convention_info
             })
         if request.form.get('eventsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
