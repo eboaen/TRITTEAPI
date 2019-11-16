@@ -808,7 +808,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
         if space_start < space_total or space_total == 0:
             space_total = int(spaces_data['result']['paging']['total_pages'])
             space_start = int(spaces_data['result']['paging']['next_page_number'])
-        elif day_parts_start = day_parts_total and day_parts_total != 0:
+        elif day_parts_start == day_parts_total and day_parts_total != 0:
             space_total = int(spaces_data['result']['paging']['total_pages'])
             space_start = int(spaces_data['result']['paging']['next_page_number'])
         else:
@@ -836,7 +836,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
         if rooms_start < rooms_total or rooms_total == 0:
             rooms_total = int(rooms_data['result']['paging']['total_pages'])
             rooms_start = int(rooms_data['result']['paging']['next_page_number'])
-        elif day_parts_start = day_parts_total and day_parts_total != 0:
+        elif day_parts_start == day_parts_total and day_parts_total != 0:
             rooms_total = int(rooms_data['result']['paging']['total_pages'])
             rooms_start = int(rooms_data['result']['paging']['next_page_number'])
         else:
