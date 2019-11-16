@@ -10,11 +10,12 @@ from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import TextField, PasswordField, TextAreaField, validators, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
 from werkzeug.utils import secure_filename
-
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import NoResultFound
+from pytz import timezone
 
+import pytz
 import os
 import shutil
 from pathlib import Path
@@ -106,6 +107,20 @@ def tte_session():
     if response.status_code==200:
         session = response.json()['result']
     return (session)
+# -----------------------------------------------------------------------
+# Helper Functions
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# Convert a given datetime object to a UTC time
+# -----------------------------------------------------------------------
+def datetime_utc_convert(timezone,unconverted_datetime):
+    utc = pytz.utc
+    current_tz = timezone(timezone)
+
+
+    
+    utc_dt = datetime(2002, 10, 27, 6, 0, 0, tzinfo=utc)
+
 
 # -----------------------------------------------------------------------
 # Pull Convention listing from TTE
@@ -193,8 +208,9 @@ def tte_convention_geolocation_api_get(ttesession,tteconvention_id):
   geolocation_params = {'session_id': ttesession['id'], '_include_related_objects': 'geolocation'}
   geolocation_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= geolocation_params)
   geolocation_data = geolocation_response.json()
-  print (geolocation_data)
-
+  geolocation_timezone = geolocation_data['result']['geolocation']['timezone']
+  print (geolocation_timezone)
+  return(geolocation_timezone)
 
 # -----------------------------------------------------------------------
 # Volunteer Functions
@@ -496,6 +512,9 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
     slots = {}
     # Get data on the days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
+    # Get the GeoLoc info for the timezone to use
+
+
 
     # Convert slots data to datetime
     #for slot in savedslots:
@@ -597,6 +616,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
     #Get the dayparts for the convention
     convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
+    #Get the Geodata for the convention
+    convention_geodata_tz = tte_convention_geolocation_api_get(ttesession,tteconvention_id)
+
 
     for event in savedevents:
         # Define the list of hosts for the event
@@ -619,7 +641,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
-        event['datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %I:%M %p')
+        event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %I:%M %p')
+        #Convert the datetime value to UTC
+        event['datetime'] = datetime_utc_convert(convention_geodata_tz,event['unconverted_datetime'])
 
         # Identify the Day Id for the convention
         for day in convention_days:
