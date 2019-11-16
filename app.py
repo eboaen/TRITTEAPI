@@ -457,7 +457,7 @@ def convention_save(convention_info,tteconvention_id,tteconvention_name):
     new_convention.slots = conventions_slots
     new_convention.tteid = tteconvention_id
     new_convention.name = tteconvention_name
-    new_convention.tables = slot_info['tables']
+    new_convention.tables = convention_info['tables']
     db.session.merge(new_convention)
     try:
         db.session.commit()
