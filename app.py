@@ -768,6 +768,7 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
         if day_parts_start < day_parts_total or day_parts_total == 0:
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
         elif day_parts_start == day_parts_total and day_parts_total != 0:
+            print ('Breaking out')
             break
     return(all_dayparts)
 
