@@ -82,8 +82,8 @@ class LoginForm(FlaskForm):
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
     volunteersave = SubmitField(label='Submit File for Volunteers')
-    slotsave = SubmitField(label='Submit File for Volunteer Shifts')
     eventsave = SubmitField(label='Submit File for Convention Events')
+    conventionsave = SubmitField(label='Submit File for Convention Details')
     eventsdelete = SubmitField(label='Delete All Convention Events')
     shiftsdelete = SubmitField(label='Delete All Volunteer Shifts ')
     daypartsdelete = SubmitField(label='Delete All Convention Day Parts')
@@ -1009,7 +1009,7 @@ def conventions():
             saved = convention_parse(location,tteconvention_id,tteconvention_name)
             convention_info = list_convention_info(tteconvention_id)
             pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
-            pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
+            # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
