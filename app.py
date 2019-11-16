@@ -59,7 +59,7 @@ class Conventions(db.Model):
     name = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
     slots = db.Column(db.String(2048))
-#    events = db.Column(db.String(2048))
+    tables = db.Column(db.String(255))
 
 class Volunteers(db.Model):
     name = db.Column(db.String(255))
