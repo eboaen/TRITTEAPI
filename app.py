@@ -970,8 +970,11 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             savedvolunteers = list_volunteers(session['tteconvention_id'])
             convention_info = list_convention_info(session['tteconvention_id'])
+            print ('Getting Day Parts')
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
+            print ('Getting Events')
             savedevents = tte_convention_events_api_get(ttesession,session['tteconvention_id'])
+            print ('Getting Tables')
             spaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
