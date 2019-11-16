@@ -690,8 +690,8 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
         eventtypes_response = requests.get(tteconvention_eventtypes_uri, params= eventtypes_params)
         eventtypes_data = eventtypes_response.json()
         convention_eventtypes = eventtypes_data['result']['items']
-            for eventtypes in convention_eventtypes:
-                all_eventtypes.append(eventtypes)
+        for eventtypes in convention_eventtypes:
+            all_eventtypes.append(eventtypes)
         if eventtypes_start < eventtypes_total or eventtypes_total == 0:
             eventtypes_total = int(eventtypes_data['result']['paging']['total_pages'])
             eventtypes_start = int(eventtypes_data['result']['paging']['next_page_number'])
