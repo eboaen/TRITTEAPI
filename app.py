@@ -799,7 +799,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
         spaces_response = requests.get(tteconvention_spaces_url, params= spaces_params)
         spaces_data = spaces_response.json()
         convention_spaces = spaces_data['result']['items']
-        spaces_total = int(spaces_data['result']['paging']['total_pages'])
+        spaces_total = int(convention_spaces['result']['paging']['total_pages'])
         for spaces in convention_spaces:
             all_spaces.append(spaces)
         if spaces_start < spaces_total or spaces_total == 0:
