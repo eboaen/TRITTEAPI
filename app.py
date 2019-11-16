@@ -1005,8 +1005,8 @@ def conventions():
             tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Slot Management
-            convention_info = request.form.get('selectfile')
-            location = os.path.join(folder,slotselect)
+            conventionselect = request.form.get('selectfile')
+            location = os.path.join(folder,conventionselect)
             saved = convention_parse(location,tteconvention_id,tteconvention_name)
             convention_info = list_convention_info(tteconvention_id)
             pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
