@@ -827,15 +827,17 @@ def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,conventi
         rooms_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': room['table_type'] }
         rooms_response = requests.post(config.tte_url + '/room', params= rooms_params)
         rooms_json = rooms_response.json()
-        rooms_id = rooms_json['result']['id']
-        print (room['table_type'],rooms_id)
+        room_id = rooms_json['id']
+        room_name = rooms_json['name']
         for i in range(int(room['table_start']),int(room['table_end'])):
             table_num = i + 1
             table_name = room['table_type'] + ' Table ' + str(table_num)
             spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': rooms_data, 'name': table_name, 'max_tickets': 6}
             spaces_response = requests.post(config.tte_url + '/space', params= spaces_params)
             spaces_json = spaces_response.json()
-            spaces_data = {'space_id': spaces_json['result']['id'],'space_name': spaces_json['result']['name'], 'table_type': room['table_type'],'room_id': rooms_id}
+            space_id = spaces_json['id']
+            space_name = spaces_json['name']
+            spaces_data = {'space_id': space_id,'space_name': space_name, 'table_type': room_name,'room_id': room_id}
             print(spaces_data)
             all_spaces.append(spaces_data)
     return(all_spaces)
