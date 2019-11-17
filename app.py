@@ -230,7 +230,7 @@ def tte_convention_geolocation_api_get(ttesession,tteconvention_id):
 # Parse a File for a convention
 # -----------------------------------------------------------------------
 def convention_parse(filename,tteconvention_id,tteconvention_name):
-    print('convention_parse')
+    #print('convention_parse')
     # Definitions
     slot = {}
     newheader = []
@@ -271,10 +271,8 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
             convention_tables.append(tables)
         convention['slots'] = convention_slots
         convention['tables'] = convention_tables
-        print (convention)
         # save_convention(convention,tteconvention_id,tteconvention_name)
-        #return(convention)
-        return()
+        return(convention)
 
 # -----------------------------------------------------------------------
 # Save a convention to the database
@@ -822,22 +820,23 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 # Post Tables and Rooms to Convention
 # -----------------------------------------------------------------------
 def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info):
-    # print ('tte_convention_roomnsandspaces_api_post:')
+    print ('tte_convention_roomnsandspaces_api_post:')
     all_spaces = []
     spaces_data = {}
     for room in convention_info['tables']:
-        rooms_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': room }
+        rooms_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': room['table_type'] }
         rooms_response = requests.post(config.tte_url + '/room', params= rooms_params)
         rooms_json = rooms_response.json()
-        rooms_data = rooms_json['result']['id']
-        all_rooms.append(rooms_data)
+        rooms_id = rooms_json['result']['id']
+        print (room['table_type'],rooms_id)
         for i in range(room['table_start'],room['table_end']):
             table_num = i + 1
             table_name = room + ' Table ' + str(table_num)
             spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': rooms_data, 'name': table_name, 'max_tickets': 6}
             spaces_response = requests.post(config.tte_url + '/space', params= spaces_params)
             spaces_json = spaces_response.json()
-            spaces_data = {spaces_json['result']['id'],spaces_json['result']['name']}
+            spaces_data = {'space_id': spaces_json['result']['id'],'space_name': spaces_json['result']['name'], 'table_type': room['table_type'],'room_id': rooms_id}
+            print(spaces_data)
             all_spaces.append(spaces_data)
     return(all_spaces)
 
@@ -1093,9 +1092,8 @@ def conventions():
             conventionselect = request.form.get('selectfile')
             location = os.path.join(folder,conventionselect)
             convention_info = convention_parse(location,tteconvention_id,tteconvention_name)
+            pushroomsandspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
             # pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
-            pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,convention_info)
-            savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
             # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
