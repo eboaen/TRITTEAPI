@@ -1156,7 +1156,7 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             tterooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             ttespace = tte_convention_spaces_api_get(ttesession,tteconvention_id)
-            ttedeleteroomsandspace = tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace):
+            ttedeleteroomsandspace = tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
