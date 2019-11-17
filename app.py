@@ -831,7 +831,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
     tteconvention_spaces_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['spaces']
     # Loop through the spaces for the convention
     while spaces_total >= spaces_start:
-        spaces_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+        spaces_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': spaces_start}
         spaces_response = requests.get(tteconvention_spaces_url, params= spaces_params)
         spaces_data = spaces_response.json()
         convention_spaces = spaces_data['result']['items']
@@ -884,7 +884,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
       tteconvention_rooms_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['rooms']
       # Loop through the rooms for the convention
       while rooms_total >= rooms_start:
-        rooms_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+        rooms_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': rooms_start}
         rooms_response = requests.get(tteconvention_rooms_url, params= rooms_params)
         rooms_data = rooms_response.json()
         convention_rooms = rooms_data['result']['items']
