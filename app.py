@@ -514,8 +514,8 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
                 shifttype_id = shifttype['id']
             else:
                 pass
-    print (shifttype_name, shifttype_id)
     # For each slot, get the information we need to be able to post the slot as a shift
+    print (convention_info)
     for slot in convention_info['slots']:
         shift_name = 'Slot ' + str(slot)
         slot_length = int(convention_info[slot][1])
