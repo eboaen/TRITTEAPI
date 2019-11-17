@@ -516,23 +516,24 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
                 pass
     # For each slot, get the information we need to be able to post the slot as a shift
     print (convention_info)
-    for slot in convention_info['slots']:
-        shift_name = 'Slot ' + str(slot)
-        slot_length = int(convention_info[slot][1])
-        shift_time_s = convention_info[slot][0]
-        shift_actual = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
-        shift_start = datetime_utc_convert(ttesession,tteconvention_id,shift_actual)
-        shift_end = shift_start + datetime.timedelta(hours=slot_length)
-        for day in day_info:
-            slot_date = datetime.date(shift_start.year,shift_start.month,shift_start.day)
-            shift_date = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
-            # Compare the dates of the slot and the shift to get the tteid to use to post the shift
-            if slot_date == shift_date:
-                day_id = day['id']
-                shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': day_id, 'shifttype_id': shifttype_id}
-                shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
-                shift_data = shift_response.json()
-                print (shift_data)
+    for field in convention_info['slots']:
+        if isinstance(field), int):
+            shift_name = 'Slot ' + field
+            slot_length = int(convention_info[field][1])
+            shift_time_s = convention_info[field][0]
+            shift_actual = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
+            shift_start = datetime_utc_convert(ttesession,tteconvention_id,shift_actual)
+            shift_end = shift_start + datetime.timedelta(hours=slot_length)
+            for day in day_info:
+                slot_date = datetime.date(shift_start.year,shift_start.month,shift_start.day)
+                shift_date = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
+                # Compare the dates of the slot and the shift to get the tteid to use to post the shift
+                if slot_date == shift_date:
+                    day_id = day['id']
+                    shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': day_id, 'shifttype_id': shifttype_id}
+                    shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
+                    shift_data = shift_response.json()
+                    print (shift_data)
     return('saved')
 
 # -----------------------------------------------------------------------
