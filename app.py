@@ -857,7 +857,7 @@ def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tteroo
 # Get Table Information
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_get(ttesession,tteconvention_id):
-    print ('tte_convention_spaces_api_get:')
+    # print ('tte_convention_spaces_api_get:')
     spaces_start = 1
     spaces_total = 1000
     all_spaces = list()
@@ -870,20 +870,15 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
         spaces_response = requests.get(tteconvention_spaces_url, params= spaces_params)
         spaces_data = spaces_response.json()
         convention_spaces = spaces_data['result']['items']
-        print ('a: ', spaces_start, spaces_total)
         spaces_total = int(spaces_data['result']['paging']['total_pages'])
         spaces_start = int(spaces_data['result']['paging']['page_number'])
-        print ('b: ', spaces_start, spaces_total)
         for spaces in convention_spaces:
             all_spaces.append(spaces)
         if spaces_start < spaces_total:
             spaces_start = int(spaces_data['result']['paging']['next_page_number'])
-            print ('if ', spaces_start, spaces_total)
         elif spaces_start == spaces_total:
-            print ('ef ', spaces_start, spaces_total)
             break
         else:
-            print ('e ',spaces_start, spaces_total)
             break
     return(all_spaces)
 
