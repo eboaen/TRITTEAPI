@@ -835,6 +835,19 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
       return(all_spaces)
 
 # -----------------------------------------------------------------------
+# Post Tables to Convention
+# -----------------------------------------------------------------------
+def tte_convention_spaces_api_post(ttesession,tteconvention_id,savedslots):
+    convention_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
+    for table in range(savedslots['tables']):
+        table_name = 'Table ' + table
+        print (table_name)
+        #spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': convention_rooms['id'], 'name': table_name, 'max_tickets': 6}
+        #spaces_response = requests.post(config.tte_url + '/api/room', params= spaces_params)
+        #spaces_json = spaces_response.json()
+    return ()
+
+# -----------------------------------------------------------------------
 # Get Room Information
 # -----------------------------------------------------------------------
 def tte_convention_rooms_api_get(ttesession,tteconvention_id):
@@ -1039,8 +1052,8 @@ def conventions():
             saved = convention_parse(location,tteconvention_id,tteconvention_name)
             convention_info = list_convention_info(tteconvention_id)
             pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
-            pushrooms = tte_convention_volunteer_rooms_api_post(ttesession,tteconvention_id,savedslots)
-            pushtables = tte_convention_volunteer_tables_api_post(ttesession,tteconvention_id,savedslots)
+            #pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,savedslots)
+            pushtables = tte_convention_tables_api_post(ttesession,tteconvention_id,savedslots)
             # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
