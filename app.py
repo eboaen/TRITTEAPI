@@ -87,6 +87,7 @@ class FileForm(FlaskForm):
     eventsdelete = SubmitField(label='Delete All Convention Events')
     shiftsdelete = SubmitField(label='Delete All Volunteer Shifts ')
     daypartsdelete = SubmitField(label='Delete All Convention Day Parts')
+    roomsandtablesdelete = SubmitField(label='Delete All Convention Rooms and Tables')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
@@ -181,6 +182,29 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     return(convention_info)
 
 # -----------------------------------------------------------------------
+# Pull Convention Data from the database
+# -----------------------------------------------------------------------
+def list_convention_info(tteconvention_id):
+    convention = Conventions()
+    convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
+    convention_data = {}
+    try:
+        if convention.slots is not None:
+            con_slots = json.loads(convention.slots)
+            for slot in con_slots:
+                try:
+                    new_slot = int(slot)
+                    convention_data[new_slot] = con_slots[slot]
+                except ValueError:
+                    pass
+        if convention.tables is not None:
+            convention_data['tables'] = convention.tables
+    except:
+        convention_data = None
+        pass
+    return(convention_data)
+
+# -----------------------------------------------------------------------
 # Pull Slot Data from the TTE API
 # -----------------------------------------------------------------------
 def get_slot_info(ttesession,slot_url):
@@ -190,29 +214,6 @@ def get_slot_info(ttesession,slot_url):
     slot_info = slot_data['result']['items']
     return(slot_info)
 
-# -----------------------------------------------------------------------
-# Save Convention information
-# -----------------------------------------------------------------------
-def save_convention(convention):
-    new_convention = Conventions()
-    convention_exist = Conventions.query.get(convention['id'])
-
-    if convention_exist is None:
-        new_convention.tteid = convention['id']
-        new_convention.name = convention['name']
-        db.session.merge(new_convention)
-        try:
-            db.session.commit()
-            saved = 'saved'
-            return (saved)
-        except:
-            logger.exception("Cannot save new event")
-            db.session.rollback()
-            saved = 'failed'
-            return (saved)
-    else:
-        saved = 'exists'
-        return (saved)
 
 # -----------------------------------------------------------------------
 # Get the Geolocation data (for the time zone of the con)
@@ -224,6 +225,78 @@ def tte_convention_geolocation_api_get(ttesession,tteconvention_id):
   geolocation_timezone = geolocation_data['result']['geolocation']['timezone']
   print (geolocation_timezone)
   return(geolocation_timezone)
+
+# -----------------------------------------------------------------------
+# Parse a File for a convention
+# -----------------------------------------------------------------------
+def convention_parse(filename,tteconvention_id,tteconvention_name):
+    # Definitions
+    slot = {}
+    newheader = []
+    convention = []
+    tables = {}
+    # Open CSV file and verify headers
+    with open(filename, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for header in reader.fieldnames:
+            if 'Slot' in header:
+                header_l = header.rsplit()
+                newheader.append('slot ' + header_l[1])
+            if 'Length' in header:
+                newheader.append('length')
+            if 'Table Start' in header:
+                newheader.append('table_start')
+            if 'Table End' in header:
+                newheader.append('table_end')
+            if 'Table Type' in header:
+                newheader.append('table_type')
+        reader.fieldnames = newheader
+        for room_info in reader:
+            for field in room_info:
+                # Create the dict of slot time and length of each slot if the field is a slot field
+                if 'slot' in field and room_info[field] is not 'X':
+                    slot_num = field.rsplit()
+                    new_slot[slot_num[1]] = {room_info[field], room_info['length']}
+                    # Add to a list of all the slots for the convention
+                    convention_slots.append(new_slot[slot_num[1]])
+            # Json-ify and save to the dict
+            convention['slots'] = json.dumps(convention_slots)
+            # Create a dict for each room of the convention
+            tables[room_info] = {'table_start': room_info['table_start'], 'table_end': room_info['table_end']}
+            # Add the tables dict to a list of rooms
+            convention_tables.append(tables[room_info])
+            # Json-ify and save to the dict
+            convention['tables'] = json.dumps(convention_tables)
+        print (convention)
+        # save_convention(convention,tteconvention_id,tteconvention_name)
+        #return(convention)
+        return()
+
+# -----------------------------------------------------------------------
+# Save a convention to the database
+# -----------------------------------------------------------------------
+def save_convention(convention,tteconvention_id,tteconvention_name):
+    convention_exist = list_convention_info(tteconvention_id)
+    new_convention = Conventions()
+    #Check to see if the convention already exists
+    #If the convention doesn't, Setup new convention database entry
+    if convention_exist is None:
+        new_convention.tteid = tteconvention_id
+        new_convention.name = tteconvention_name
+        new_convention.tables = convention['tables']
+        new_convention.slots = convention['slots']
+        db.session.merge(new_convention)
+    else:
+        saved = 'exists'
+    try:
+        db.session.commit()
+        saved = 'saved'
+        return (saved)
+    except:
+        logger.exception("Cannot save new convention")
+        db.session.rollback()
+        saved = 'failed'
+        return (saved)
 
 # -----------------------------------------------------------------------
 # Volunteer Functions
@@ -398,86 +471,6 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
 # -----------------------------------------------------------------------
 # Slot Functions
 # -----------------------------------------------------------------------
-# -----------------------------------------------------------------------
-# List all volunteer shifts in database for the convention
-# -----------------------------------------------------------------------
-def list_convention_info(tteconvention_id):
-    convention = Conventions()
-    convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
-    convention_data = {}
-    try:
-        if convention.slots is not None:
-            con_slots = json.loads(convention.slots)
-            for slot in con_slots:
-                try:
-                    new_slot = int(slot)
-                    convention_data[new_slot] = con_slots[slot]
-                except ValueError:
-                    pass
-        if convention.tables is not None:
-            convention_data['tables'] = convention.tables
-    except:
-        convention_data = None
-        pass
-    return(convention_data)
-
-# -----------------------------------------------------------------------
-# Parse a File for shifts
-# -----------------------------------------------------------------------
-def convention_parse(filename,tteconvention_id,tteconvention_name):
-    # Definitions
-    slot = {}
-    newheader = []
-    convention = []
-    # Open CSV file and verify headers
-    with open(filename, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for header in reader.fieldnames:
-            if 'Slot' in header:
-                header_l = header.rsplit()
-                newheader.append('slot ' + header_l[1])
-            if 'Length' in header:
-                newheader.append('length')
-            if 'Tables' in header:
-                newheader.append('tables')
-        reader.fieldnames = newheader
-        for convention_info in reader:
-            convention_saved = convention_save(convention_info,tteconvention_id,tteconvention_name)
-            convention.append(convention_saved)
-        return(convention)
-
-# -----------------------------------------------------------------------
-# Save shifts to database
-# -----------------------------------------------------------------------
-def convention_save(convention_info,tteconvention_id,tteconvention_name):
-    convention_exist = list_convention_info(tteconvention_id)
-    new_convention = Conventions()
-    new_slot = {}
-    # Check to see if the convention already exists
-    if convention_exist is None:
-        # Create the dict of slot time and length of each slot
-        for field in convention_info:
-            if 'slot' in field:
-                slot_num = field.rsplit()
-                new_slot[slot_num[1]] = convention_info[field], convention_info['length']
-        conventions_slots = json.dumps(new_slot)
-        new_convention.slots = conventions_slots
-        new_convention.tteid = tteconvention_id
-        new_convention.name = tteconvention_name
-        new_convention.tables = convention_info['tables']
-        db.session.merge(new_convention)
-        try:
-            db.session.commit()
-            saved = 'saved'
-            return (saved)
-        except:
-            logger.exception("Cannot save volunteer")
-            db.session.rollback()
-            saved = 'failed'
-            return (saved)
-    else:
-        return(None)
-
 # -----------------------------------------------------------------------
 # Delete shofts from database
 # -----------------------------------------------------------------------
@@ -819,6 +812,48 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
     return()
 
 # -----------------------------------------------------------------------
+# Rooms and Spaces (Tables) Functions
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# Post Tables and Rooms to Convention
+# -----------------------------------------------------------------------
+def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info):
+    # print ('tte_convention_roomnsandspaces_api_post:')
+    all_spaces = []
+    spaces_data = {}
+    for room in convention_info['tables']:
+        rooms_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': room }
+        rooms_response = requests.post(config.tte_url + '/room', params= rooms_params)
+        rooms_json = rooms_response.json()
+        rooms_data = rooms_json['result']['id']
+        all_rooms.append(rooms_data)
+        for i in range(room['table_start'],room['table_end']):
+            table_num = i + 1
+            table_name = room + ' Table ' + str(table_num)
+            spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': rooms_data, 'name': table_name, 'max_tickets': 6}
+            spaces_response = requests.post(config.tte_url + '/space', params= spaces_params)
+            spaces_json = spaces_response.json()
+            spaces_data = {spaces_json['result']['id'],spaces_json['result']['name']}
+            all_spaces.append(spaces_data)
+    return(all_spaces)
+
+# -----------------------------------------------------------------------
+# Delete Tables and Rooms in Convention
+# -----------------------------------------------------------------------
+def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace):
+    # print ('tte_convention_roomnsandspaces_api_delete:')
+    for space in ttespace:
+        space_delete_params = {'session_id': ttesession['id']}
+        space_delete_url = 'https://tabletop.events/api/space/' + space['id']
+        space_delete_response = requests.delete(space_delete_url, params= space_delete_params)
+        space_delete_data = space_delete_response.json()
+    for room in tterooms:
+        room_delete_params = {'session_id': ttesession['id']}
+        room_delete_url = 'https://tabletop.events/api/room/' + room['id']
+        room_delete_response = requests.delete(room_delete_url, params= room_delete_params)
+        room_delete_data = room_delete_response.json()
+    return(roomsandspacesdeleted)
+# -----------------------------------------------------------------------
 # Get Table Information
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_get(ttesession,tteconvention_id):
@@ -851,26 +886,6 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
             print ('e ',spaces_start, spaces_total)
             break
     return(all_spaces)
-
-# -----------------------------------------------------------------------
-# Post Tables to Convention
-# -----------------------------------------------------------------------
-def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
-    # print ('tte_convention_spaces_api_post:')
-    all_spaces = []
-    spaces_data = {}
-    convention_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
-    for room in convention_rooms:
-        convention_room_id = room['id']
-    for table in range(int(convention_info['tables'])):
-        table_num = table + 1
-        table_name = 'Table ' + str(table_num)
-        spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': convention_room_id, 'name': table_name, 'max_tickets': 6}
-        spaces_response = requests.post(config.tte_url + '/space', params= spaces_params)
-        spaces_json = spaces_response.json()
-        spaces_data = {spaces_json['result']['id'],spaces_json['result']['name']}
-        all_spaces.append(spaces_data)
-    return (all_spaces)
 
 # -----------------------------------------------------------------------
 # Get Room Information
@@ -1073,11 +1088,10 @@ def conventions():
             # Slot Management
             conventionselect = request.form.get('selectfile')
             location = os.path.join(folder,conventionselect)
-            saved = convention_parse(location,tteconvention_id,tteconvention_name)
-            convention_info = list_convention_info(tteconvention_id)
-            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
-            # pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,convention_info)
-            savedspaces = tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info)
+            convention_info = convention_parse(location,tteconvention_id,tteconvention_name)
+            # pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
+            pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,convention_info)
+            savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
             # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
@@ -1131,6 +1145,18 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             ttedayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
             deletedayparts = tte_convention_dayparts_api_delete(ttesession,tteconvention_id,ttedayparts)
+            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
+            })
+        if request.form.get('roomsandtablesdelete') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            tteconvention_name = tteconvention_data['data']['result']['name']
+            tterooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
+            ttespace = tte_convention_spaces_api_get(ttesession,tteconvention_id)
+            ttedeleteroomsandspace = tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace):
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,

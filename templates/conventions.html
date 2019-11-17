@@ -75,6 +75,7 @@
                   {{ fileform.eventsdelete }}
                   {{ fileform.shiftsdelete }}
                   {{ fileform.daypartsdelete }}
+                  {{ filefomr.tablesandroomsdelete }}
                 </div>
               </form>
             </div> <!-- /container -->
@@ -95,12 +96,14 @@
               </tr>
               </thead>
               <tbody>
-                {% for slot in savedslots|sort %}
+                {% for field in convention_info %}
+                  {% if 'slot' in field %}
                   <tr>
-                      <td>{{ slot }}</td>
-                      <td>{{ savedslots[slot][0] }}</td>
-                      <td>{{ savedslots[slot][1] }}</td>
+                    <td>{{ field }}</td>
+                    <td>{{ convention_info[field][0] }}</td>
+                    <td>{{ convention_info[field][1] }}</td>
                   </tr>
+                  {% endif %}
                 {% endfor %}
               </tbody>
             </table>
