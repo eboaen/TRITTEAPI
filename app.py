@@ -517,7 +517,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     # For each slot, get the information we need to be able to post the slot as a shift
     print (convention_info)
     for field in convention_info['slots']:
-        if isinstance(field), int):
+        if isinstance(field, int):
             shift_name = 'Slot ' + field
             slot_length = int(convention_info[field][1])
             shift_time_s = convention_info[field][0]
