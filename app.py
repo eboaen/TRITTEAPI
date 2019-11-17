@@ -262,17 +262,16 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
                 # Create the dict of slot time and length of each slot if the field is a slot field
                 if 'slot' in field and room_info[field] is not 'X':
                     slot_num = field.rsplit()
-                    new_slot[slot_num[1]] = {room_info[field], room_info['length']}
+                    new_slot = {'slot': slot_num[1] , 'time': room_info[field], 'length': room_info['length']}
                     # Add to a list of all the slots for the convention
-                    convention_slots.append(new_slot[slot_num[1]])
+                    convention_slots.append(new_slot)
             convention['slots'] = convention_slots
             print (convention['slots'])
             # Create a dict for each room of the convention
-            tables = {'room_name': room_info, 'table_start': room_info['table_start'],'table_end': room_info['table_end']}
+            tables = {'table_type': room_info['table_type'], 'table_start': room_info['table_start'],'table_end': room_info['table_end']}
             # Add the tables dict to a list of rooms
             convention_tables.append(tables)
         convention['tables'] = convention_tables
-        print (convention['tables'])
         print (convention)
         # save_convention(convention,tteconvention_id,tteconvention_name)
         #return(convention)
