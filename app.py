@@ -494,7 +494,7 @@ def database_slot_delete(tteconvention_id):
 # -----------------------------------------------------------------------
 # Post to TTE the Volunteer Shifts
 # -----------------------------------------------------------------------
-def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots):
+def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     # Get the information on Convention Days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
@@ -507,10 +507,10 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
             shifttype_name = 'Slot'
             shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
     # For each slot, get the information we need to be able to post the slot as a shift
-    for slot in savedslots:
+    for slot in convention_info:
         shift_name = 'Slot ' + str(slot)
-        slot_length = int(savedslots[slot][1])
-        shift_time_s = savedslots[slot][0]
+        slot_length = int(convention_info[slot][1])
+        shift_time_s = convention_info[slot][0]
         shift_actual = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
         shift_start = datetime_utc_convert(ttesession,tteconvention_id,shift_start)
         shift_end = shift_start + datetime.timedelta(hours=slot_length)
@@ -552,7 +552,7 @@ def tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shi
 # -----------------------------------------------------------------------
 # Post slots to TTE as Day Parts
 # -----------------------------------------------------------------------
-def tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots):
+def tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info):
     #Declarations
     slots = {}
     # Get data on the days
@@ -837,9 +837,9 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Post Tables to Convention
 # -----------------------------------------------------------------------
-def tte_convention_spaces_api_post(ttesession,tteconvention_id,savedslots):
+def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
     convention_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
-    for table in range(savedslots['tables']):
+    for table in range(convention_info['tables']):
         table_name = 'Table ' + table
         print (table_name)
         #spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': convention_rooms['id'], 'name': table_name, 'max_tickets': 6}
@@ -995,9 +995,6 @@ def conventions():
     folder = config.UPLOAD_FOLDER
     files = os.listdir(folder)
     tteconventions = gettteconventions(ttesession)
-    savedslots = {}
-    savedvolunteers = {}
-    savedevents = {}
     # Form Function calls
     conform = ConForm(request.form, obj=tteconventions)
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
@@ -1051,10 +1048,10 @@ def conventions():
             location = os.path.join(folder,conventionselect)
             saved = convention_parse(location,tteconvention_id,tteconvention_name)
             convention_info = list_convention_info(tteconvention_id)
-            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
-            #pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,savedslots)
-            pushtables = tte_convention_tables_api_post(ttesession,tteconvention_id,savedslots)
-            # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
+            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
+            #pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,convention_info)
+            pushtables = tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info)
+            # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
@@ -1093,7 +1090,7 @@ def conventions():
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteshifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
             deleteshifts = tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,tteshifts)
-            savedslots = list_convention_info(tteconvention_id)
+            convention_info = list_convention_info(tteconvention_id)
             databaseslotdelete = database_slot_delete(tteconvention_id)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
