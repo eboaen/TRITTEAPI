@@ -716,7 +716,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 # Get Event Types Information
 # -----------------------------------------------------------------------
 def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
-      eventtypes_start = 0
+      eventtypes_start = 1
       eventtypes_total = 1000
       all_eventtypes = list()
       # Get the data on the convention
@@ -785,7 +785,7 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
 # Get the id for day parts
 # -----------------------------------------------------------------------
 def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
-    day_parts_start = 0
+    day_parts_start = 1
     day_parts_total = 1000
     all_dayparts = list()
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
@@ -823,7 +823,7 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_get(ttesession,tteconvention_id):
     print ('tte_convention_spaces_api_get:')
-    spaces_start = 0
+    spaces_start = 1
     spaces_total = 1000
     all_spaces = list()
     # Get the data on the convention
@@ -872,7 +872,7 @@ def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
 # Get Room Information
 # -----------------------------------------------------------------------
 def tte_convention_rooms_api_get(ttesession,tteconvention_id):
-      rooms_start = 0
+      rooms_start = 1
       rooms_total = 1000
       all_rooms = list()
       # Get the data on the convention
@@ -901,7 +901,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_events_api_get(ttesession,tteconvention_id):
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    events_start = 0
+    events_start = 1
     events_total = 1000
     all_events = list()
 
