@@ -841,18 +841,20 @@ def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,conventi
 # Delete Tables and Rooms in Convention
 # -----------------------------------------------------------------------
 def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace):
-    # print ('tte_convention_roomnsandspaces_api_delete:')
+    print ('tte_convention_roomnsandspaces_api_delete:')
     for space in ttespace:
         space_delete_params = {'session_id': ttesession['id']}
         space_delete_url = 'https://tabletop.events/api/space/' + space['id']
         space_delete_response = requests.delete(space_delete_url, params= space_delete_params)
         space_delete_data = space_delete_response.json()
+        all_deleted.append(space_delete_data)
     for room in tterooms:
         room_delete_params = {'session_id': ttesession['id']}
         room_delete_url = 'https://tabletop.events/api/room/' + room['id']
         room_delete_response = requests.delete(room_delete_url, params= room_delete_params)
         room_delete_data = room_delete_response.json()
-
+        all_deleted.append(room_delete_data)
+    print(room_delete_data)
     return(room_delete_data)
 # -----------------------------------------------------------------------
 # Get Table Information
