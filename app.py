@@ -237,8 +237,8 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
     convention_slots = []
     convention_tables = []
     convention = {}
-    tables = {}
-    new_slot = {}
+
+
     # Open CSV file and verify headers
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -256,6 +256,8 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
                 newheader.append('table_type')
         reader.fieldnames = newheader
         for room_info in reader:
+            tables = {}
+            new_slot = {}
             for field in room_info:
                 # Create the dict of slot time and length of each slot if the field is a slot field
                 if 'slot' in field and room_info[field] is not 'X':
@@ -263,15 +265,14 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
                     new_slot[slot_num[1]] = {room_info[field], room_info['length']}
                     # Add to a list of all the slots for the convention
                     convention_slots.append(new_slot[slot_num[1]])
-            # Json-ify and save to the dict
             convention['slots'] = convention_slots
+            print (convention['slots'])
             # Create a dict for each room of the convention
-            print (room_info['table_start'],room_info['table_end'])
-            tables[room_info] = {room_info['table_start'],room_info['table_end']}
+            tables = {'room_name': room_info, 'table_start': room_info['table_start'],'table_end': room_info['table_end']}
             # Add the tables dict to a list of rooms
-            convention_tables.append(tables[room_info])
-            # Json-ify and save to the dict
-            convention['tables'] = convention_tables
+            convention_tables.append(tables)
+        convention['tables'] = convention_tables
+        print (convention['tables'])
         print (convention)
         # save_convention(convention,tteconvention_id,tteconvention_name)
         #return(convention)
