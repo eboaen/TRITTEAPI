@@ -855,7 +855,7 @@ def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
         #spaces_response = requests.post(config.tte_url + '/api/room', params= spaces_params)
         #spaces_json = spaces_response.json()
         #spaces_data = spaces_json['result']['items']
-        print spaces(spaces_data)
+        print(table_name)
     return (spaces_data)
 
 # -----------------------------------------------------------------------
