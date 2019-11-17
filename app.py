@@ -843,7 +843,6 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
             space_start = int(spaces_data['result']['paging']['next_page_number'])
         elif spaces_start == spaces_total:
             break
-    print (all_spaces)
     return(all_spaces)
 
 # -----------------------------------------------------------------------
