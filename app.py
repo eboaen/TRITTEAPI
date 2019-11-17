@@ -839,10 +839,9 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
         spaces_total = int(spaces_data['result']['paging']['total_pages'])
         spaces_start = int(spaces_data['result']['paging']['page_number'])
         for spaces in convention_spaces:
-            print(spaces)
             all_spaces.append(spaces)
         if spaces_start < spaces_total:
-            space_start = int(spaces_data['result']['paging']['next_page_number'])
+            spaces_start = int(spaces_data['result']['paging']['next_page_number'])
         elif spaces_start == spaces_total:
             break
         else:
