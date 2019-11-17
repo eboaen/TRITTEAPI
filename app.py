@@ -794,7 +794,6 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
             day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
         elif day_parts_start == day_parts_total:
             break
-    print(all_dayparts)
     return(all_dayparts)
 
 # -----------------------------------------------------------------------
@@ -1012,10 +1011,11 @@ def conventions():
                 pass
             print ('Getting Day Parts')
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
+            print (ttedayparts)
             print ('Getting Events')
             savedevents = tte_convention_events_api_get(ttesession,session['tteconvention_id'])
             print ('Getting Tables')
-            spaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
+            savedspaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
             print ('Done')
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
@@ -1023,6 +1023,7 @@ def conventions():
             'ttedayparts' : ttedayparts,
             'savedvolunteers' : savedvolunteers,
             'savedevents' : savedevents,
+            'savedspaces' : savedspaces,
             'convention_info' : convention_info
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
