@@ -504,7 +504,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
     # Verify if the shift type exists, if it doesn't, initialize the shifttype of "Slot" for the convention
     shiftypes_info = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
-    if len(shiftypes_info) = 0:
+    if len(shiftypes_info) == 0:
         shifttype_name = 'Slot'
         shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
     else:
