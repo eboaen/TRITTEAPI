@@ -849,11 +849,12 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
 def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
     convention_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
     for table in range(int(convention_info['tables'])):
-        table_name = 'Table ' + str(table)
+        table_num = table + 1
+        table_name = 'Table ' + str(table_num)
         spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': convention_rooms['id'], 'name': table_name, 'max_tickets': 6}
-        spaces_response = requests.post(config.tte_url + '/api/room', params= spaces_params)
-        spaces_json = spaces_response.json()
-        spaces_data = spaces_json['result']['items']
+        #spaces_response = requests.post(config.tte_url + '/api/room', params= spaces_params)
+        #spaces_json = spaces_response.json()
+        #spaces_data = spaces_json['result']['items']
         print spaces(spaces_data)
     return (spaces_data)
 
