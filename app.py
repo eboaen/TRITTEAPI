@@ -525,7 +525,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
             shift_start = datetime_utc_convert(ttesession,tteconvention_id,shift_actual)
             shift_end = shift_start + datetime.timedelta(hours=slot_length)
             for day in day_info:
-                slot_date = datetime.date(shift_start.year,shift_start.month,shift_start.day)
+                slot_date = datetime.date(shift_actual.year,shift_actual.month,shift_actual.day)
                 shift_date = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
                 # Compare the dates of the slot and the shift to get the tteid to use to post the shift
                 if slot_date == shift_date:
@@ -769,10 +769,10 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
     day_info = []
     # Get the data on the convention
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-    tteconvention_days_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
+    tteconvention_days_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
     # Use the day url to get data on the days
     day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    day_response = requests.get(tteconvention_days_uri, params= day_params)
+    day_response = requests.get(tteconvention_days_url, params= day_params)
     day_data = day_response.json()
     # Create a datetime value for each day, add to a new dict
     for item in day_data['result']['items']:
@@ -869,7 +869,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
       # Loop through the rooms for the convention
       while rooms_total >= rooms_start:
         rooms_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-        rooms_response = requests.get(tteconvention_rooms_uri, params= rooms_params)
+        rooms_response = requests.get(tteconvention_rooms_url, params= rooms_params)
         rooms_data = rooms_response.json()
         convention_rooms = rooms_data['result']['items']
         rooms_total = int(rooms_data['result']['paging']['total_pages'])
