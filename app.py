@@ -267,7 +267,7 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
             convention['slots'] = convention_slots
             # Create a dict for each room of the convention
             print (room_info['table_start'],room_info['table_end'])
-            tables[room_info] = {'table_start': room_info['table_start'], 'table_end': room_info['table_end']}
+            tables[room_info] = {room_info['table_start'],room_info['table_end']}
             # Add the tables dict to a list of rooms
             convention_tables.append(tables[room_info])
             # Json-ify and save to the dict
