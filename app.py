@@ -525,6 +525,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
 # Pull shifts from TTE
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id):
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     shifttypes_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
     shifttypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
     shifttypes_response = requests.get(shifttypes_url, params= shifttypes_params)
@@ -536,6 +537,7 @@ def tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id):
 # Post shiftstypes to TTE
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttypetype_name):
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     shifttypes_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shifttype_name}
     shifttypes_response = requests.post(config.tte_url + '/api/shifttype', params= shifttypes_params)
     shifttypes_json = shifttypes_response.json()
