@@ -401,7 +401,6 @@ def list_convention_info(tteconvention_id):
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
     convention_data = {}
-
     try:
         if convention.slots is not None:
             con_slots = json.loads(convention.slots)
@@ -411,10 +410,8 @@ def list_convention_info(tteconvention_id):
                     convention_data[new_slot] = con_slots[slot]
                 except ValueError:
                     pass
-            try:
-                convention_data['tables'] = convention.tables
-            except:
-                pass
+        if convention.tables is not None:
+            convention_data['tables'] = convention.tables
     except:
         convention_data = None
         pass
@@ -449,30 +446,33 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
 # Save shifts to database
 # -----------------------------------------------------------------------
 def convention_save(convention_info,tteconvention_id,tteconvention_name):
-    all_slots = list_convention_info(tteconvention_id)
+    convention_exist = list_convention_info(tteconvention_id)
     new_convention = Conventions()
     new_slot = {}
-    # Check the database to see if the slot already exists for the convention
-    # Create the dict of slot time and length of each slot
-    for field in convention_info:
-        if 'slot' in field:
-            slot_num = field.rsplit()
-            new_slot[slot_num[1]] = convention_info[field], convention_info['length']
-    conventions_slots = json.dumps(new_slot)
-    new_convention.slots = conventions_slots
-    new_convention.tteid = tteconvention_id
-    new_convention.name = tteconvention_name
-    new_convention.tables = convention_info['tables']
-    db.session.merge(new_convention)
-    try:
-        db.session.commit()
-        saved = 'saved'
-        return (saved)
-    except:
-        logger.exception("Cannot save volunteer")
-        db.session.rollback()
-        saved = 'failed'
-        return (saved)
+    # Check to see if the convention already exists
+    if convention_exist is None:
+        # Create the dict of slot time and length of each slot
+        for field in convention_info:
+            if 'slot' in field:
+                slot_num = field.rsplit()
+                new_slot[slot_num[1]] = convention_info[field], convention_info['length']
+        conventions_slots = json.dumps(new_slot)
+        new_convention.slots = conventions_slots
+        new_convention.tteid = tteconvention_id
+        new_convention.name = tteconvention_name
+        new_convention.tables = convention_info['tables']
+        db.session.merge(new_convention)
+        try:
+            db.session.commit()
+            saved = 'saved'
+            return (saved)
+        except:
+            logger.exception("Cannot save volunteer")
+            db.session.rollback()
+            saved = 'failed'
+            return (saved)
+    else:
+        return(None)
 
 # -----------------------------------------------------------------------
 # Delete shofts from database
@@ -1039,6 +1039,8 @@ def conventions():
             saved = convention_parse(location,tteconvention_id,tteconvention_name)
             convention_info = list_convention_info(tteconvention_id)
             pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslots)
+            pushrooms = tte_convention_volunteer_rooms_api_post(ttesession,tteconvention_id,savedslots)
+            pushtables = tte_convention_volunteer_tables_api_post(ttesession,tteconvention_id,savedslots)
             # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,savedslots)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
