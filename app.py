@@ -848,6 +848,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
     all_spaces = []
+    spaces_data = {}
     convention_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
     for room in convention_rooms:
         convention_room_id = room['id']
