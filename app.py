@@ -236,7 +236,7 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
     newheader = []
     convention_slots = []
     convention_tables = []
-    convention = []
+    convention = {}
     tables = {}
     new_slot = {}
     # Open CSV file and verify headers
