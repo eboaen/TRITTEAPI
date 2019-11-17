@@ -1042,7 +1042,9 @@ def conventions():
             session['tteconvention_id'] = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             try:
+                print ('Getting Volunteer Info')
                 savedvolunteers = list_volunteers(session['tteconvention_id'])
+                print ('Getting Convention Info')
                 convention_info = list_convention_info(session['tteconvention_id'])
             except:
                 pass
