@@ -517,7 +517,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
                 shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
     print (shifttype_name, shifttype_id)
     # For each slot, get the information we need to be able to post the slot as a shift
-    for slot in convention_info:
+    for slot in convention_info['slots']:
         shift_name = 'Slot ' + str(slot)
         slot_length = int(convention_info[slot][1])
         shift_time_s = convention_info[slot][0]
