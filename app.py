@@ -265,13 +265,13 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
                     convention_slots.append(new_slot[slot_num[1]])
             print (convention_slots)
             # Json-ify and save to the dict
-            convention['slots'] = json.dumps(convention_slots)
+            convention['slots'] = convention_slots
             # Create a dict for each room of the convention
             tables[room_info] = {'table_start': room_info['table_start'], 'table_end': room_info['table_end']}
             # Add the tables dict to a list of rooms
             convention_tables.append(tables[room_info])
             # Json-ify and save to the dict
-            convention['tables'] = json.dumps(convention_tables)
+            convention['tables'] = convention_tables
         print (convention)
         # save_convention(convention,tteconvention_id,tteconvention_name)
         #return(convention)
