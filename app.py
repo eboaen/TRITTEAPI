@@ -518,7 +518,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     print (convention_info)
     for field in convention_info:
         if isinstance(field, int):
-            shift_name = 'Slot ' + field
+            shift_name = 'Slot ' + str(field)
             slot_length = int(convention_info[field][1])
             shift_time_s = convention_info[field][0]
             shift_actual = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
