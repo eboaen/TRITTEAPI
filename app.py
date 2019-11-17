@@ -401,18 +401,23 @@ def list_convention_info(tteconvention_id):
     convention = Conventions()
     convention = Conventions.query.filter_by(tteid = tteconvention_id).first()
     convention_data = {}
-    if convention.slots is not None:
-        con_slots = json.loads(convention.slots)
-        for slot in con_slots:
+
+    try:
+        if convention.slots is not None:
+            con_slots = json.loads(convention.slots)
+            for slot in con_slots:
+                try:
+                    new_slot = int(slot)
+                    convention_data[new_slot] = con_slots[slot]
+                except ValueError:
+                    pass
             try:
-                new_slot = int(slot)
-                convention_data[new_slot] = con_slots[slot]
-            except ValueError:
+                convention_data['tables'] = convention.tables
+            except:
                 pass
-        try:
-            convention_data['tables'] = convention.tables
-        except:
-            pass
+    except:
+        convention_data = None
+        pass
     return(convention_data)
 
 # -----------------------------------------------------------------------
@@ -990,8 +995,11 @@ def conventions():
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
-            savedvolunteers = list_volunteers(session['tteconvention_id'])
-            convention_info = list_convention_info(session['tteconvention_id'])
+            try:
+                savedvolunteers = list_volunteers(session['tteconvention_id'])
+                convention_info = list_convention_info(session['tteconvention_id'])
+            except:
+                pass
             print ('Getting Day Parts')
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
             print ('Getting Events')
