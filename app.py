@@ -852,7 +852,8 @@ def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tteroo
         room_delete_url = 'https://tabletop.events/api/room/' + room['id']
         room_delete_response = requests.delete(room_delete_url, params= room_delete_params)
         room_delete_data = room_delete_response.json()
-    return(roomsandspacesdeleted)
+
+    return(room_delete_data)
 # -----------------------------------------------------------------------
 # Get Table Information
 # -----------------------------------------------------------------------
