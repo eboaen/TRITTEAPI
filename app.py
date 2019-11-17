@@ -848,7 +848,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
     convention_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
-    for table in range(convention_info['tables']):
+    for table in range(int(convention_info['tables'])):
         table_name = 'Table ' + table
         print (table_name)
         #spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': convention_rooms['id'], 'name': table_name, 'max_tickets': 6}
