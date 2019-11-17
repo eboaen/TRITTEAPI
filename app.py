@@ -265,12 +265,11 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
                     new_slot = {'slot': slot_num[1] , 'time': room_info[field], 'length': room_info['length']}
                     # Add to a list of all the slots for the convention
                     convention_slots.append(new_slot)
-            convention['slots'] = convention_slots
-            print (convention['slots'])
-            # Create a dict for each room of the convention
+                    # Create a dict for each room of the convention
             tables = {'table_type': room_info['table_type'], 'table_start': room_info['table_start'],'table_end': room_info['table_end']}
             # Add the tables dict to a list of rooms
             convention_tables.append(tables)
+        convention['slots'] = convention_slots
         convention['tables'] = convention_tables
         print (convention)
         # save_convention(convention,tteconvention_id,tteconvention_name)
