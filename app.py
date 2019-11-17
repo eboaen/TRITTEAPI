@@ -263,6 +263,7 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
                     new_slot[slot_num[1]] = {room_info[field], room_info['length']}
                     # Add to a list of all the slots for the convention
                     convention_slots.append(new_slot[slot_num[1]])
+            print (convention_slots)
             # Json-ify and save to the dict
             convention['slots'] = json.dumps(convention_slots)
             # Create a dict for each room of the convention
