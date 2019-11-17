@@ -831,7 +831,7 @@ def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,conventi
         print (room['table_type'],rooms_id)
         for i in range(int(room['table_start']),int(room['table_end'])):
             table_num = i + 1
-            table_name = room + ' Table ' + str(table_num)
+            table_name = room['table_type'] + ' Table ' + str(table_num)
             spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': rooms_data, 'name': table_name, 'max_tickets': 6}
             spaces_response = requests.post(config.tte_url + '/space', params= spaces_params)
             spaces_json = spaces_response.json()
