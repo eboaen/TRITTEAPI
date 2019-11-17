@@ -1011,7 +1011,6 @@ def conventions():
                 pass
             print ('Getting Day Parts')
             ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
-            print (ttedayparts)
             print ('Getting Events')
             savedevents = tte_convention_events_api_get(ttesession,session['tteconvention_id'])
             print ('Getting Tables')
