@@ -510,11 +510,10 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     else:
         for shifttype in shiftypes_info:
             if shifttype['name'] == 'Slot':
-                shiftypes_name = shifttype['name']
+                shiftype_name = shifttype['name']
                 shifttype_id = shifttype['id']
             else:
-                shifttype_name = 'Slot'
-                shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
+                pass
     print (shifttype_name, shifttype_id)
     # For each slot, get the information we need to be able to post the slot as a shift
     for slot in convention_info['slots']:
