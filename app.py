@@ -107,7 +107,8 @@ class LogoutForm(FlaskForm):
 def datetime_utc_convert(ttesession,tteconvention_id,unconverted_datetime):
     timezone_data = tte_convention_geolocation_api_get(ttesession,tteconvention_id)
     current_tz = timezone(timezone_data)
-    utc_delta = current_tz.utcoffset()
+    dt = current_tz.localize(unconverted_datetime)
+    utc_delta = dt.utcoffset()
     utc_time = unconverted_datetime - utc_delta
     print(current_tz, unconverted_datetime, utc_delta, utc_time)
     return(utc_time)
@@ -118,9 +119,9 @@ def datetime_utc_convert(ttesession,tteconvention_id,unconverted_datetime):
 def datetime_timezone_convert(ttesession,tteconvention_id, utc_datetime):
     timezone_data = tte_convention_geolocation_api_get(ttesession,tteconvention_id)
     current_tz = timezone(timezone_data)
-    utc_delta = current_tz.utcoffset()
-    current_time = utc_datetime + utc_delta
-    print(current_tz, current_time, utc_delta, ' UTC ', utc_datetime)
+    utc_tz = timezone('UTC')
+    current_time = utc_tz.localize(utc_datetime).astimezone(current_tz)
+    print(current_tz, current_time, ' UTC: ', utc_datetime)
     return(current_time)
 
 # -----------------------------------------------------------------------
