@@ -105,7 +105,7 @@ class LogoutForm(FlaskForm):
 # Convert a given datetime object to a UTC time
 # -----------------------------------------------------------------------
 def datetime_utc_convert(ttesession,tteconvention_id,unconverted_datetime):
-    timezone_data = tte_convention_geolocation_api_get(ttesession['id'],tteconvention_id)
+    timezone_data = tte_convention_geolocation_api_get(ttesession,tteconvention_id)
     current_tz = timezone(timezone_data)
     utc_delta = current_tz.utcoffset(normal, is_dst=False)
     utc_time = unconverted_datetime - utc_delta
@@ -116,7 +116,7 @@ def datetime_utc_convert(ttesession,tteconvention_id,unconverted_datetime):
 # Convert UTC datetime object to the convention time
 # -----------------------------------------------------------------------
 def datetime_timezone_convert(ttesession,tteconvention_id, utc_datetime):
-    timezone_data = tte_convention_geolocation_api_get(ttesession['id'],tteconvention_id)
+    timezone_data = tte_convention_geolocation_api_get(ttesession,tteconvention_id)
     current_tz = timezone(timezone_data)
     utc_delta = current_tz.utcoffset(normal, is_dst=False)
     current_time = utc_datetime + utc_delta
@@ -133,6 +133,9 @@ def tte_session():
         session = response.json()['result']
     return (session)
 
+# -----------------------------------------------------------------------
+# Convention Functions
+# -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
 # Pull Convention listing from TTE for TRI
 # -----------------------------------------------------------------------
