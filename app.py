@@ -510,7 +510,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     else:
         for shifttype in shiftypes_info:
             if shifttype['name'] == 'Slot':
-                shiftype_name = shifttype['name']
+                shifttype_name = shifttype['name']
                 shifttype_id = shifttype['id']
             else:
                 pass
