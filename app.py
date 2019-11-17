@@ -541,6 +541,7 @@ def tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id):
     shifttypes_response = requests.get(shifttypes_url, params= shifttypes_params)
     shifttypes_json = shifttypes_response.json()
     shifttypes_data = shifttypes_json['result']['items']
+    print(shifttypes_data)
     return (shifttypes_data)
 
 # -----------------------------------------------------------------------
