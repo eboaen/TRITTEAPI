@@ -230,11 +230,13 @@ def tte_convention_geolocation_api_get(ttesession,tteconvention_id):
 # Parse a File for a convention
 # -----------------------------------------------------------------------
 def convention_parse(filename,tteconvention_id,tteconvention_name):
+    print('convention_parse')
     # Definitions
     slot = {}
     newheader = []
     convention = []
     tables = {}
+    new_slot = {}
     # Open CSV file and verify headers
     with open(filename, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
