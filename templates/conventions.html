@@ -107,6 +107,27 @@
         </div><!-- /container -->
       </div><!-- /media -->
     </div><!-- /jumbotron -->
+    {% if savedspaces %}
+    <div class="jumbotron">
+        <div class ="main">
+          <div class="container">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-xs-1">Table Name</th>
+              </tr>
+              </thead>
+              <tbody>
+                {% for table in savedspaces|sort %}
+                  <tr>
+                      <td>{{ table.name }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div><!-- /container -->
+      </div><!-- /media -->
+    </div><!-- /jumbotron -->
     {% endif %}
     {% if savedvolunteers %}
     <div class="jumbotron">
