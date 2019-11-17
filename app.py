@@ -555,9 +555,9 @@ def tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shi
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     shifttypes_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shifttype_name}
     shifttypes_response = requests.post(config.tte_url + 'shifttype', params= shifttypes_params)
-    shifttypes_json = shifttypes_response.json()
+    #shifttypes_json = shifttypes_response.json()
     print(shifttypes_response)
-    print(shifttypes_json)
+    #print(shifttypes_json)
     shifttypes_id = shifttypes_json['id']
     return(shifttypes_id)
 
