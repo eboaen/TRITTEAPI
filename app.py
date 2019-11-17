@@ -512,7 +512,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
         slot_length = int(convention_info[slot][1])
         shift_time_s = convention_info[slot][0]
         shift_actual = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
-        shift_start = datetime_utc_convert(ttesession,tteconvention_id,shift_start)
+        shift_start = datetime_utc_convert(ttesession,tteconvention_id,shift_actual)
         shift_end = shift_start + datetime.timedelta(hours=slot_length)
         for day in day_info:
             slot_date = datetime.date(shift_start.year,shift_start.month,shift_start.day)
