@@ -822,7 +822,7 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 # Get Table Information
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_get(ttesession,tteconvention_id):
-    print ('tte_convention_spaces_api_get')
+    print ('tte_convention_spaces_api_get:')
     spaces_start = 0
     spaces_total = 1000
     all_spaces = list()
@@ -831,12 +831,13 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
     tteconvention_spaces_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['spaces']
     # Loop through the spaces for the convention
     while spaces_total >= spaces_start:
-        print (spaces_total, spaces_start)
         spaces_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
         spaces_response = requests.get(tteconvention_spaces_url, params= spaces_params)
         spaces_data = spaces_response.json()
         convention_spaces = spaces_data['result']['items']
         spaces_total = int(spaces_data['result']['paging']['total_pages'])
+        spaces_start = int(spaces_data['result']['paging']['page_number'])
+        print(spaces_start,spaces_total)
         for spaces in convention_spaces:
             all_spaces.append(spaces)
         if spaces_start < spaces_total:
