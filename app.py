@@ -822,14 +822,16 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 # Get Table Information
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_get(ttesession,tteconvention_id):
-      spaces_start = 0
-      spaces_total = 1000
-      all_spaces = list()
-      # Get the data on the convention
-      tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
-      tteconvention_spaces_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['spaces']
-      # Loop through the spaces for the convention
-      while spaces_total >= spaces_start:
+    print ('tte_convention_spaces_api_get')
+    spaces_start = 0
+    spaces_total = 1000
+    all_spaces = list()
+    # Get the data on the convention
+    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    tteconvention_spaces_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['spaces']
+    # Loop through the spaces for the convention
+    while spaces_total >= spaces_start:
+        print (spaces_total, spaces_start)
         spaces_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
         spaces_response = requests.get(tteconvention_spaces_url, params= spaces_params)
         spaces_data = spaces_response.json()
@@ -841,7 +843,8 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
             space_start = int(spaces_data['result']['paging']['next_page_number'])
         elif spaces_start == spaces_total:
             break
-      return(all_spaces)
+    print (all_spaces)
+    return(all_spaces)
 
 # -----------------------------------------------------------------------
 # Post Tables to Convention
