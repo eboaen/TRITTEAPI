@@ -822,7 +822,7 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 # Get Table Information
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_get(ttesession,tteconvention_id):
-    # print ('tte_convention_spaces_api_get:')
+    print ('tte_convention_spaces_api_get:')
     spaces_start = 0
     spaces_total = 1000
     all_spaces = list()
@@ -838,6 +838,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
         spaces_total = int(spaces_data['result']['paging']['total_pages'])
         spaces_start = int(spaces_data['result']['paging']['page_number'])
         for spaces in convention_spaces:
+            print(spaces)
             all_spaces.append(spaces)
         if spaces_start < spaces_total:
             space_start = int(spaces_data['result']['paging']['next_page_number'])
@@ -849,7 +850,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
 # Post Tables to Convention
 # -----------------------------------------------------------------------
 def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
-    print ('tte_convention_spaces_api_post:')
+    # print ('tte_convention_spaces_api_post:')
     all_spaces = []
     spaces_data = {}
     convention_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
@@ -862,7 +863,6 @@ def tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info):
         spaces_response = requests.post(config.tte_url + '/space', params= spaces_params)
         spaces_json = spaces_response.json()
         spaces_data = {spaces_json['result']['id'],spaces_json['result']['name']}
-        print (spaces_data)
         all_spaces.append(spaces_data)
     return (all_spaces)
 
