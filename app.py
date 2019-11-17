@@ -1049,14 +1049,15 @@ def conventions():
             saved = convention_parse(location,tteconvention_id,tteconvention_name)
             convention_info = list_convention_info(tteconvention_id)
             pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
-            #pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,convention_info)
-            pushtables = tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info)
+            # pushrooms = tte_convention_rooms_api_post(ttesession,tteconvention_id,convention_info)
+            savedspaces = tte_convention_spaces_api_post(ttesession,tteconvention_id,convention_info)
             # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
-            'convention_info' : convention_info
+            'convention_info' : convention_info,
+            'savedspaces' : savedspaces,
             })
         if request.form.get('eventsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
