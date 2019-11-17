@@ -831,10 +831,10 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
     tteconvention_spaces_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['spaces']
     # Loop through the spaces for the convention
     while spaces_total >= spaces_start:
-        print('w ', spaces_start, spaces_total)
         spaces_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
         spaces_response = requests.get(tteconvention_spaces_url, params= spaces_params)
         spaces_data = spaces_response.json()
+        print (spaces_data)
         convention_spaces = spaces_data['result']['items']
         spaces_total = int(spaces_data['result']['paging']['total_pages'])
         spaces_start = int(spaces_data['result']['paging']['page_number'])
