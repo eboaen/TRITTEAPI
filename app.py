@@ -493,18 +493,18 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     # Get the information on Convention Days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
-
-    # Verify if the "Slot Type" exists, if it doesn't, initialize the shifttype of "Slot" for tteid
-    shifttypes_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
-    shifttypes_get_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    shifttypes_get_response = requests.get(shifttypes_uri, params= shifttypes_get_params)
-    shifttypes_get_data = shifttypes_get_response.json()
-    shifttype_id = shifttypes_get_data['result']['items'][0]['id']
-
+    # Verify if the shift type exists, if it doesn't, initialize the shifttype of "Slot" for the convention
+    shiftypes_info = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
+    for shifttype in shiftypes_info:
+        if shifttype['name'] = 'Slot':
+            pass
+        else:
+            shifttype_name = 'Slot'
+            shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
     # For each slot, get the information we need to be able to post the slot as a shift
     for slot in savedslots:
-        slot_length = int(savedslots[slot][1])
         shift_name = 'Slot ' + str(slot)
+        slot_length = int(savedslots[slot][1])
         shift_time_s = savedslots[slot][0]
         shift_actual = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
         shift_start = datetime_utc_convert(ttesession,tteconvention_id,shift_start)
@@ -514,15 +514,34 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,savedslo
             shift_date = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
             # Compare the dates of the slot and the shift to get the tteid to use to post the shift
             if slot_date == shift_date:
-                shift_id = day['id']
-                shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': shift_id, 'shifttype_id': shifttype_id}
+                day_id = day['id']
+                shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': day_id, 'shifttype_id': shifttype_id}
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                 shift_data = shift_response.json()
                 print (shift_data)
     return('saved')
+
 # -----------------------------------------------------------------------
-# API Post to TTE for Volunteer Shifts
+# Pull shifts from TTE
 # -----------------------------------------------------------------------
+tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
+    shifttypes_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
+    shifttypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+    shifttypes_response = requests.get(shifttypes_url, params= shifttypes_params)
+    shifttypes_json = shifttypes_response.json()
+    shifttypes_data = shifttypes_json['result']['items']
+    return (shifttypes_data)
+
+# -----------------------------------------------------------------------
+# Post shiftstypes to TTE
+# -----------------------------------------------------------------------
+tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttypetype_name)
+    shifttypes_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shifttype_name}
+    shifttypes_response = requests.post(config.tte_url + '/api/shifttype', params= shifttypes_params)
+    shifttypes_json = shifttypes_response.json()
+    shifttypes_id = shifttypes_json['result']['id']
+    return(shifttypes_id)
+
 # -----------------------------------------------------------------------
 # Post slots to TTE as Day Parts
 # -----------------------------------------------------------------------
