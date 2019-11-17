@@ -234,6 +234,8 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
     # Definitions
     slot = {}
     newheader = []
+    convention_slots = []
+    convention_tables = []
     convention = []
     tables = {}
     new_slot = {}
