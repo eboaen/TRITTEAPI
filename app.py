@@ -458,12 +458,14 @@ def tte_user_api_pull(ttesession,volunteer_email):
 # Add user to TTE
 # -----------------------------------------------------------------------
 def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
+    print (tte_user_add)
     volunteer_full_name = volunteer_name.rsplit()
     volunteer_first = volunteer_full_name[0]
     volunteer_last = volunteer_full_name[1]
     useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_first,'lastname' : volunteer_last,'phone_number' : '555-555-5555'}
-    volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
-    volunteer_data = volunteer_response.json()
+    print (useradd_params)
+    # volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
+    # volunteer_data = volunteer_response.json()
     try:
         volunteer_id = volunteer_data['result']['id']
         return(volunteer_id)
