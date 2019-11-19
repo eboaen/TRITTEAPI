@@ -366,7 +366,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         if tiers is not None:
             volunteer.tiers = ','.join(tiers)
         if new_volunteer['hours'] == 'Badge':
-            volunteer.hours = 12
+            volunteer.hours = 10
         elif new_volunteer['hours'] == 'Hotel':
             volunteer.hours = 20
         else:
@@ -374,6 +374,8 @@ def volunteer_save(new_volunteer,tteconvention_id):
                 volunteer.hours = int(new_volunteer['hours'])
             except TypeError:
                 pass
+            except ValueError:
+                print (new_volunteer)
         for field in new_volunteer:
             if 'slot' in field:
                 slot_number = field.rsplit()
