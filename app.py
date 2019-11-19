@@ -384,6 +384,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions.append(tteconvention_id)
         volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
+        print
         if ttevolunteer_id is None:
             try:
                 volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
@@ -444,10 +445,12 @@ def list_volunteers(tteconvention_id):
 # Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
+    print (tte_user_api_pull)
     volunteer_params = {'session_id': ttesession['id']}
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_data = volunteer_response.json()
+    print(volunteer_data)
     try:
         volunteer_id = volunteer_data['result']['items'][0]['id']
     except:
