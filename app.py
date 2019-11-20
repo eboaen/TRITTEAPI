@@ -372,7 +372,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
             except TypeError:
                 pass
             except ValueError:
-                print (new_volunteer)
+                print (new_volunteer['email'], ' failed to parse hours')
         for field in new_volunteer:
             if 'slot' in field:
                 slot_number = field.rsplit()
@@ -385,7 +385,8 @@ def volunteer_save(new_volunteer,tteconvention_id):
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
         if ttevolunteer_id is None:
             try:
-                volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
+                print ('Test added new volunteer to TTE: ', new_volunteer['email'],new_volunteer['name'])
+                # volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
                 db.session.merge(volunteer)
             except:
                 logger.exception("Cannot save volunteer")
@@ -403,10 +404,11 @@ def volunteer_save(new_volunteer,tteconvention_id):
         ttevolunteer_id = tte_user_api_pull(ttesession,old_volunteer.email)
         if ttevolunteer_id is None:
             try:
-                old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
+                print ('Test added old volunteer to TTE: ', new_volunteer['email'],new_volunteer['name'])
+                # old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
                 db.session.merge(volunteer)
             except:
-                logger.exception("Cannot save volunteer")
+                logger.exception("Cannot save volunteer: ", new_volunteer['email'],new_volunteer['name'])
                 db.session.rollback()
                 saved = 'failed'
                 return (saved)
