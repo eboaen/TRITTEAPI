@@ -736,9 +736,9 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
 # Post a new Event Type
 # -----------------------------------------------------------------------
 def tte_convention_events_type_api_post(ttesession,tteconvention_id,events_type):
-    print (tte_convention_events_type_api_post)
+    print ('tte_convention_events_type_api_post')
     events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': events_type, 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0}
-    print (events_type_params)
+    print ('Parameters: ', events_type_params)
     events_type_response = requests.post(config.tte_url + '/api/eventtype', params= events_type_params)
     events_type_data = events_type_response.json()
     print (events_type_data)
