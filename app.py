@@ -674,7 +674,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     event['type_id'] = type['id']
                 else:
                     pass
-        else
+        else:
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
             print (type['name'], event['type_id'])
         # Calculate the datetime value of the event
