@@ -675,7 +675,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
 
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
-        event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M%S %p')
+        event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
         #Convert the datetime value to UTC
         event['datetime_utc'] = datetime_utc_convert(ttesession,tteconvention_id,event['unconverted_datetime'])
         print ('Datetime Check: ', event['unconverted_datetime'], 'UTC: ', event['datetime_utc'])
