@@ -111,7 +111,6 @@ def datetime_utc_convert(ttesession,tteconvention_id,unconverted_datetime):
     dt = current_tz.localize(unconverted_datetime)
     utc_delta = dt.utcoffset()
     utc_time = unconverted_datetime - utc_delta
-    print(current_tz, unconverted_datetime, utc_delta, utc_time)
     return(utc_time)
 
 # -----------------------------------------------------------------------
@@ -122,7 +121,6 @@ def datetime_timezone_convert(ttesession,tteconvention_id, utc_datetime):
     current_tz = timezone(timezone_data)
     utc_tz = timezone('UTC')
     current_time = utc_tz.localize(utc_datetime).astimezone(current_tz)
-    print(current_tz, current_time, ' UTC: ', utc_datetime)
     return(current_time)
 
 # -----------------------------------------------------------------------
@@ -223,7 +221,6 @@ def tte_convention_geolocation_api_get(ttesession,tteconvention_id):
   geolocation_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= geolocation_params)
   geolocation_data = geolocation_response.json()
   geolocation_timezone = geolocation_data['result']['geolocation']['timezone']
-  print (geolocation_timezone)
   return(geolocation_timezone)
 
 # -----------------------------------------------------------------------
@@ -445,7 +442,7 @@ def list_volunteers(tteconvention_id):
 # Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
-    print (tte_user_api_pull)
+    # print (tte_user_api_pull)
     volunteer_params = {'session_id': ttesession['id']}
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
@@ -499,6 +496,7 @@ def database_slot_delete(tteconvention_id):
 # Post to TTE the Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info):
+    # print ('tte_convention_volunteer_shift_api_post')
     tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     # Get the information on Convention Days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
@@ -515,7 +513,6 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
             else:
                 pass
     # For each slot, get the information we need to be able to post the slot as a shift
-    print (convention_info)
     for field in convention_info:
         if isinstance(field, int):
             shift_name = 'Slot ' + str(field)
@@ -573,16 +570,13 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info
         day_start = day['day_time']
         day_end = day['end_time']
         daypart_time = day_start
-        print (day_start,day_end)
         while daypart_time < day_end:
             convention_datetime = datetime_timezone_convert(ttesession,tteconvention_id,daypart_time)
             daypart_name = datetime.datetime.strftime(convention_datetime, '%a %I:%M %p')
-            print(daypart_time,daypart_name)
             # API Post to TTE (Day Parts)
             daypart_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': daypart_name, 'start_date': daypart_time, 'conventionday_id': day_id}
             daypart_response = requests.post(config.tte_url + '/daypart', params= daypart_params)
             daypart_data = daypart_response.json()
-            print (daypart_data['result']['name'],daypart_data['result']['start_date'])
             daypart_time = daypart_time + datetime.timedelta(minutes= 30)
     return('saved')
 
@@ -607,7 +601,6 @@ def tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,all_sh
         shift_delete_url = 'https://tabletop.events/api/shift/' + shift['id']
         shift_delete_response = requests.delete(shift_delete_url, params= shift_delete_params)
         shift_delete_data = shift_delete_response.json()
-        print(shift['id'],shift_delete_data)
     return()
 
 # -----------------------------------------------------------------------
@@ -649,7 +642,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
-    print "tte_convention_events_api_post testing"
+    print ("tte_convention_events_api_post testing")
     event_hosts_l = []
     #Get the event types
     event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
@@ -685,11 +678,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M%S %p')
         #Convert the datetime value to UTC
         event['datetime_utc'] = datetime_utc_convert(ttesession,tteconvention_id,event['unconverted_datetime'])
-
+        print ('Datetime Check: ', event['unconverted_datetime'], 'UTC: ', event['datetime_utc'])
         # Identify the Day Id for the convention
         for day in convention_days:
             day['date_check'] = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
             event['date_check'] = datetime.date(event['datetime_utc'].year,event['datetime_utc'].month,event['datetime_utc'].day)
+            print ('Date Check: ', event['date_check'], day['date_check'])
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
 
@@ -702,7 +696,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             # Create the Event
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
-            print (event_params)
+            print ('Parameters Check: ', event_params)
             #event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             #event_data = event_response.json()
             #event['id'] = event_data['result']['id']
@@ -762,7 +756,6 @@ def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
         event_delete_url = 'https://tabletop.events/api/event/' + event['id']
         event_delete_response = requests.delete(event_delete_url, params= event_delete_params)
         event_delete_data = event_delete_response.json()
-        print(event['id'],event_delete_data)
     return()
 
 # -----------------------------------------------------------------------
