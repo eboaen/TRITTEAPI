@@ -670,7 +670,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['type'] == type['name']:
                 event['type_id'] = type['id']
             else:
-                # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+                event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
 
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
@@ -736,11 +736,12 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
 # Post a new Event Type
 # -----------------------------------------------------------------------
 def tte_convention_events_type_api_post(ttesession,tteconvention_id,events_type):
+    print ('events_type_params')
     events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': events_type, 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0}
     events_type_response = requests.post(config.tte_url + '/api/eventtype', params= events_type_params)
     events_type_data = events_type_response.json()
     events_type_id = events_type_data['id']
-    print (events_type_id)
+    print (events_type_data)
     return(events_type_id)
 
 # -----------------------------------------------------------------------
