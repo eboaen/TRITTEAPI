@@ -642,7 +642,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
-    # print ("tte_convention_events_api_post testing")
+    print ("tte_convention_events_api_post testing")
     event_hosts_l = []
     #Get the event types
     event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
@@ -667,6 +667,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If they match, return the TTE ID of the Type
         # If they don't match, create a new Event Type and return the TTE ID for that Type
         for type in event_types:
+            print (type['name'], event['type'])
             if event['type'] == type['name']:
                 event['type_id'] = type['id']
             else:
