@@ -630,10 +630,12 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         for header in reader.fieldnames:
             if 'Event Name' in header:
                 newheader.append('name')
-            elif 'Date' in header:
-                newheader.append('date_info')
-            elif 'Start Time' in header:
-                newheader.append('starttime')
+#            elif 'Date' in header:
+#                newheader.append('date_info')
+#            elif 'Start Time' in header:
+#                newheader.append('starttime')
+            elif "Datetime" in header:
+                newheader.append('datetime')
             elif 'Duration' in header:
                 newheader.append('duration')
             elif 'Table Count' in header:
@@ -651,6 +653,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
+    print "tte_convention_events_api_post testing"
     event_hosts_l = []
     #Get the event types
     event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
@@ -669,7 +672,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 host_id_l.append(host_id)
                 print(host,host_id)
             except:
-                print(host,host_id,' Failure')
+                print(' Failure. ', host, ' does not exist')
                 pass
         # Compare the Name of the event types with the provided Event Type
         # If they match, return the TTE ID of the Type
@@ -678,42 +681,43 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['type'] == type['name']:
                 event['type_id'] = type['id']
             else:
-                event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+                print (event['type'], ' added')
+                # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
 
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
-        event['datetime_s'] = event['date_info'] + ' ' + event['starttime']
-        event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime_s'],'%m/%d/%y %I:%M %p')
+        event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M%S %p')
         #Convert the datetime value to UTC
-        event['datetime'] = datetime_utc_convert(ttesession,tteconvention_id,event['unconverted_datetime'])
+        event['datetime_utc'] = datetime_utc_convert(ttesession,tteconvention_id,event['unconverted_datetime'])
 
         # Identify the Day Id for the convention
         for day in convention_days:
             day['date_check'] = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
-            event['date_check'] = datetime.date(event['datetime'].year,event['datetime'].month,event['datetime'].day)
+            event['date_check'] = datetime.date(event['datetime_utc'].year,event['datetime_utc'].month,event['datetime_utc'].day)
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
 
         # Identify the datetime value of the dayparts
         # Then compare to see if they are equal to determine the TTE ID of the time
         for dayparts in convention_dayparts:
-            if event['datetime'] == dayparts['datetime']:
+            if event['datetime_utc'] == dayparts['datetime']:
                 event['dayparts_id'] = dayparts['id']
 
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
             # Create the Event
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
-            event_response = requests.post('https://tabletop.events/api/event', params= event_params)
-            event_data = event_response.json()
-            event['id'] = event_data['result']['id']
+            print (event_params)
+            #event_response = requests.post('https://tabletop.events/api/event', params= event_params)
+            #event_data = event_response.json()
+            #event['id'] = event_data['result']['id']
             # Add hosts to the Event
             for host in host_id_l:
                 if host is not None:
                     host_params = {'session_id': ttesession['id'] }
-                    print ('Event: ', event['id'], ' Host: ', host)
-                    host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
-                    host_response = requests.post(host_url, params= host_params)
-                    host_data = host_response.json()
+                    print ('Event: ', event['name'], ' Host: ', host)
+                    #host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
+                    #host_response = requests.post(host_url, params= host_params)
+                    #host_data = host_response.json()
     return()
 
 # -----------------------------------------------------------------------
