@@ -669,7 +669,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print ('Event Types: ', event_types)
         if len(event_types) != 0:
             for type in event_types:
-                print (type['name'], event['type'])
+                print (type('name'), event['type'])
                 if event['type'] == type['name']:
                     event['type_id'] = type['id']
                     break
@@ -677,7 +677,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
         else:
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-            print (type['name'], event['type_id'])
+            print (event['type'], event['type_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
