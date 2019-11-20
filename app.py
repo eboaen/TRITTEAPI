@@ -530,7 +530,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
                     shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': day_id, 'shifttype_id': shifttype_id}
                     shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                     shift_data = shift_response.json()
-                    print (shift_data)
+                    # print (shift_data)
     return('saved')
 
 # -----------------------------------------------------------------------
