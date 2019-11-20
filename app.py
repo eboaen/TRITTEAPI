@@ -308,10 +308,7 @@ def save_convention(convention,tteconvention_id,tteconvention_name):
 # -----------------------------------------------------------------------
 def volunteer_parse(filename,tteconvention_id):
     # Definitions
-    volunteer = {}
     newheader = []
-    slottimes = []
-    all_slots = []
 
     # Open CSV file and verify headers
     with open(filename, newline='') as csvfile:
@@ -366,7 +363,7 @@ def volunteer_save(new_volunteer,tteconvention_id):
         if tiers is not None:
             volunteer.tiers = ','.join(tiers)
         if new_volunteer['hours'] == 'Badge':
-            volunteer.hours = 12
+            volunteer.hours = 10
         elif new_volunteer['hours'] == 'Hotel':
             volunteer.hours = 20
         else:
@@ -384,10 +381,8 @@ def volunteer_save(new_volunteer,tteconvention_id):
         tteconventions.append(tteconvention_id)
         volunteer.conventions = ','.join(tteconventions)
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
-        print
         if ttevolunteer_id is None:
             try:
-                print ('New Volunteer')
                 volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
                 db.session.merge(volunteer)
             except:
@@ -406,7 +401,6 @@ def volunteer_save(new_volunteer,tteconvention_id):
         ttevolunteer_id = tte_user_api_pull(ttesession,old_volunteer.email)
         if ttevolunteer_id is None:
             try:
-                print ('Old Volunteer')
                 old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
                 db.session.merge(volunteer)
             except:
@@ -452,7 +446,6 @@ def tte_user_api_pull(ttesession,volunteer_email):
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_data = volunteer_response.json()
-    print(volunteer_data)
     try:
         volunteer_id = volunteer_data['result']['items'][0]['id']
     except:
@@ -463,15 +456,16 @@ def tte_user_api_pull(ttesession,volunteer_email):
 # Add user to TTE
 # -----------------------------------------------------------------------
 def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
-    print (tte_user_add)
+    print ('tte_user_add')
     volunteer_full_name = volunteer_name.rsplit()
     volunteer_first = volunteer_full_name[0]
     volunteer_last = volunteer_full_name[1]
     useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_first,'lastname' : volunteer_last,'phone_number' : '555-555-5555'}
-    print (useradd_params)
-    # volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
-    # volunteer_data = volunteer_response.json()
+
+    volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
+    volunteer_data = volunteer_response.json()
     try:
+        print (volunteer_data)
         volunteer_id = volunteer_data['result']['id']
         return(volunteer_id)
     except:
