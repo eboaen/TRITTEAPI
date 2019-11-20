@@ -731,7 +731,7 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
             all_eventtypes.append(eventtypes)
         if eventtypes_start < eventtypes_total:
             eventtypes_start = int(eventtypes_data['result']['paging']['next_page_number'])
-        elif day_parts_start == day_parts_total:
+        elif eventtypes_start == eventtypes_total:
             break
       return(all_eventtypes)
 
