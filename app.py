@@ -644,14 +644,14 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     print ("tte_convention_events_api_post testing")
     event_hosts_l = []
-    #Get the event types
-    event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
+    # For each event, gather the information needed to post the event
     #Get the convention days
     convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
     #Get the dayparts for the convention
     convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
-    # For each event, gather the information needed to post the event
     for event in savedevents:
+        #Get the event types
+        event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
         # Define the list of hosts for the event
         host_id_l = []
         event_hosts_l = event['hosts'].split(' ')
@@ -667,13 +667,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If they match, return the TTE ID of the Type
         # If they don't match, create a new Event Type and return the TTE ID for that Type
         print ('Event Types: ', event_types)
-        if event_types is not None:
+        if len(event_types) != 0:
             for type in event_types:
                 print (type['name'], event['type'])
                 if event['type'] == type['name']:
                     event['type_id'] = type['id']
+                    break
                 else:
-                    pass
+                    event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
         else:
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
             print (type['name'], event['type_id'])
