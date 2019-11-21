@@ -649,30 +649,35 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     #Get the dayparts for the convention
     convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
     for event in savedevents:
-        #Get the event types
-        event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
         # Define the list of hosts for the event
         host_id_l = []
         event_hosts_l = event['hosts'].split(' ')
         for host in event_hosts_l:
             try:
-                host_id = tte_user_api_pull(ttesession,host)
-                host_id_l.append(host_id)
+                if host is " ":
+                    pass
+                else:
+                    host_id = tte_user_api_pull(ttesession,host)
+                    host_id_l.append(host_id)
             except:
-                print(' Failure. ', host, ' does not exist')
+                print('Failure. ', host, ' does not exist')
                 pass
+        #Get the event types
+        event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
         # Compare the Name of the event types with the provided Event Type
         # If they match, return the TTE ID of the Type
         # If they don't match, create a new Event Type and return the TTE ID for that Type
-        if len(event_types) != 0:
+        if len(event_types) is not 0:
             for type in event_types:
                 if event['type'] == type['name']:
                     event['type_id'] = type['id']
                     break
                 else:
                     event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+                    print ('New Event Type: ',type['name'],event['type_id'])
         else:
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+            print ('New Event Type: ',type['name'],event['type_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
@@ -698,15 +703,17 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 event_data = event_response.json()
                 event['id'] = event_data['result']['id']
                 # Add hosts to the Event if there are any hosts to add
-                if len(host_id_l) != 0:
+                if len(host_id_l) is not 0:
                     for host in host_id_l:
                         try:
+                            host_data = []
                             host_params = {'session_id': ttesession['id'] }
                             host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
                             host_response = requests.post(host_url, params= host_params)
-                            host_data = host_response.json()
+                            host_json = host_response.json()
+                            print ('Added host to event: ', host_json['email'], host_json['real_name'], host_json['id'])
                         except:
-                            print ('Unable to add host to event: ', host)
+                            print ('Unable to add host to event')
                 print ('Added new Event to TTE: ', event['name'], event['unconverted_datetime'], event['id'])
             except:
                 print ('Failed to add new Event to TTE: ', event['name'], event['unconverted_datetime'], event_hosts_l)
