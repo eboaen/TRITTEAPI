@@ -677,15 +677,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If they don't match, create a new Event Type and return the TTE ID for that Type
         print (event['type'])
         event_l = [type for type in event_types if type['name'] == event['type']]
-        if len(event_l) == 0:
-            print ('New Event Type (eIf): ', event['type'])
+        if len(event_l) != 0:
+            for e in event_l:
+                event['type_id'] = e['id']
+                print ('Event Exists: ', event['type'], event['type_id'])
         else:
-            print (event_l)
-            # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-
-        #else:
-            #event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-        #    print ('New Event Type (Else): ',type['name'])
+            print ('Adding: ', event['type'])
+            event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
@@ -708,9 +706,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             try:
                 event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
                 print(event_params)
-                #event_response = requests.post('https://tabletop.events/api/event', params= event_params)
-                #event_data = event_response.json()
-                #event['id'] = event_data['result']['id']
+                event_response = requests.post('https://tabletop.events/api/event', params= event_params)
+                event_data = event_response.json()
+                event['id'] = event_data['result']['id']
                 # Add hosts to the Event if there are any hosts to add
                 if len(host_id_l) is not 0:
                     for host in host_id_l:
