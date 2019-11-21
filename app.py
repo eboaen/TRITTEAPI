@@ -1060,6 +1060,7 @@ def conventions():
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
+            print (session['id'],session['tteconvention_id'])
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             try:
                 print ('Getting Volunteer Info')
