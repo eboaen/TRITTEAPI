@@ -677,7 +677,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If they don't match, create a new Event Type and return the TTE ID for that Type
         print (event['type'])
         event_l = [type for type in event_types if type['name'] == event['type']]
-        if len(event_l) = 0:
+        if len(event_l) == 0:
             print ('New Event Type (eIf): ', event['type'])
         else:
             print (event_l)
