@@ -649,6 +649,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     #Get the dayparts for the convention
     convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
     for event in savedevents:
+        print (event)
         # Define the list of hosts for the event
         host_id_l = []
         event_hosts_l = event['hosts'].split(' ')
@@ -664,6 +665,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 pass
         #Get the event types
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
+        print (event_types)
         # Compare the Name of the event types with the provided Event Type
         # If they match, return the TTE ID of the Type
         # If they don't match, create a new Event Type and return the TTE ID for that Type
@@ -671,6 +673,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for type in event_types:
                 if event['type'] == type['name']:
                     event['type_id'] = type['id']
+                    print ('Event ', event['type'], ' already exists')
                     break
                 else:
                     event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
@@ -726,6 +729,7 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
       eventtypes_start = 1
       eventtypes_total = 1000
       all_eventtypes = list()
+      convention_eventtypes = {}
       # Get the data on the convention
       tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
       tteconvention_eventtypes_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['eventtypes']
@@ -734,7 +738,8 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
         eventtypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
         eventtypes_response = requests.get(tteconvention_eventtypes_url, params= eventtypes_params)
         eventtypes_data = eventtypes_response.json()
-        convention_eventtypes = eventtypes_data['result']['items']
+        convention_eventtypes['id'] = eventtypes_data['result']['items']['id']
+        convention_eventtypes['name'] = eventtypes_data['result']['items']['name']
         eventtypes_total = int(eventtypes_data['result']['paging']['total_pages'])
         for eventtypes in convention_eventtypes:
             all_eventtypes.append(eventtypes)
