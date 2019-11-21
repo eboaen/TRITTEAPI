@@ -445,14 +445,15 @@ def list_volunteers(tteconvention_id):
 # Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
-    print (tte_user_api_pull)
+    print ('tte_user_api_pull')
     volunteer_params = {'session_id': ttesession['id']}
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
-    volunteer_data = volunteer_response.json()
-    print (volunteer_data)
+    volunteer_json = volunteer_response.json()
     try:
-        volunteer_id = volunteer_data['result']['items'][0]['id']
+        for vol in volunteer_json['result']['items']
+            volunteer_id = vol['id']
+            print (vol['real_name'],vol['id'])
     except:
         volunteer_id = None
     return(volunteer_id)
@@ -645,7 +646,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
-    # print ("tte_convention_events_api_post testing")
+    print ('tte_convention_events_api_post testing')
     event_hosts_l = []
     # For each event, gather the information needed to post the event
     #Get the convention days
@@ -674,16 +675,15 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If they match, return the TTE ID of the Type
         # If they don't match, create a new Event Type and return the TTE ID for that Type
         if len(event_types) is not 0:
-            if event['type'] not in event_types:
-                # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-                print ('New Event Type (If): ', event['type'])
-
-            else:
+            if event['type'] in event_types:
                 for type in event_types:
                     if event['type'] == type['name']:
                         event['type_id'] = type['id']
                         print ('Event ', type, ' already exists')
                         break
+                else:
+                    # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+                    print ('New Event Type (If): ', event['type'])
         else:
             #event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
             print ('New Event Type (Else): ',type['name'],event['type_id'])
