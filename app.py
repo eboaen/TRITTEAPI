@@ -674,17 +674,17 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If they don't match, create a new Event Type and return the TTE ID for that Type
         if len(event_types) is not 0:
             if event['type'] not in event_types:
-                event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-                print ('New Event Type: ',type['name'],event['type_id'])
+                # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+                print ('New Event Type (If): ', event['type'])
             else:
                 for type in event_types:
                     if event['type'] == type['name']:
                         event['type_id'] = type['id']
-                        print ('Event ', event['type'], ' already exists')
+                        print ('Event ', type, ' already exists')
                         break
         else:
-            event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-            print ('New Event Type: ',type['name'],event['type_id'])
+            #event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+            print ('New Event Type (Else): ',type['name'],event['type_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
