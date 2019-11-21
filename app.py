@@ -712,15 +712,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 # Add hosts to the Event if there are any hosts to add
                 if len(host_id_l) is not 0:
                     for host in host_id_l:
-                        try:
-                            host_data = []
-                            host_params = {'session_id': ttesession['id'] }
-                            host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
-                            host_response = requests.post(host_url, params= host_params)
-                            host_json = host_response.json()
-                            print ('Added host to event: ', host_json['email'], host_json['real_name'], host_json['id'])
-                        except:
-                            print ('Unable to add host to event')
+                        host_data = []
+                        host_params = {'session_id': ttesession['id'] }
+                        host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
+                        host_response = requests.post(host_url, params= host_params)
+                        host_json = host_response.json()
+                        print ('Added host to event: ', host_json['email'], host_json['real_name'], host_json['id'])
                 print ('Added new Event to TTE: ', event['name'], event['unconverted_datetime'], event['id'])
             except:
                 print ('Failed to add new Event to TTE: ', event['name'], event['unconverted_datetime'], event_hosts_l)
