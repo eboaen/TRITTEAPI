@@ -451,10 +451,11 @@ def tte_user_api_pull(ttesession,volunteer_email):
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_json = volunteer_response.json()
     try:
-        for vol in volunteer_json['result']['items']
+        for vol in volunteer_json['result']['items']:
             volunteer_id = vol['id']
             print (vol['real_name'],vol['id'])
     except:
+        print ('Unable to find: ', volunteer_email)
         volunteer_id = None
     return(volunteer_id)
 
