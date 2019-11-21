@@ -671,14 +671,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 pass
         #Get the event types
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
-        print (event_types)
+        print ('Event Types: ' event_types)
         # Compare the Name of the event types with the provided Event Type
         # If they match, return the TTE ID of the Type
         # If they don't match, create a new Event Type and return the TTE ID for that Type
         if len(event_types) is not 0:
             if event['type'] in event_types:
                 for type in event_types:
-                    print (type(event['type']),type(type['name']))
                     if event['type'] == type['name']:
                         event['type_id'] = type['id']
                         print ('Event ', type, ' already exists')
