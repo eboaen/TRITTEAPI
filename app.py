@@ -734,13 +734,13 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
       tteconvention_eventtypes_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['eventtypes']
       # Loop through the eventtypes for the convention
       while eventtypes_total >= eventtypes_start:
-        eventtypes_d = dict()
         eventtypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
         eventtypes_response = requests.get(tteconvention_eventtypes_url, params= eventtypes_params)
         eventtypes_json = eventtypes_response.json()
         eventtypes_data = eventtypes_json['result']['items']
         eventtypes_total = int(eventtypes_json['result']['paging']['total_pages'])
         for eventtypes in eventtypes_data:
+            eventtypes_d = dict()
             eventtypes_d['id'] = eventtypes['id']
             eventtypes_d['name'] = eventtypes['name']
             all_eventtypes.append(eventtypes_d)
