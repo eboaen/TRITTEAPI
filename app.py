@@ -1073,6 +1073,7 @@ def conventions():
             volunteerselect = request.form.get('selectfile')
             location = os.path.join(folder,volunteerselect)
             volunteers = volunteer_parse(location,tteconvention_id)
+            savedvolunteers = list_volunteers(session['tteconvention_id'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
