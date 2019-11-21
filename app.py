@@ -701,7 +701,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
-            post (event_data)
+            print (event_data)
             event['id'] = event_data['result']['id']
             # Add hosts to the Event
             for host in host_id_l:
