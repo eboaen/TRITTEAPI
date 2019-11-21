@@ -682,9 +682,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     event['type_id'] = type['id']
                     print ('Event ', type, ' already exists')
                     break
-            else:
-                # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-                print ('New Event Type (eIf): ', event['type'])
+        else:
+            # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
+            print ('New Event Type (eIf): ', event['type'])
         #else:
             #event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
         #    print ('New Event Type (Else): ',type['name'])
