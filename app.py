@@ -382,8 +382,8 @@ def volunteer_save(new_volunteer,tteconvention_id):
         ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
         if ttevolunteer_id is None:
             try:
-                print ('Test added new volunteer to TTE: ', new_volunteer['email'],new_volunteer['name'])
-                # volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
+                volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
+                print ('Added new volunteer to TTE: ', new_volunteer['email'],new_volunteer['name'], volunteer.tteid)
                 db.session.merge(volunteer)
             except:
                 logger.exception("Cannot save volunteer")
@@ -401,11 +401,11 @@ def volunteer_save(new_volunteer,tteconvention_id):
         ttevolunteer_id = tte_user_api_pull(ttesession,old_volunteer.email)
         if ttevolunteer_id is None:
             try:
-                print ('Test added old volunteer to TTE: ', new_volunteer['email'],new_volunteer['name'])
-                # old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
-                db.session.merge(volunteer)
+                old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
+                print ('Added old volunteer to TTE: ', old_volunteer['email'],old_volunteer['name'], old_volunteer.tteid)
+                db.session.merge(old_volunteer)
             except:
-                logger.exception("Cannot save volunteer: ", new_volunteer['email'],new_volunteer['name'])
+                logger.exception("Cannot save volunteer: ", old_volunteer['email'],old_volunteer['name'])
                 db.session.rollback()
                 saved = 'failed'
                 return (saved)
@@ -457,7 +457,7 @@ def tte_user_api_pull(ttesession,volunteer_email):
 # Add user to TTE
 # -----------------------------------------------------------------------
 def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
-    print ('tte_user_add')
+    #  print ('tte_user_add')
     volunteer_full_name = volunteer_name.rsplit()
     volunteer_first = volunteer_full_name[0]
     volunteer_last = volunteer_full_name[1]
@@ -466,7 +466,6 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
     try:
-        print (volunteer_data)
         volunteer_id = volunteer_data['result']['id']
         return(volunteer_id)
     except:
@@ -642,7 +641,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
-    print ("tte_convention_events_api_post testing")
+    # print ("tte_convention_events_api_post testing")
     event_hosts_l = []
     # For each event, gather the information needed to post the event
     #Get the convention days
@@ -659,17 +658,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             try:
                 host_id = tte_user_api_pull(ttesession,host)
                 host_id_l.append(host_id)
-                print(host,host_id)
             except:
                 print(' Failure. ', host, ' does not exist')
                 pass
         # Compare the Name of the event types with the provided Event Type
         # If they match, return the TTE ID of the Type
         # If they don't match, create a new Event Type and return the TTE ID for that Type
-        print ('Event Types: ', event_types)
         if len(event_types) != 0:
             for type in event_types:
-                print (type['name'], event['type'])
                 if event['type'] == type['name']:
                     event['type_id'] = type['id']
                     break
@@ -677,7 +673,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
         else:
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-            print (event['type'], event['type_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
@@ -701,16 +696,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id' : event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_data = event_response.json()
-            print (event_data)
             event['id'] = event_data['result']['id']
-            # Add hosts to the Event
-            for host in host_id_l:
-                if host is not None:
+            # Add hosts to the Event if there are any hosts to add
+            if len(host_id_l) != 0
+                for host in host_id_l:
                     host_params = {'session_id': ttesession['id'] }
                     host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
                     host_response = requests.post(host_url, params= host_params)
                     host_data = host_response.json()
-                    print (host_data)
     return()
 
 # -----------------------------------------------------------------------
@@ -742,12 +735,10 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
 # Post a new Event Type
 # -----------------------------------------------------------------------
 def tte_convention_events_type_api_post(ttesession,tteconvention_id,events_type):
-    print ('tte_convention_events_type_api_post')
+    #print ('tte_convention_events_type_api_post')
     events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': events_type, 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0}
-    print ('Parameters: ', events_type_params)
     events_type_response = requests.post(config.tte_url + '/eventtype', params= events_type_params)
     events_type_json = events_type_response.json()
-    print (events_type_json)
     events_type_id = events_type_json['result']['id']
     return(events_type_id)
 
@@ -817,7 +808,6 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
         daypart_delete_url = 'https://tabletop.events/api/daypart/' + daypart['id']
         daypart_delete_response = requests.delete(daypart_delete_url, params= daypart_delete_params)
         daypart_delete_data = daypart_delete_response.json()
-        print(daypart['id'],daypart_delete_data)
     return()
 
 # -----------------------------------------------------------------------
@@ -827,14 +817,13 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 # Post Tables and Rooms to Convention
 # -----------------------------------------------------------------------
 def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info):
-    print ('tte_convention_roomnsandspaces_api_post:')
+    # print ('tte_convention_roomnsandspaces_api_post:')
     all_spaces = []
     spaces_data = {}
     for room in convention_info['tables']:
         rooms_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': room['table_type'] }
         rooms_response = requests.post(config.tte_url + '/room', params= rooms_params)
         rooms_json = rooms_response.json()
-        print (rooms_json)
         room_id = rooms_json['result']['id']
         room_name = rooms_json['result']['name']
         for table_num in range(int(room['table_start']),int(room['table_end'])):
@@ -842,11 +831,9 @@ def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,conventi
             spaces_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'room_id': room_id, 'name': table_name, 'max_tickets': 6}
             spaces_response = requests.post(config.tte_url + '/space', params= spaces_params)
             spaces_json = spaces_response.json()
-            print(spaces_json)
             space_id = spaces_json['result']['id']
             space_name = spaces_json['result']['name']
             spaces_data = {'space_id': space_id,'space_name': space_name, 'table_type': room_name,'room_id': room_id}
-            print (spaces_data)
             all_spaces.append(spaces_data)
     return(all_spaces)
 
@@ -854,7 +841,7 @@ def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,conventi
 # Delete Tables and Rooms in Convention
 # -----------------------------------------------------------------------
 def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace):
-    print ('tte_convention_roomnsandspaces_api_delete:')
+    # print ('tte_convention_roomnsandspaces_api_delete:')
     for space in ttespace:
         space_delete_params = {'session_id': ttesession['id']}
         space_delete_url = 'https://tabletop.events/api/space/' + space['id']
@@ -867,7 +854,6 @@ def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tteroo
         room_delete_response = requests.delete(room_delete_url, params= room_delete_params)
         room_delete_data = room_delete_response.json()
         all_deleted.append(room_delete_data)
-    print(room_delete_data)
     return(room_delete_data)
 # -----------------------------------------------------------------------
 # Get Table Information
@@ -948,7 +934,6 @@ def tte_convention_events_api_get(ttesession,tteconvention_id):
             events_start = int(events_data['result']['paging']['next_page_number'])
         elif events_start == events_total:
             break
-            print('Events break')
     return(all_events)
 # -----------------------------------------------------------------------
 # Login to server route
