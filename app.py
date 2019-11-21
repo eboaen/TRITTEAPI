@@ -669,7 +669,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print ('Event Types: ', event_types)
         if len(event_types) != 0:
             for type in event_types:
-                print (type('name'), event['type'])
+                print (type['name'], event['type'])
                 if event['type'] == type['name']:
                     event['type_id'] = type['id']
                     break
