@@ -445,11 +445,12 @@ def list_volunteers(tteconvention_id):
 # Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
-    # print (tte_user_api_pull)
+    print (tte_user_api_pull)
     volunteer_params = {'session_id': ttesession['id']}
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
     volunteer_data = volunteer_response.json()
+    print (volunteer_data)
     try:
         volunteer_id = volunteer_data['result']['items'][0]['id']
     except:
@@ -676,6 +677,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['type'] not in event_types:
                 # event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
                 print ('New Event Type (If): ', event['type'])
+
             else:
                 for type in event_types:
                     if event['type'] == type['name']:
@@ -706,9 +708,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             # Create the Event
             try:
                 event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
-                event_response = requests.post('https://tabletop.events/api/event', params= event_params)
-                event_data = event_response.json()
-                event['id'] = event_data['result']['id']
+                print(event_params)
+                #event_response = requests.post('https://tabletop.events/api/event', params= event_params)
+                #event_data = event_response.json()
+                #event['id'] = event_data['result']['id']
                 # Add hosts to the Event if there are any hosts to add
                 if len(host_id_l) is not 0:
                     for host in host_id_l:
