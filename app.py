@@ -660,6 +660,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         host_id_l = []
         event_hosts_l = event['hosts'].split(' ')
         for host in event_hosts_l:
+            print (host)
             try:
                 if host is " ":
                     pass
@@ -700,24 +701,25 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 event['dayparts_id'] = dayparts['id']
         # Verify an events has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
+            print ('Added Fake Event')
             # Create the Event
-            event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
-            print(event_params)
-            event_response = requests.post('https://tabletop.events/api/event', params= event_params)
-            event_data = event_response.json()
-            event['id'] = event_data['result']['id']
+            #event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
+            #print(event_params)
+            #event_response = requests.post('https://tabletop.events/api/event', params= event_params)
+            #event_data = event_response.json()
+            #event['id'] = event_data['result']['id']
             # Add hosts to the Event if there are any hosts to add
             if len(host_id_l) is not 0:
                 for host in host_id_l:
-                    host_data = []
-                    host_params = {'session_id': ttesession['id'] }
-                    host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
-                    host_response = requests.post(host_url, params= host_params)
-                    host_json = host_response.json()
-                    print ('Added host to event:')
-                    print (host_json)
+                    print ('Added host: ', host)
+                    #host_params = {'session_id': ttesession['id'] }
+                    #host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
+                    #host_response = requests.post(host_url, params= host_params)
+                    #host_json = host_response.json()
+                    #print ('Added host to event:')
+                    #print (host_json)
                     #', host_json['email'], host_json['real_name'], host_json['id'])
-            print ('Added new Event to TTE: ', event['name'], event['unconverted_datetime'], event['id'])
+            #print ('Added new Event to TTE: ', event['name'], event['unconverted_datetime'], event['id'])
             #print ('Failed to add new Event to TTE: ', event['name'], event['unconverted_datetime'], event_hosts_l)
     return()
 
