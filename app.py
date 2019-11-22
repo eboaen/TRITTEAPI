@@ -52,6 +52,9 @@ csrf = CSRFProtect(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+# init global
+tteconvention_data = {}
+
 # -----------------------------------------------------------------------
 # Database models
 # -----------------------------------------------------------------------
@@ -442,14 +445,17 @@ def list_volunteers(tteconvention_id):
 # Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
-    # print (tte_user_api_pull)
+    print ('tte_user_api_pull')
     volunteer_params = {'session_id': ttesession['id']}
     volunteer_url = 'https://tabletop.events' + '/api/user' + '?query=' + volunteer_email
     volunteer_response = requests.get(volunteer_url, params= volunteer_params)
-    volunteer_data = volunteer_response.json()
+    volunteer_json = volunteer_response.json()
     try:
-        volunteer_id = volunteer_data['result']['items'][0]['id']
+        for vol in volunteer_json['result']['items']:
+            volunteer_id = vol['id']
+            print (vol['real_name'],vol['id'])
     except:
+        print ('Unable to find: ', volunteer_email)
         volunteer_id = None
     return(volunteer_id)
 
@@ -462,13 +468,13 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     volunteer_first = volunteer_full_name[0]
     volunteer_last = volunteer_full_name[1]
     useradd_params = {'session_id': ttesession['id'],'convention_id' : tteconvention_id,'email_address' : volunteer_email,'firstname' : volunteer_first,'lastname' : volunteer_last,'phone_number' : '555-555-5555'}
-
     volunteer_response = requests.post('https://tabletop.events/api/volunteer/by-organizer', params= useradd_params)
     volunteer_data = volunteer_response.json()
     try:
         volunteer_id = volunteer_data['result']['id']
         return(volunteer_id)
     except:
+        print ('Unable to add: ', volunteer_email)
         return()
 
 # -----------------------------------------------------------------------
@@ -496,7 +502,7 @@ def database_slot_delete(tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info):
     # print ('tte_convention_volunteer_shift_api_post')
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     # Get the information on Convention Days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
     # Verify if the shift type exists, if it doesn't, initialize the shifttype of "Slot" for the convention
@@ -536,7 +542,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
 # Pull shifts from TTE
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id):
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     shifttypes_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifttypes']
     shifttypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
     shifttypes_response = requests.get(shifttypes_url, params= shifttypes_params)
@@ -548,7 +554,7 @@ def tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id):
 # Post shiftstypes to TTE
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name):
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     shifttypes_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shifttype_name}
     shifttypes_response = requests.post(config.tte_url + '/shifttype', params= shifttypes_params)
     shifttypes_json = shifttypes_response.json()
@@ -583,7 +589,7 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info
 # Pull TTE Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id):
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     tteconvention_shift_uri = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifts']
     shift_get_params = {'session_id': ttesession['id']}
     shift_get_response = requests.get(tteconvention_shift_uri, params= shift_get_params)
@@ -641,7 +647,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 # Push Events to TTE
 # -----------------------------------------------------------------------
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
-    # print ("tte_convention_events_api_post testing")
+    print ('tte_convention_events_api_post testing')
     event_hosts_l = []
     # For each event, gather the information needed to post the event
     #Get the convention days
@@ -654,8 +660,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         host_id_l = []
         event_hosts_l = event['hosts'].split(' ')
         for host in event_hosts_l:
+            print (host)
             try:
-                if host is " ":
+                if host is " " or host is "":
                     pass
                 else:
                     host_id = tte_user_api_pull(ttesession,host)
@@ -665,24 +672,24 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 pass
         #Get the event types
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
+<<<<<<< HEAD
         print (event_types)
         # Compare the Name of the event types from the matrix to the names of existing event types.
         # If there's nothing in the list of existing event types, create a new event type
         # If there is a match, return the TTE ID of the Type that matches
+=======
+        # Compare the Name of the event types with the provided Event Type
+        # If they match, return the TTE ID of the Type
+>>>>>>> e572cd974d861dc9ad5a2efdec50341138325602
         # If they don't match, create a new Event Type and return the TTE ID for that Type
-        if len(event_types) is not 0:
-            if event['type'] not in event_types:
-                event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-                print ('New Event Type: ',type['name'],event['type_id'])
-            else:
-                for type in event_types:
-                    if event['type'] == type['name']:
-                        event['type_id'] = type['id']
-                        print ('Event ', event['type'], ' already exists')
-                        break
+        event_l = [type for type in event_types if type['name'] == event['type']]
+        if len(event_l) != 0:
+            for e in event_l:
+                event['type_id'] = e['id']
+                print ('Event Type Exists: ', event['type'], event['type_id'])
         else:
+            print ('Adding Event Type to TTE: ', event['type'])
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event['type'])
-            print ('New Event Type: ',type['name'],event['type_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
@@ -701,27 +708,25 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 event['dayparts_id'] = dayparts['id']
         # Verify an events has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
+            print ('Adding Event')
             # Create the Event
-            try:
-                event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
-                event_response = requests.post('https://tabletop.events/api/event', params= event_params)
-                event_data = event_response.json()
-                event['id'] = event_data['result']['id']
-                # Add hosts to the Event if there are any hosts to add
-                if len(host_id_l) is not 0:
-                    for host in host_id_l:
-                        try:
-                            host_data = []
-                            host_params = {'session_id': ttesession['id'] }
-                            host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
-                            host_response = requests.post(host_url, params= host_params)
-                            host_json = host_response.json()
-                            print ('Added host to event: ', host_json['email'], host_json['real_name'], host_json['id'])
-                        except:
-                            print ('Unable to add host to event')
-                print ('Added new Event to TTE: ', event['name'], event['unconverted_datetime'], event['id'])
-            except:
-                print ('Failed to add new Event to TTE: ', event['name'], event['unconverted_datetime'], event_hosts_l)
+            event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_id'], 'preferreddaypart_id' : event['dayparts_id']}
+            event_response = requests.post('https://tabletop.events/api/event', params= event_params)
+            event_data = event_response.json()
+            event['id'] = event_data['result']['id']
+            # Add hosts to the Event if there are any hosts to add
+            if len(host_id_l) is not 0:
+                for host in host_id_l:
+                    print ('Added host: ', host)
+                    host_params = {'session_id': ttesession['id'] }
+                    host_url = 'https://tabletop.events/api/event/' + event['id'] + '/host/' + host
+                    host_response = requests.post(host_url, params= host_params)
+                    host_json = host_response.json()
+                    print ('Added host to event:')
+                    print (host_json)
+                    #', host_json['email'], host_json['real_name'], host_json['id'])
+            print ('Added new Event to TTE: ', event['name'], event['unconverted_datetime'], event['id'])
+            #print ('Failed to add new Event to TTE: ', event['name'], event['unconverted_datetime'], event_hosts_l)
     return()
 
 # -----------------------------------------------------------------------
@@ -732,7 +737,7 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
       eventtypes_total = 1000
       all_eventtypes = list()
       # Get the data on the convention
-      tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+      # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
       tteconvention_eventtypes_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['eventtypes']
       # Loop through the eventtypes for the convention
       while eventtypes_total >= eventtypes_start:
@@ -767,7 +772,7 @@ def tte_convention_events_type_api_post(ttesession,tteconvention_id,events_type)
 # Delete all Events for the Convention
 # -----------------------------------------------------------------------
 def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     for event in allevents:
         event_delete_params = {'session_id': ttesession['id']}
         event_delete_url = 'https://tabletop.events/api/event/' + event['id']
@@ -782,7 +787,7 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
     #Declarations
     day_info = []
     # Get the data on the convention
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     tteconvention_days_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['days']
     # Use the day url to get data on the days
     day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
@@ -802,7 +807,7 @@ def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
     day_parts_start = 1
     day_parts_total = 1000
     all_dayparts = list()
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     dayparts_url = tteconvention_data['data']['result']['_relationships']['dayparts']
 
     while day_parts_total >= day_parts_start:
@@ -885,7 +890,7 @@ def tte_convention_spaces_api_get(ttesession,tteconvention_id):
     spaces_total = 1000
     all_spaces = list()
     # Get the data on the convention
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     tteconvention_spaces_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['spaces']
     # Loop through the spaces for the convention
     while spaces_total >= spaces_start:
@@ -913,7 +918,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
       rooms_total = 1000
       all_rooms = list()
       # Get the data on the convention
-      tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+      # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
       tteconvention_rooms_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['rooms']
       # Loop through the rooms for the convention
       while rooms_total >= rooms_start:
@@ -937,7 +942,7 @@ def tte_convention_rooms_api_get(ttesession,tteconvention_id):
 # Get all events for Convention
 # -----------------------------------------------------------------------
 def tte_convention_events_api_get(ttesession,tteconvention_id):
-    tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+    # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
     events_start = 1
     events_total = 1000
     all_events = list()
@@ -1048,6 +1053,8 @@ def upload():
 @app.route('/conventions', methods=['GET', 'POST', 'PUT'])
 def conventions():
     # Declarations
+    # Call the global so we can modify it in the function with the API call.
+    global tteconvention_data
     name = session.get('name')
     ttesession = session.get('ttesession')
     folder = config.UPLOAD_FOLDER
@@ -1089,7 +1096,7 @@ def conventions():
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Volunteer Management
             volunteerselect = request.form.get('selectfile')
@@ -1104,7 +1111,7 @@ def conventions():
             })
         if request.form.get('conventionsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             # Slot Management
             conventionselect = request.form.get('selectfile')
@@ -1122,7 +1129,7 @@ def conventions():
             })
         if request.form.get('eventsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             eventselect = request.form.get('selectfile')
             location = os.path.join(folder,eventselect)
@@ -1136,7 +1143,7 @@ def conventions():
             })
         if request.form.get('eventsdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteevents = tte_convention_events_api_get(ttesession,tteconvention_id)
             deleteevents = tte_convention_events_api_delete(ttesession,tteconvention_id,tteevents)
@@ -1148,7 +1155,7 @@ def conventions():
             })
         if request.form.get('shiftsdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             tteshifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
             deleteshifts = tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,tteshifts)
@@ -1161,7 +1168,7 @@ def conventions():
             })
         if request.form.get('daypartsdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             ttedayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
             deletedayparts = tte_convention_dayparts_api_delete(ttesession,tteconvention_id,ttedayparts)
@@ -1172,7 +1179,7 @@ def conventions():
             })
         if request.form.get('roomsandtablesdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
-            tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
+            # tteconvention_data = tte_convention_api_pull(ttesession,tteconvention_id)
             tteconvention_name = tteconvention_data['data']['result']['name']
             tterooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             ttespace = tte_convention_spaces_api_get(ttesession,tteconvention_id)
