@@ -662,7 +662,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         for host in event_hosts_l:
             print (host)
             try:
-                if host is " " or host is "":
+                if host is " " or host is "" or "@" not in host:
                     pass
                 else:
                     host_id = tte_user_api_pull(ttesession,host)
