@@ -169,7 +169,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
         # Get the slots this event is assigned to
-        slots_url = 'https://tabletop.events/api/event/' + event['id'] + '/slots'
+        slots_url = 'https://tabletop.events/' + event['_relationships']['slots']
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
         event['event_slots'] = event_slots
         print (event['event_number'],event['name'],event_slots)
@@ -1022,7 +1022,7 @@ def tte_events_api_get(ttesession,tteconvention_id):
     all_events = list()
     while events_total >= events_start:
         events_url = tteconvention_data['result']['_relationships']['events']
-        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id, '_page_number': events_start}
+        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id, '_page_number': events_start, '_include_relationships'=1}
         events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
         events_data = events_response.json()
         convention_events = events_data['result']['items']
