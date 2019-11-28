@@ -265,8 +265,7 @@ def slots_parse(event_slots):
     for slot in event_slots:
         table_l = slot['name'].split()
         table_str = table_l[0] + ' ' + table_l[1]
-        table_l.append(table_str)
-        if slot_table not in table_l:
+        if table_str not in slot_tables:
             print (slot_table)
             slot_tables.append(slot_table)
     return (slot_tables)
