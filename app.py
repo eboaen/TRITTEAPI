@@ -171,7 +171,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
         slots_url = 'https://tabletop.events/api/event' + event['id'] + '/slots'
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
         event['event_slots'] = event_slots
-        print (event['event_number'],'event['name'],event_slots)
+        print (event['event_number'],event['name'],event_slots)
         # Get the hosts this event has
         # hosts_url = field['_relationships']['hosts']
         # event_hosts = tte_event_hosts_api_get(ttesession,tteconvention_id,hosts_url)
