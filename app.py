@@ -764,7 +764,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for slot_time in all_slot_times:
                 # Find the id of the daypart for the start of the event
                 # Add to the list of slot times and ids
-                if dayparts['datetime'] = slot_time and event['datetime_utc'] == dayparts['datetime']:
+                if dayparts['datetime'] == slot_time and event['datetime_utc'] == dayparts['datetime']:
                     slot_info.append(dayparts['id'], dayparts['datetime'])
                     event['dayparts_start_id'] = dayparts['id']
                 # Add other ids of correspdonging slot times that fall within the event
@@ -1145,28 +1145,12 @@ def conventions():
             session['tteconvention_id'] = request.form.get('selectcon',None)
             tteconvention_data = tte_convention_api_pull(ttesession,session['tteconvention_id'])
             print (ttesession['id'],session['tteconvention_id'])
-            try:
-                print ('Getting Volunteer Info')
-                savedvolunteers = list_volunteers(session['tteconvention_id'])
-                print ('Getting Convention Info')
-                convention_info = list_convention_info(session['tteconvention_id'])
-            except:
-                pass
-            print ('Getting Day Parts')
-            ttedayparts = tte_convention_dayparts_api_get(ttesession,session['tteconvention_id'])
             print ('Getting Events')
             savedevents = tte_convention_events_api_get(ttesession,session['tteconvention_id'])
-            print ('Getting Tables')
-            savedspaces = tte_convention_spaces_api_get(ttesession,session['tteconvention_id'])
-            print ('Done')
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
-            'ttedayparts' : ttedayparts,
-            'savedvolunteers' : savedvolunteers,
-            'savedevents' : savedevents,
-            'savedspaces' : savedspaces,
-            'convention_info' : convention_info
+            'savedevents' : savedevents
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
