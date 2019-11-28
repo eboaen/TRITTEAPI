@@ -262,7 +262,7 @@ def tte_event_slots_api_get(ttesession,tteconvention_id,slots_url):
 def slots_parse(event_slots):
     for slot in event_slots:
         slot_l = slot['name'].split()
-        slot_table = slot[0] + ' ' + slot[1]
+        slot_table = slot_l[0] + ' ' + slot_l[1]
         if slot_table not in slot_tables:
             print (slot_table)
             slot_tables.append(slot_table)
