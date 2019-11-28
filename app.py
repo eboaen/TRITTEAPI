@@ -158,7 +158,7 @@ def gettteconventions(ttesession):
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,tteconvention_id):
-    print ('tte_convention_api_pull testing')
+    # print ('tte_convention_api_pull testing')
     global tteconvention_data
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
@@ -166,13 +166,15 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
     # API Pull from TTE to get
+    print ('Getting Events')
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
         # Get the slots this event is assigned to
         slots_url = 'https://tabletop.events' + event['_relationships']['slots']
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
-        event['event_slots'] = event_slots
-        print (event['event_number'],event['name'],event_slots)
+        slot_tables = slots_parse(event_slots)
+        event['event_tables'] = slot_tables
+        print (event['event_number'],event['name'],event['event_tables'])
         # Get the hosts this event has
         # hosts_url = field['_relationships']['hosts']
         # event_hosts = tte_event_hosts_api_get(ttesession,tteconvention_id,hosts_url)
@@ -252,6 +254,19 @@ def tte_event_slots_api_get(ttesession,tteconvention_id,slots_url):
         elif slots_start == slots_total:
             break
     return(all_slots)
+
+
+# -----------------------------------------------------------------------
+# Create a list of tables assigned to the slot
+# -----------------------------------------------------------------------
+def slots_parse(event_slots)
+    for slot in event_slots:
+        slot_l = slot['name'].split()
+        slot_table = slot[0] + ' ' + slot[1]
+        if slot_table not in slot_tables:
+            print (slot_table)
+            slot_tables.append(slot_Table)
+    return (slot_tables)
 
 # -----------------------------------------------------------------------
 # Pull Hosts Data from the TTE API for a specific event
@@ -1145,12 +1160,10 @@ def conventions():
             tte_convention_api_pull(ttesession,session['tteconvention_id'])
             print (tteconvention_data)
             print (ttesession['id'],session['tteconvention_id'])
-            print ('Getting Events')
             savedevents = tteconvention_data['events']
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
-            'savedevents' : savedevents
             })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
