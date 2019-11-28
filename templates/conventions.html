@@ -34,7 +34,6 @@
         </div>
       </main>
     </div> <!-- /container -->
-
     <div class="container"> <!-- Select a convention to work on -->
       <main role="main">
         <div class="jumbotron">
@@ -83,107 +82,6 @@
         </div><!-- /jumbotron -->
       </div><!-- main -->
     </div> <!-- /container -->
-    {% if convention_info %}
-    <div class="jumbotron">
-        <div class ="main">
-          <div class="container">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="col-xs-1">Slot</th>
-                  <th scope="col" class="col-xs-1">Slot Info</th>
-                  <th scope="col" class="col-xs-1">Length</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for field in convention_info %}
-                  {% if 'slot' in field %}
-                  <tr>
-                    <td>{{ field }}</td>
-                    <td>{{ convention_info[field][0] }}</td>
-                    <td>{{ convention_info[field][1] }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-        </div><!-- /container -->
-      </div><!-- /media -->
-    </div><!-- /jumbotron -->
-    {% endif %}
-    {% if savedspaces %}
-    <div class="jumbotron">
-        <div class ="main">
-          <div class="container">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="col-xs-1">Table Name</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for table in savedspaces %}
-                  <tr>
-                      <td>{{ table.name }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-        </div><!-- /container -->
-      </div><!-- /media -->
-    </div><!-- /jumbotron -->
-    {% endif %}
-    {% if savedvolunteers %}
-    <div class="jumbotron">
-        <div class ="main">
-          <div class="container">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="col-xs-1">Name</th>
-                  <th scope="col" class="col-xs-1">DM or Admin</th>
-                  <th scope="col" class="col-xs-1">Tiers DMing</th>
-                  <th scope="col" class="col-xs-1">Slot Preference</th>
-                  <th scope="col" class="col-xs-1">Hours Volunteered/Current Hours Working</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for volunteer in all_volunteers %}
-                  <tr>
-                    <td>{{ volunteer.name }}</td>
-                    <td>{{ volunteer.role }}</td>
-                    <td>{{ volunteer.tiers }}</td>
-                    <td>{{ volunteer.slots }}</td>
-                    <td>{{ volunteer.hours }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-        </div><!-- /container -->
-      </div><!-- /media -->
-    </div><!-- /jumbotron -->
-    {% endif %}
-    {% if ttedayparts %}
-    <div class="jumbotron">
-        <div class ="main">
-          <div class="container">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="col-xs-1">Name</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for dayparts in ttedayparts %}
-                  <tr>
-                    <td>{{ dayparts.name }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-        </div><!-- /container -->
-      </div><!-- /media -->
-    </div><!-- /jumbotron -->
     {% endif %}
     {% if savedevents %}
     <div class="jumbotron">
@@ -195,6 +93,7 @@
                   <th scope="col" class="col-xs-1">Event</th>
                   <th scope="col" class="col-xs-1">Start Time</th>
                   <th scope="col" class="col-xs-1">Length</th>
+                  <th scope="col" class="col-xs-1">Tables</th>
               </tr>
               </thead>
               <tbody>
@@ -203,6 +102,9 @@
                       <td>{{ events.name }}</td>
                       <td>{{ events.startdaypart_name }}</td>
                       <td>{{ events.duration }}</td>
+                      {% for table in events.tables %}
+                          <td>{{ table }}</td>
+                      {% endfor %}
                   </tr>
                 {% endfor %}
               </tbody>
@@ -211,7 +113,6 @@
       </div><!-- /media -->
     </div><!-- /jumbotron -->
     {% endif %}
-  {% endif %}
 </main>
 <footer class="container">
   <p class="lead text-left"><a href="{{ url_for('index') }}">Return</a></p>
