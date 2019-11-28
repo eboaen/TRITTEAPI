@@ -159,11 +159,12 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 def tte_convention_api_pull(ttesession,tteconvention_id):
     print ('tte_convention_api_pull testing')
+    global tteconvention_data
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
     con_params = {'session_id': ttesession['id'], "_include_relationships": 1}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
-    convention_json = convention_response.json()
+    tteconvention_data = convention_response.json()
     # API Pull from TTE to get
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
@@ -177,15 +178,14 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
         # event_hosts = tte_event_hosts_api_get(ttesession,tteconvention_id,hosts_url)
         # field['event_hosts'] = event_hosts
     # API Pull from TTE to get the volunteer information
-    volunteer_field = convention_data['result']['_relationships']['volunteers']
-    volunteer_params = {'session_id': ttesession['id']}
-    volunteer_response = requests.get('https://tabletop.events' + volunteer_field, params = volunteer_params)
-    volunteer_data = volunteer_response.json()
+    #volunteer_field = convention_data['result']['_relationships']['volunteers']
+    #volunteer_params = {'session_id': ttesession['id']}
+    #volunteer_response = requests.get('https://tabletop.events' + volunteer_field, params = volunteer_params)
+    #volunteer_data = volunteer_response.json()
     # Populate dictionary with the info pulled from TTE
-    convention_info['convention_data'] = convention_json
-    convention_info['event'] = event_data
-    convention_info['volunteers'] = volunteer_data
-    return(convention_info)
+    #tteconvention_data['event'] = event_data
+    #tteconvention_data['volunteers'] = volunteer_data
+    return()
 
 # -----------------------------------------------------------------------
 # Pull Convention Data from the database
@@ -1127,7 +1127,6 @@ def upload():
 def conventions():
     # Declarations
     # Call the global so we can modify it in the function with the API call.
-    global tteconvention_data
     name = session.get('name')
     ttesession = session.get('ttesession')
     folder = config.UPLOAD_FOLDER
@@ -1143,8 +1142,7 @@ def conventions():
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
-            tteconvention_info = tte_convention_api_pull(ttesession,session['tteconvention_id'])
-            tteconvention_data = tteconvention_info['tteconvention_data']
+            tte_convention_api_pull(ttesession,session['tteconvention_id'])
             print (tteconvention_data)
             print (ttesession['id'],session['tteconvention_id'])
             print ('Getting Events')
