@@ -169,7 +169,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
         # Get the slots this event is assigned to
-        slots_url = 'https://tabletop.events/' + event['_relationships']['slots']
+        slots_url = 'https://tabletop.events' + event['_relationships']['slots']
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
         event['event_slots'] = event_slots
         print (event['event_number'],event['name'],event_slots)
