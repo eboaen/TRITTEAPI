@@ -185,7 +185,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     #volunteer_response = requests.get('https://tabletop.events' + volunteer_field, params = volunteer_params)
     #volunteer_data = volunteer_response.json()
     # Populate dictionary with the info pulled from TTE
-    tteconvention_data['event'] = event_data
+    tteconvention_data['events'] = event_data
     #tteconvention_data['volunteers'] = volunteer_data
     return()
 
@@ -1159,9 +1159,7 @@ def conventions():
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
             tte_convention_api_pull(ttesession,session['tteconvention_id'])
-            print (tteconvention_data)
             print (ttesession['id'],session['tteconvention_id'])
-            savedevents = tteconvention_data['events']
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
