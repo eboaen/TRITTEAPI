@@ -186,6 +186,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     #volunteer_data = volunteer_response.json()
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['events'] = event_data
+    event_data_csv(tteconvention_data['events'])
     #tteconvention_data['volunteers'] = volunteer_data
     return()
 
@@ -255,7 +256,6 @@ def tte_event_slots_api_get(ttesession,tteconvention_id,slots_url):
             break
     return(all_slots)
 
-
 # -----------------------------------------------------------------------
 # Create a list of tables assigned to the slot
 # -----------------------------------------------------------------------
@@ -269,6 +269,18 @@ def slots_parse(event_slots):
             slot_tables.append(table_str)
     return (slot_tables)
 
+# -----------------------------------------------------------------------
+# Save the event data to CSV
+# -----------------------------------------------------------------------
+def event_data_csv(events):
+    folder = config.UPLOAD_FOLDER
+    with open('eventdata.csv', mode='w') as csv_file:
+    fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'host_count']
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+    writer.writeheader()
+    for event in events:
+        writer.writerow(event)
 # -----------------------------------------------------------------------
 # Pull Hosts Data from the TTE API for a specific event
 # -----------------------------------------------------------------------
