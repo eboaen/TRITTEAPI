@@ -803,9 +803,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                                 if event_slot_json['id']:
                                     print ('Added event to slot ', event_slot_json['name'])
                                 else:
-                                    print ('Unable to add slot'), eventslot)
+                                    print ('Unable to add slot', eventslot)
                             else:
-                                print ('Unable to add slot '), eventslot)
+                                print ('Unable to add slot ', eventslot)
                     else:
                         print ('No matching room found for event')
     return()
