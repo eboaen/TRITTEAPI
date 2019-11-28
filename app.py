@@ -797,7 +797,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                         for eventslot in slot_info:
                             if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
                                 event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
-                                event_slot_params = {'session_id': ttesession['id'], event['id']}
+                                event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
                                 event_slot_response = requests.put(event_slot_url, params=event_slot_params)
                                 event_slot_json = event_slot_response.json()
                                 if event_slot_json['id']:
