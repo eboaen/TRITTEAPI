@@ -173,7 +173,7 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
         field['event_slots'] = event_slots
         # Get the hosts this event has
-        slots_url = field['_relationships']['hosts']
+        hosts_url = field['_relationships']['hosts']
         event_hosts = tte_event_hosts_api_get(ttesession,tteconvention_id,hosts_url)
         field['event_hosts'] = event_hosts
     # API Pull from TTE to get the volunteer information
