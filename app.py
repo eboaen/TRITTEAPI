@@ -768,7 +768,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     slot_info.append(dayparts['id'], dayparts['datetime'])
                     event['dayparts_start_id'] = dayparts['id']
                 # Add other ids of correspdonging slot times that fall within the event
-                elif dayparts['datetime'] = slot_time and event['datetime_utc'] != dayparts['datetime']:
+            elif dayparts['datetime'] == slot_time and event['datetime_utc'] != dayparts['datetime']:
                     slot_info.append(dayparts['id'], dayparts['datetime'])
         # Verify an events has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_id']:
