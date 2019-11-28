@@ -99,7 +99,7 @@
               </tr>
               </thead>
               <tbody>
-                {% for event tteconvention_data.events in  %}
+                {% for event in tteconvention_data.events  %}
                   <tr>
                     <td>{{ event.event_number }}</td>
                     <td>{{ event.name }}</td>
@@ -107,7 +107,6 @@
                     <td>{{ event.duration }}</td>
                     <td>{{ event.event_tables}}</td>
                     <td>{{ event.host_count}}</td>
-
                   </tr>
                 {% endfor %}
               </tbody>
