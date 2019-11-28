@@ -83,28 +83,31 @@
       </div><!-- main -->
     </div> <!-- /container -->
     {% endif %}
-    {% if savedevents %}
+    {% if tteconvention_data.events %}
     <div class="jumbotron">
         <div class ="main">
           <div class="container">
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <th scope="col" class="col-xs-1">Event Number</th>
                   <th scope="col" class="col-xs-1">Event</th>
                   <th scope="col" class="col-xs-1">Start Time</th>
                   <th scope="col" class="col-xs-1">Length</th>
                   <th scope="col" class="col-xs-1">Tables</th>
+                  <th scope="col" class="col-xs-1">Number of hosts</th>
               </tr>
               </thead>
               <tbody>
-                {% for events in savedevents %}
+                {% for event tteconvention_data.events in  %}
                   <tr>
-                      <td>{{ events.name }}</td>
-                      <td>{{ events.startdaypart_name }}</td>
-                      <td>{{ events.duration }}</td>
-                      {% for table in events.tables %}
-                          <td>{{ table }}</td>
-                      {% endfor %}
+                    <td>{{ event.event_number }}</td>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.startdaypart_name }}</td>
+                    <td>{{ event.duration }}</td>
+                    <td>{{ event.event_tables}}</td>
+                    <td>{{ event.host_count}}</td>
+
                   </tr>
                 {% endfor %}
               </tbody>
