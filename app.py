@@ -274,7 +274,8 @@ def slots_parse(event_slots):
 # -----------------------------------------------------------------------
 def event_data_csv(events):
     folder = config.UPLOAD_FOLDER
-    with open('eventdata.csv', mode='w') as csv_file:
+    saveloc = folder + '/eventdata.csv'
+    with open(saveloc, mode='w') as csv_file:
         fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'host_count']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
