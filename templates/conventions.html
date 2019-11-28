@@ -99,7 +99,7 @@
               </tr>
               </thead>
               <tbody>
-                {% for event in tteconvention_data.events  %}
+                {% for event in tteconvention_data.events|sort(attribute='event_number')  %}
                   <tr>
                     <td>{{ event.event_number }}</td>
                     <td>{{ event.name }}</td>
