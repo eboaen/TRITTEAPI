@@ -277,7 +277,7 @@ def event_data_csv(events):
     saveloc = folder + '/eventdata.csv'
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'host_count']
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames,extrasaction='ignore')
 
         writer.writeheader()
         for event in events:
