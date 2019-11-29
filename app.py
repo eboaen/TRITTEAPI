@@ -183,7 +183,7 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
             # Find if there are matches between the volunteer shift ids and the event shift ids
             for volunteer_shift in volunteer['shifts']:
                 for event_shift in event['shifts']:
-                    if volunteer_shift['id'] == event_shift['id']
+                    if volunteer_shift['id'] == event_shift['id']:
                         # Get a list of events the volunteer is already scheduled for
                         volunteer['events'] = tte_user_events_api_get(ttesession,volunteer['user_id'])
                         # If there are any events already hosted by the volunteer, get their information
@@ -194,14 +194,15 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
                                 # Make sure the dayparts of the volunteer's events don't conflict with the dayparts of the event
                                 for volunteer_event_daypart in volunteer_event['dayparts']:
                                     if volunteer_event_daypart['id'] in event_dayparts:
-                                        return()
+                                        volunteer_event_daypart_count = volunteer_event_daypart_count + 1
                                     else:
                                         volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                for event_daypart in event_dayparts:
-                                    volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                if volunteer['maxtime'] < 480:
-                                    host_data = tte_event_host_post(ttesession,event_id,volunteer['id'])
-                                    return(host_data)
+                                if volunteer_event_daypart_count < 1:
+                                    for event_daypart in event_dayparts:
+                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
+                                    if volunteer['maxtime'] < 480:
+                                        host_data = tte_event_host_post(ttesession,event_id,volunteer['id'])
+                                        return(host_data)
 
 # -----------------------------------------------------------------------
 # Convention Functions
