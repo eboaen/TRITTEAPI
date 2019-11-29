@@ -952,8 +952,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         if event['tier'] != None:
             event_type_l = [type for type in event_types if type['name'] == event['type'] and event['tier'] in type['custom_fields']]
         else:
-            event_type_l = [type for type in event_types if type['name'] == event['type']
-        if len(event_type_l) !=0:
+            event_type_l = [type for type in event_types if type['name'] == event['type']]
+        if len(event_type_l)!=0:
             for e in event_type_l:
                 event['type_id'] = e['id']
         else:
