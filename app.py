@@ -137,6 +137,73 @@ def tte_session():
     return (session)
 
 # -----------------------------------------------------------------------
+# Schedule Creator Addon
+# -----------------------------------------------------------------------
+def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_type):
+    # Pull the information regarding the volunteer shifts in the convention
+    convention_shifts = tte_convention_shifts_api_get(ttesession,tteconvention_id)
+    # Pull the information regarding the volunteer shifttypes in the convention
+    convention_shift_types = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
+    # Pull the information regarding the days of each convention
+    convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
+    # Pull the information of each of the dayparrts of the convention
+    convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
+    # Pull the information regarding the dayparts that comprise the event
+    event_dayparts = tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id)
+    # Pull the information on the event itself
+    event = tte_event_api_get(ttesession,tteconvention_id,event_id)
+    # Iterate through the types of shifts and the shifts in the convention to get the shift(s) that cover the event
+    for type in convention_shift_types:
+        for shift in convention_shifts:
+            if shift['shifttype_id'] = type['id']
+                shift['type_name'] = type['name']
+            while event['shift_durations'] != event['duration']:
+                if shift['start_time'] == event['start_date'] and shift['type_name'] == event_type:
+                    shift['start_time'] = datetime.datetime.strptime(shift['start_time'], '%Y-%m-%d %H:%M:%S')
+                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
+                    shift_td = shift['end_time'] - shift['start_time']
+                    shift['duration'] = int(shift_td.seconds / 60)
+                    event['shift_durations'] = event['shift_durations'] + shift['duration']
+                    event['next_shift_time'] = shift['end_time']
+                    event['shifts'].append(shift)
+                elif shift['start_time'] == event['next_shift_time'] and shift['type_name'] == event_type:
+                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
+                    shift_td = shift['end_time'] - event['next_shift_time']
+                    shift['duration'] = int(shift_td.seconds / 60)
+                    event['shift_durations'] = event['shift_durations'] + shift['duration']
+                    event['next_shift_time'] = shift['end_time']
+                    event['shifts'].append(shift)
+    # Itereate through the volunteers as many times as there are tables for the event to compare all volunteer shift ids, content, and difficulty to the event.
+    # If there is a match, check if the volunteer isn't already scheduled for the time, and if the volunteer is under 8 hours for the day.
+    # If all those don't conflict, add the volunteer to the event as a host
+    for tc in range(1,event_tablecount,1):
+        for volunteer in convention_data['volunteers']:
+            # Get the shifts the volunteer applied for
+            volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['user_id'])
+            # Find if there are matches between the volunteer shift ids and the event shift ids
+            for volunteer_shift in volunteer['shifts']:
+                for event_shift in event['shifts']:
+                    if volunteer_shift['id'] = event_shift['id']
+                        # Get a list of events the volunteer is already scheduled for
+                        volunteer['events'] = tte_user_events_api_get(ttesession,volunteer['user_id'])
+                        # If there are any events already hosted by the volunteer, get their information
+                        if len(volunteer['events']) != 0:
+                            for volunteer_event in volunteer['events']:
+                                volunteer_event['detail'] = tte_event_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
+                                volunteer_event['dayparts'] = tte_eventdayparts_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
+                                # Make sure the dayparts of the volunteer's events don't conflict with the dayparts of the event
+                                for volunteer_event_daypart in volunteer_event['dayparts']:
+                                    if volunteer_event_daypart['id'] in event_dayparts:
+                                        return()
+                                    else:
+                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
+                                for event_daypart in event_dayparts:
+                                    volunteer['maxtime'] = volunteer['maxtime'] + 30
+                                if volunteer['maxtime'] < 480:
+                                    host_data = tte_event_host_post(ttesession,event_id,volunteer['id'])
+                                    return(host_data)
+
+# -----------------------------------------------------------------------
 # Convention Functions
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
@@ -410,6 +477,60 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
     return(all_volunteers)
 
 # -----------------------------------------------------------------------
+# Get days of the convention
+# -----------------------------------------------------------------------
+def tte_convention_days_api_get(ttesession,tteconvention_id):
+    #Declarations
+    day_info = []
+    # Get the data on the convention
+    tteconvention_days_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['days']
+    # Use the day url to get data on the days
+    day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+    day_response = requests.get(tteconvention_days_url, params= day_params)
+    day_data = day_response.json()
+    # Create a datetime value for each day, add to a new dict
+    for item in day_data['result']['items']:
+         dt = datetime.datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
+         et = datetime.datetime.strptime(item['end_date'], '%Y-%m-%d %H:%M:%S')
+         day_info.append({'id' : item['id'], 'day_time' : dt, 'end_time': et})
+    return(day_info)
+
+# -----------------------------------------------------------------------
+# Get the id for day parts
+# -----------------------------------------------------------------------
+def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
+    day_parts_start = 1
+    day_parts_total = 1000
+    all_dayparts = list()
+    dayparts_url = tteconvention_data['result']['_relationships']['dayparts']
+
+    while day_parts_total >= day_parts_start:
+        dayparts_params = {'session_id': ttesession['id'], '_page_number': day_parts_start}
+        dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
+        dayparts_data = dayparts_response.json()
+        convention_dayparts = dayparts_data['result']['items']
+        day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
+        for dayparts in convention_dayparts:
+            dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
+            all_dayparts.append(dayparts)
+        if day_parts_start < day_parts_total:
+            day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
+        elif day_parts_start == day_parts_total:
+            break
+    return(all_dayparts)
+
+# -----------------------------------------------------------------------
+# Delete all dayparts from TTE
+# -----------------------------------------------------------------------
+def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts):
+    for daypart in all_dayparts:
+        daypart_delete_params = {'session_id': ttesession['id']}
+        daypart_delete_url = 'https://tabletop.events/api/daypart/' + daypart['id']
+        daypart_delete_response = requests.delete(daypart_delete_url, params= daypart_delete_params)
+        daypart_delete_data = daypart_delete_response.json()
+    return()
+
+# -----------------------------------------------------------------------
 # Volunteer Functions
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
@@ -590,6 +711,46 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
     except:
         print ('Unable to add: ', volunteer_email)
         return()
+
+# -----------------------------------------------------------------------
+# Get Volunteer Shift Information
+# -----------------------------------------------------------------------
+def tte_volunteer_shifts_api_get(ttesession,tteconvention_id,user_id):
+    volunteer_shifts_start = 1
+    volunteer_shifts_total = 1000
+    all_volunteer_shifts = list()
+    ttevolunteer_shifts_url = 'https://tabletop.events/api/volunteershift' + user_id
+    while volunteer_shifts_total >= volunteer_shifts_start:
+        volunteer_shifts_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_shifts_start}
+        volunteer_shifts_response = requests.get(ttevolunteer_shifts_url, params= volunteer_shifts_params)
+        volunteer_shifts_json = volunteer_shifts_response.json()
+        volunteer_shifts_data = volunteer_shifts_data['result']['items']
+        volunteer_shifts_total = int(volunteer_shifts_data['result']['paging']['total_pages'])
+        volunteer_shifts_start = int(volunteer_shifts_data['result']['paging']['page_number'])
+        for volunteer_shift in volunteer_shifts_data:
+            volunteer_shift['shift_data'] = tte_shift_api_get(ttesession,tteconvention_id,volunteer_shift['shift_id'])
+            all_volunteer_shifts.append(volunteer_shift)
+        if volunteer_shifts_start < volunteer_shifts_total:
+            volunteer_shifts_start = int(volunteer_shifts_data['result']['paging']['next_page_number'])
+        elif volunteer_shifts_start == volunteer_shifts_total:
+            break
+        else:
+            break
+    return(all_volunteer_shifts)
+
+# -----------------------------------------------------------------------
+# Get Shift Information
+# -----------------------------------------------------------------------
+def tte_shift_api_get(ttesession,tteconvention_id,shift_id):
+    shift_start = 1
+    shift_total = 1000
+    all_shift = list()
+    tteshift_url = 'https://tabletop.events/api/shift' + shift_id
+    shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': shift_start}
+    shift_response = requests.get(tteshift_url, params= shift_params)
+    shift_json = shift_response.json()
+    shift_data = shift_data['result']['items']
+    return(shift_data)
 
 # -----------------------------------------------------------------------
 # Slot Functions
@@ -914,6 +1075,91 @@ def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
     events_type_json = events_type_response.json()
     events_type_id = events_type_json['result']['id']
     return(events_type_id)
+# -----------------------------------------------------------------------
+# Add host to an event
+# -----------------------------------------------------------------------
+def tte_event_host_post(ttesession,event_id,host_id):
+  host_params = {'session_id': ttesession['id'] }
+  host_url = 'https://tabletop.events/api/event/' + event_id + '/host/' + host_id
+  host_response = requests.post(host_url, params= host_params)
+  host_json = host_response.json()
+  host_data = host_json['result']
+  return(host_data)
+
+# -----------------------------------------------------------------------
+# Get User Events Information
+# -----------------------------------------------------------------------
+def tte_user_events_api_get(ttesession,user_id):
+    user_events_start = 1
+    user_events_total = 1000
+    all_user_events = list()
+    tteuser_events_url = 'https://tabletop.events/api/'
+    while user_events_total >= user_events_start:
+        user_events_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': user_events_start}
+        user_events_response = requests.get(tteuser_events_url, params= user_events_params)
+        user_events_json = user_events_response.json()
+        user_events_data = user_events_data['result']['items']
+        user_events_total = int(user_events_data['result']['paging']['total_pages'])
+        user_events_start = int(user_events_data['result']['paging']['page_number'])
+        for user_events in user_events_data:
+            all_user_events.append(daypart)
+        if user_events_start < user_events_total:
+            user_events_start = int(user_events_data['result']['paging']['next_page_number'])
+        elif user_events_start == user_events_total:
+            break
+        else:
+            break
+    return(all_user_events)
+
+# -----------------------------------------------------------------------
+# Get Event Dayparts Information
+# -----------------------------------------------------------------------
+def tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id):
+    eventdayparts_start = 1
+    eventdayparts_total = 1000
+    all_eventdayparts = list()
+    tteeventdayparts_url = 'https://tabletop.events/api/event/' + event_id + '/dayparts'
+    while eventdayparts_total >= eventdayparts_start:
+        eventdayparts_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': eventdayparts_start, '_include_relationships': 1}
+        eventdayparts_response = requests.get(tteeventdayparts_url, params= eventdayparts_params)
+        eventdayparts_json = eventdayparts_response.json()
+        eventdayparts_data = eventdayparts_data['result']['items']
+        eventdayparts_total = int(eventdayparts_data['result']['paging']['total_pages'])
+        eventdayparts_start = int(eventdayparts_data['result']['paging']['page_number'])
+        for daypart in eventdayparts_data:
+            all_event.append(daypart)
+        if eventdayparts_start < eventdayparts_total:
+            eventdayparts_start = int(eventdayparts_data['result']['paging']['next_page_number'])
+        elif eventdayparts_start == eventdayparts_total:
+            break
+        else:
+            break
+    return(all_eventdayparts)
+
+# -----------------------------------------------------------------------
+# Get Event Information
+# -----------------------------------------------------------------------
+def tte_event_api_get(ttesession,tteconvention_id,event_id):
+    event_start = 1
+    event_total = 1000
+    all_event = list()
+    tteeevnt_url = 'https://tabletop.events/api/event/' + event_id
+    while event_total >= event_start:
+        event_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': event_start, '_include_relationships': 1}
+        event_response = requests.get(tteeevnt_url, params= event_params)
+        event_data = event_response.json()
+        convention_event = event_data['result']['items']
+        event_total = int(event_data['result']['paging']['total_pages'])
+        event_start = int(event_data['result']['paging']['page_number'])
+        for event in convention_event:
+            all_event.append(event)
+        if event_start < event_total:
+            event_start = int(event_data['result']['paging']['next_page_number'])
+        elif event_start == event_total:
+            break
+        else:
+            break
+    return(all_event)
 
 # -----------------------------------------------------------------------
 # Delete all Events for the Convention
@@ -924,60 +1170,6 @@ def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
         event_delete_url = 'https://tabletop.events/api/event/' + event['id']
         event_delete_response = requests.delete(event_delete_url, params= event_delete_params)
         event_delete_data = event_delete_response.json()
-    return()
-
-# -----------------------------------------------------------------------
-# Get days of the convention
-# -----------------------------------------------------------------------
-def tte_convention_days_api_get(ttesession,tteconvention_id):
-    #Declarations
-    day_info = []
-    # Get the data on the convention
-    tteconvention_days_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['days']
-    # Use the day url to get data on the days
-    day_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
-    day_response = requests.get(tteconvention_days_url, params= day_params)
-    day_data = day_response.json()
-    # Create a datetime value for each day, add to a new dict
-    for item in day_data['result']['items']:
-         dt = datetime.datetime.strptime(item['start_date'], '%Y-%m-%d %H:%M:%S')
-         et = datetime.datetime.strptime(item['end_date'], '%Y-%m-%d %H:%M:%S')
-         day_info.append({'id' : item['id'], 'day_time' : dt, 'end_time': et})
-    return(day_info)
-
-# -----------------------------------------------------------------------
-# Get the id for day parts
-# -----------------------------------------------------------------------
-def tte_convention_dayparts_api_get(ttesession,tteconvention_id):
-    day_parts_start = 1
-    day_parts_total = 1000
-    all_dayparts = list()
-    dayparts_url = tteconvention_data['result']['_relationships']['dayparts']
-
-    while day_parts_total >= day_parts_start:
-        dayparts_params = {'session_id': ttesession['id'], '_page_number': day_parts_start}
-        dayparts_response = requests.get('https://tabletop.events' + dayparts_url, params= dayparts_params)
-        dayparts_data = dayparts_response.json()
-        convention_dayparts = dayparts_data['result']['items']
-        day_parts_total = int(dayparts_data['result']['paging']['total_pages'])
-        for dayparts in convention_dayparts:
-            dayparts['datetime'] = datetime.datetime.strptime(dayparts['start_date'],'%Y-%m-%d %H:%M:%S')
-            all_dayparts.append(dayparts)
-        if day_parts_start < day_parts_total:
-            day_parts_start = int(dayparts_data['result']['paging']['next_page_number'])
-        elif day_parts_start == day_parts_total:
-            break
-    return(all_dayparts)
-
-# -----------------------------------------------------------------------
-# Delete all dayparts from TTE
-# -----------------------------------------------------------------------
-def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts):
-    for daypart in all_dayparts:
-        daypart_delete_params = {'session_id': ttesession['id']}
-        daypart_delete_url = 'https://tabletop.events/api/daypart/' + daypart['id']
-        daypart_delete_response = requests.delete(daypart_delete_url, params= daypart_delete_params)
-        daypart_delete_data = daypart_delete_response.json()
     return()
 
 # -----------------------------------------------------------------------
@@ -1313,214 +1505,3 @@ def conventions():
 # -----------------------------------------------------------------------
 if __name__ == '__main__':
     app.run(port=config.PORT, host=config.HOST)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# -----------------------------------------------------------------------
-# Schedule Creator Addon
-# -----------------------------------------------------------------------
-def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_type):
-    # Pull the information regarding the volunteer shifts in the convention
-    convention_shifts = tte_convention_shifts_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the volunteer shifttypes in the convention
-    convention_shift_types = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the days of each convention
-    convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
-    # Pull the information of each of the dayparrts of the convention
-    convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the dayparts that comprise the event
-    event_dayparts = tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id)
-    # Pull the information on the event itself
-    event = tte_event_api_get(ttesession,tteconvention_id,event_id)
-    # Iterate through the types of shifts and the shifts in the convention to get the shift(s) that cover the event
-    for type in convention_shift_types:
-        for shift in convention_shifts:
-            if shift['shifttype_id'] = type['id']
-                shift['type_name'] = type['name']
-            while event['shift_durations'] != event['duration']:
-                if shift['start_time'] == event['start_date'] and shift['type_name'] == event_type:
-                    shift['start_time'] = datetime.datetime.strptime(shift['start_time'], '%Y-%m-%d %H:%M:%S')
-                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
-                    shift_td = shift['end_time'] - shift['start_time']
-                    shift['duration'] = int(shift_td.seconds / 60)
-                    event['shift_durations'] = event['shift_durations'] + shift['duration']
-                    event['next_shift_time'] = shift['end_time']
-                    event['shifts'].append(shift)
-                elif shift['start_time'] == event['next_shift_time'] and shift['type_name'] == event_type:
-                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
-                    shift_td = shift['end_time'] - event['next_shift_time']
-                    shift['duration'] = int(shift_td.seconds / 60)
-                    event['shift_durations'] = event['shift_durations'] + shift['duration']
-                    event['next_shift_time'] = shift['end_time']
-                    event['shifts'].append(shift)
-    # Itereate through the volunteers as many times as there are tables for the event to compare all volunteer shift ids, content, and difficulty to the event.
-    # If there is a match, check if the volunteer isn't already scheduled for the time, and if the volunteer is under 8 hours for the day.
-    # If all those don't conflict, add the volunteer to the event as a host
-    for tc in range(1,event_tablecount,1):
-        for volunteer in convention_data['volunteers']:
-            # Get the shifts the volunteer applied for
-            volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['user_id'])
-            # Find if there are matches between the volunteer shift ids and the event shift ids
-            for volunteer_shift in volunteer['shifts']:
-                for event_shift in event['shifts']:
-                    if volunteer_shift['id'] = event_shift['id']
-                        # Get a list of events the volunteer is already scheduled for
-                        volunteer['events'] = tte_user_events_api_get(ttesession,volunteer['user_id'])
-                        # If there are any events already hosted by the volunteer, get their information
-                        if len(volunteer['events']) != 0
-                            for volunteer_event in volunteer['events']:
-                                volunteer_event['detail'] = tte_event_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                                volunteer_event['dayparts'] = tte_eventdayparts_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                                # Make sure the dayparts of the volunteer's events don't conflict with the dayparts of the event
-                                for volunteer_event_daypart in volunteer_event['dayparts']:
-                                    if volunteer_event_daypart['id'] in event_dayparts:
-                                        return()
-                                    else:
-                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                for event_daypart in event_dayparts:
-                                    volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                if volunteer['maxtime'] < 480
-                                    host_data = tte_event_host_post(ttesession,event_id,volunteer['id'])
-                                    return(host_data)
-
-
-
-
-
-# -----------------------------------------------------------------------
-# Get User Events Information
-# -----------------------------------------------------------------------
-def tte_user_events_api_get(ttesession,user_id):
-    user_events_start = 1
-    user_events_total = 1000
-    all_user_events = list()
-    tteuser_events_url = 'https://tabletop.events/api/'
-    while user_events_total >= user_events_start:
-        user_events_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': user_events_start}
-        user_events_response = requests.get(tteuser_events_url, params= user_events_params)
-        user_events_json = user_events_response.json()
-        user_events_data = user_events_data['result']['items']
-        user_events_total = int(user_events_data['result']['paging']['total_pages'])
-        user_events_start = int(user_events_data['result']['paging']['page_number'])
-        for user_events in user_events_data:
-            all_user_events.append(daypart)
-        if user_events_start < user_events_total:
-            user_events_start = int(user_events_data['result']['paging']['next_page_number'])
-        elif user_events_start == user_events_total:
-            break
-        else:
-            break
-    return(all_user_events)
-
-# -----------------------------------------------------------------------
-# Get Event Dayparts Information
-# -----------------------------------------------------------------------
-def tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id):
-    eventdayparts_start = 1
-    eventdayparts_total = 1000
-    all_eventdayparts = list()
-    tteeventdayparts_url = 'https://tabletop.events/api/event/' + event_id + '/dayparts'
-    while eventdayparts_total >= eventdayparts_start:
-        eventdayparts_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': eventdayparts_start, '_include_relationships': 1}
-        eventdayparts_response = requests.get(tteeventdayparts_url, params= eventdayparts_params)
-        eventdayparts_json = eventdayparts_response.json()
-        eventdayparts_data = eventdayparts_data['result']['items']
-        eventdayparts_total = int(eventdayparts_data['result']['paging']['total_pages'])
-        eventdayparts_start = int(eventdayparts_data['result']['paging']['page_number'])
-        for daypart in eventdayparts_data:
-            all_event.append(daypart)
-        if eventdayparts_start < eventdayparts_total:
-            eventdayparts_start = int(eventdayparts_data['result']['paging']['next_page_number'])
-        elif eventdayparts_start == eventdayparts_total:
-            break
-        else:
-            break
-    return(all_eventdayparts)
-
-# -----------------------------------------------------------------------
-# Get Event Information
-# -----------------------------------------------------------------------
-def tte_event_api_get(ttesession,tteconvention_id,event_id):
-    event_start = 1
-    event_total = 1000
-    all_event = list()
-    tteeevnt_url = 'https://tabletop.events/api/event/' + event_id
-    while event_total >= event_start:
-        event_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': event_start, '_include_relationships': 1}
-        event_response = requests.get(tteeevnt_url, params= event_params)
-        event_data = event_response.json()
-        convention_event = event_data['result']['items']
-        event_total = int(event_data['result']['paging']['total_pages'])
-        event_start = int(event_data['result']['paging']['page_number'])
-        for event in convention_event:
-            all_event.append(event)
-        if event_start < event_total:
-            event_start = int(event_data['result']['paging']['next_page_number'])
-        elif event_start == event_total:
-            break
-        else:
-            break
-    return(all_event)
-
-
-# -----------------------------------------------------------------------
-# Get Volunteer Shift Information
-# -----------------------------------------------------------------------
-def tte_volunteer_shifts_api_get(ttesession,tteconvention_id,user_id):
-    volunteer_shifts_start = 1
-    volunteer_shifts_total = 1000
-    all_volunteer_shifts = list()
-    ttevolunteer_shifts_url = 'https://tabletop.events/api/volunteershift' + user_id
-    while volunteer_shifts_total >= volunteer_shifts_start:
-        volunteer_shifts_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_shifts_start}
-        volunteer_shifts_response = requests.get(ttevolunteer_shifts_url, params= volunteer_shifts_params)
-        volunteer_shifts_json = volunteer_shifts_response.json()
-        volunteer_shifts_data = volunteer_shifts_data['result']['items']
-        volunteer_shifts_total = int(volunteer_shifts_data['result']['paging']['total_pages'])
-        volunteer_shifts_start = int(volunteer_shifts_data['result']['paging']['page_number'])
-        for volunteer_shift in volunteer_shifts_data:
-            volunteer_shift['shift_data'] = tte_shift_api_get(ttesession,tteconvention_id,volunteer_shift['shift_id'])
-            all_volunteer_shifts.append(volunteer_shift)
-        if volunteer_shifts_start < volunteer_shifts_total:
-            volunteer_shifts_start = int(volunteer_shifts_data['result']['paging']['next_page_number'])
-        elif volunteer_shifts_start == volunteer_shifts_total:
-            break
-        else:
-            break
-    return(all_volunteer_shifts)
-
-# -----------------------------------------------------------------------
-# Get Shift Information
-# -----------------------------------------------------------------------
-def tte_shift_api_get(ttesession,tteconvention_id,shift_id):
-    shift_start = 1
-    shift_total = 1000
-    all_shift = list()
-    tteshift_url = 'https://tabletop.events/api/shift' + shift_id
-    shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': shift_start}
-    shift_response = requests.get(tteshift_url, params= shift_params)
-    shift_json = shift_response.json()
-    shift_data = shift_data['result']['items']
-    return(shift_data)
-
-# -----------------------------------------------------------------------
-# Add host to an event
-# -----------------------------------------------------------------------
-def tte_event_host_post(ttesession,event_id,host_id):
-  host_params = {'session_id': ttesession['id'] }
-  host_url = 'https://tabletop.events/api/event/' + event_id + '/host/' + host_id
-  host_response = requests.post(host_url, params= host_params)
-  host_json = host_response.json()
-  host_data = host_json['result']
-  return(host_data)
