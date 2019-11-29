@@ -1364,8 +1364,9 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
                     event['shift_durations'] = event['shift_durations'] + shift['duration']
                     event['next_shift_time'] = shift['end_time']
                     event['shifts'].append(shift)
-    # Itereate through the volunteers as many times as there are tables for the event to compare their requested volunteer shift ids, content, and difficulty to the event.
-    # If there is a match, if the volunteer isn't already scheduled for the time, and if the volunteer is under 8 hours for the day, add the volunteer to the event as a host
+    # Itereate through the volunteers as many times as there are tables for the event to compare all volunteer shift ids, content, and difficulty to the event.
+    # If there is a match, check if the volunteer isn't already scheduled for the time, and if the volunteer is under 8 hours for the day.
+    # If all those don't conflict, add the volunteer to the event as a host
     for tc in range(1,event_tablecount,1):
         for volunteer in convention_data['volunteers']:
             # Get the shifts the volunteer applied for
@@ -1381,92 +1382,17 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
                             for volunteer_event in volunteer['events']:
                                 volunteer_event['detail'] = tte_event_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
                                 volunteer_event['dayparts'] = tte_eventdayparts_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                                # Make sure the dayparts of the volunteer's event don't conflict with the dayparts of the event
-                                daypart_counter = 0
+                                # Make sure the dayparts of the volunteer's events don't conflict with the dayparts of the event
                                 for volunteer_event_daypart in volunteer_event['dayparts']:
-                                    for event_daypart in event_dayparts:
-                                        if volunteer_event_daypart['id'] != event_daypart:
-
-                                            pass
-                                        else:
-                                            daypart_counter = daypart_counter + 1
-                                            break
-                                if daypart_counter == 0 and :
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                for user_shift in user_shifts:
-                    if user_shift['shift_id'] == event_shift_id
-                        user_shift['name'] = shift_type['name']
-                    user_shift['duration'] = int[user_shift['shift_data']['duration_in_hours']] * 60
-                        for y in range(user_shift['duration'],30):
-                            u_shift_time = user_shift['shift_data']['start_time'] + datetime.timedelta(minutes=y)
-                            all_user_shifts.append(u_shift_time)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            # Compare the times of dayparts in the convention to the times of the dayparts the volunteer has requested in their shifts.
-            # Create a list of daypart ids when there are matches for the user and for the convention
-            for con_daypart in convention_dayparts:
-                for user_shift in all_user_shifts:
-                    if user_shift == con_daypart['start_date'];
-                        all_user_shift_daypart_ids.append(con_daypart['id'])
-            # If the user is already scheduled for any event, get the info on all the dayparts that comprise those events
-            if len(volunteer['user_events']) != 0
-                for event in user_events:
-                    all_user_event_dayparts = all_user_event_dayparts + )
-            # Iterate through the days of the convention
-            for day in convention_days:
-                volunteer['maxtime'] = 480
-                # - Loop to make sure the volunteer doesn't go over 8 Hours
-                while volunteer['time'] < volunteer['maxtime']:
-                    # Iterate through the users shift dayparts
-                    for user_shift_daypart in all_user_shift_daypart_ids:
-                        # Check if the day of the event matches the iterated day, if and there's no conflicting dayparts alrady assigned for the user
-                        if user_event_daypart['conventionday_id'] = day['id'] and user_event_daypart['id'] not in event_dayparts_ids:
-
-
-
-                            for d in event_dayparts_ids:
-                                if d[0] in user_shift_daypart_ids and d[1] ==
-
-                                    volunteer['time'] = volunteer['time'] + 30
-                                except:
-
-
+                                    if volunteer_event_daypart['id'] in event_dayparts:
+                                        return()
+                                    else:
+                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
+                                for event_daypart in event_dayparts:
+                                    volunteer['maxtime'] = volunteer['maxtime'] + 30
+                                if volunteer['maxtime'] < 480
+                                    host_data = tte_event_host_post(ttesession,event_id,volunteer['id'])
+                                    return(host_data)
 
 
 
