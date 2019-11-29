@@ -459,7 +459,7 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
     volunteer_start = 1
     volunteer_total = 1000
     all_volunteer = list()
-    ttevolunteer_url = tteconvention_data['result']['_relationships']['volunteers']
+    ttevolunteer_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['volunteers']
     while volunteer_total >= volunteer_start:
         volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start}
         volunteer_response = requests.get(ttevolunteer_url, params= volunteer_params)
