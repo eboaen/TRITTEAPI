@@ -183,7 +183,7 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
             # Find if there are matches between the volunteer shift ids and the event shift ids
             for volunteer_shift in volunteer['shifts']:
                 for event_shift in event['shifts']:
-                    if volunteer_shift['id'] = event_shift['id']
+                    if volunteer_shift['id'] == event_shift['id']
                         # Get a list of events the volunteer is already scheduled for
                         volunteer['events'] = tte_user_events_api_get(ttesession,volunteer['user_id'])
                         # If there are any events already hosted by the volunteer, get their information
