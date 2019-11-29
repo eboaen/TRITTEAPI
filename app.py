@@ -861,7 +861,6 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info
 # -----------------------------------------------------------------------
 # Pull TTE Volunteer Shifts
 # -----------------------------------------------------------------------
-
 def tte_convention_shifts_api_get(ttesession,tteconvention_id):
     shifts_start = 1
     shifts_total = 1000
@@ -874,12 +873,12 @@ def tte_convention_shifts_api_get(ttesession,tteconvention_id):
         shifts_json = shifts_response.json()
         shifts_total = int(shifts_json['result']['paging']['total_pages'])
         shifts_data = shifts_json['result']['items']
-    for shifts in shifts_data:
-        all_shifts.append(shifts)
-    if shifts_start < shifts_total:
-        shifts_start = int(shifts_json['result']['paging']['next_page_number'])
-    elif shifts_start == shifts_total:
-        break
+        for shifts in shifts_data:
+            all_shifts.append(shifts)
+        if shifts_start < shifts_total:
+            shifts_start = int(shifts_json['result']['paging']['next_page_number'])
+        elif shifts_start == shifts_total:
+            break
     return(all_shifts)
 
 # -----------------------------------------------------------------------
