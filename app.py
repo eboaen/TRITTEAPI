@@ -467,7 +467,7 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
         volunteer_total = int(volunteer_json['result']['paging']['total_pages'])
         volunteer_start = int(volunteer_json['result']['paging']['page_number'])
         for volunteer in volunteer_data:
-            all_volunteers.append(daypart)
+            all_volunteers.append(volunteer)
         if volunteer_start < volunteer_total:
             volunteer_start = int(volunteer_json['result']['paging']['next_page_number'])
         elif volunteer_start == volunteer_total:
