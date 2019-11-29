@@ -464,7 +464,7 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
         volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start}
         volunteer_response = requests.get(ttevolunteer_url, params= volunteer_params)
         volunteer_json = volunteer_response.json()
-        volunteer_data = volunteer_data['result']['items']
+        volunteer_data = volunteer_json['result']['items']
         volunteer_total = int(volunteer_data['result']['paging']['total_pages'])
         volunteer_start = int(volunteer_data['result']['paging']['page_number'])
         for volunteer in volunteer_data:
