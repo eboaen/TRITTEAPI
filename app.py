@@ -155,7 +155,7 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
     # Iterate through the types of shifts and the shifts in the convention to get the shift(s) that cover the event
     for type in convention_shift_types:
         for shift in convention_shifts:
-            if shift['shifttype_id'] = type['id']
+            if shift['shifttype_id'] == type['id']:
                 shift['type_name'] = type['name']
             while event['shift_durations'] != event['duration']:
                 if shift['start_time'] == event['start_date'] and shift['type_name'] == event_type:
