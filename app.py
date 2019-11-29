@@ -252,7 +252,6 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
-    # event_data_csv(tteconvention_data['events'])
     #tteconvention_data['volunteers'] = volunteer_data
     return()
 
@@ -1067,7 +1066,7 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
 def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
     #print ('tte_convention_events_type_api_post')
     if event_type['tier'] != None:
-        custom_tier = {'required': 1, 'options': event_type['tier'], 'type': 'text'  'select', 'label': 'Tier', 'name': 'tier', 'conditional': 0, 'edit': 0, 'view': 1, 'sequence_number': 1}
+        custom_tier = {'required': 1, 'type': 'text', 'label': 'Tier', 'name': 'tier', 'conditional': 0, 'edit': 0, 'view': 1}
         events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0, 'custom_fields': custom_tier}
     else:
         events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0}
@@ -1401,6 +1400,7 @@ def conventions():
             print ('Getting Convention Information')
             tte_convention_api_pull(ttesession,session['tteconvention_id'])
             print (ttesession['id'],session['tteconvention_id'])
+            event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
