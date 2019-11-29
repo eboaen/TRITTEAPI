@@ -863,17 +863,17 @@ def tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info
 # -----------------------------------------------------------------------
 
 def tte_convention_shifts_api_get(ttesession,tteconvention_id):
-     shifts_start = 1
-     shifts_total = 1000
-     all_shifts = list()
-     # Get the data on the convention
-    tteconvention_shifts_url = 'https://tabletop.events' + tteconvention_data['data']['result']['_relationships']['shifts']
+    shifts_start = 1
+    shifts_total = 1000
+    all_shifts = list()
+    # Get the data on the convention
+    tteconvention_shifts_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['shifts']
     while shifts_total >= shifts_start:
-    shifts_params = {'session_id': ttesession['id'], '_include_related_objects': shifttype}
-    shifts_response = requests.get(tteconvention_shifts_url, params= shifts_params)
-    shifts_json = shifts_response.json()
-    shifts_total = int(shifts_json['result']['paging']['total_pages'])
-    shifts_data = shifts_json['result']['items']
+        shifts_params = {'session_id': ttesession['id'], '_include_related_objects': shifttype}
+        shifts_response = requests.get(tteconvention_shifts_url, params= shifts_params)
+        shifts_json = shifts_response.json()
+        shifts_total = int(shifts_json['result']['paging']['total_pages'])
+        shifts_data = shifts_json['result']['items']
     for shifts in shifts_data:
         all_shifts.append(shifts)
     if shifts_start < shifts_total:
