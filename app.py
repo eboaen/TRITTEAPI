@@ -416,7 +416,7 @@ def convention_parse(filename,tteconvention_id,tteconvention_name):
                     new_slot = {'slot': slot_num[1] , 'time': room_info[field], 'length': room_info['length']}
                     # Add to a list of all the slots for the convention
                     convention_slots.append(new_slot)
-                    # Create a dict for each room of the convention
+            # Create a dict for each room of the convention
             tables = {'table_type': room_info['table_type'], 'table_start': room_info['table_start'],'table_end': room_info['table_end']}
             # Add the tables dict to a list of rooms
             convention_tables.append(tables)
@@ -776,22 +776,19 @@ def database_slot_delete(tteconvention_id):
 # Post to TTE the Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info):
-    # print ('tte_convention_volunteer_shift_api_post')
+    print ('tte_convention_volunteer_shift_api_post')
     # Get the information on Convention Days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
-    # Verify if the shift type exists, if it doesn't, initialize the shifttype of "Slot" for the convention
+    # Verify if the shift type exists
     shiftypes_info = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
-    if len(shiftypes_info) == 0:
-        shifttype_name = 'Slot'
-        shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
-    else:
+    if len(shiftypes_info) != 0:
         for shifttype in shiftypes_info:
-            if shifttype['name'] == 'Slot':
+            if 'Slot' in shifttype['name']:
                 shifttype_name = shifttype['name']
                 shifttype_id = shifttype['id']
             else:
                 pass
-    # For each slot, get the information we need to be able to post the slot as a shift
+    # For each slot, get the information we need to be able to post the a volunteer shift
     for field in convention_info:
         if isinstance(field, int):
             shift_name = 'Slot ' + str(field)
@@ -809,7 +806,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
                     shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': day_id, 'shifttype_id': shifttype_id}
                     shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                     shift_data = shift_response.json()
-                    # print (shift_data)
+                    print (shift_data)
     return('saved')
 
 # -----------------------------------------------------------------------
@@ -1426,8 +1423,8 @@ def conventions():
             conventionselect = request.form.get('selectfile')
             location = os.path.join(folder,conventionselect)
             convention_info = convention_parse(location,tteconvention_id,tteconvention_name)
-            savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
-            # pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
+            #savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
+            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
             # pushdayparts = tte_convention_dayparts_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
