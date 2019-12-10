@@ -790,7 +790,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
         shifttype_name = 'Slot'
         shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
     # For each slot, get the information we need to be able to post the a volunteer shift
-    for field in convention_info:
+    for field in convention_info['slots']:
         print (field)
         if isinstance(field, int):
             shift_name = 'Slot ' + str(field)
