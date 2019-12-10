@@ -1423,8 +1423,8 @@ def conventions():
             conventionselect = request.form.get('selectfile')
             location = os.path.join(folder,conventionselect)
             convention_info = convention_parse(location,tteconvention_id,tteconvention_name)
-            # savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
-            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
+            savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
+            #pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
