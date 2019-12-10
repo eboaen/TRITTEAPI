@@ -793,7 +793,6 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     for field in convention_info:
         if isinstance(field, int):
             shift_name = 'Slot ' + str(field)
-
             slot_length = int(convention_info[field][1])
             shift_time_s = convention_info[field][0]
             shift_actual = datetime.datetime.strptime(shift_time_s, '%m/%d/%y %I:%M:%S %p')
@@ -802,6 +801,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
             for day in day_info:
                 slot_date = datetime.date(shift_actual.year,shift_actual.month,shift_actual.day)
                 shift_date = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
+                print (slot_date,shift_date)
                 # Compare the dates of the slot and the shift to get the tteid to use to post the shift
                 if slot_date == shift_date:
                     day_id = day['id']
