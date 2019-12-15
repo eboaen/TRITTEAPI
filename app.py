@@ -289,6 +289,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
         geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
         print (location, geolocation_id)
     else:
+        print ('Failed to find location')
         flash('Please enter a valid location in the format of City, State or City, Country')
         return redirect(request.url)
     # Define parameters to create the convention
