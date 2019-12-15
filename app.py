@@ -1467,8 +1467,8 @@ def tte_geolocation_api_post(ttesession,new_convention):
     geolocation_url = '/api/geolocation'
     geolocation_params = {'session_id': ttesession['id'], 'name': new_convention['location']}
     geolocation_response = requests.post('https://tabletop.events' + geolocation_url, params= geolocation_params)
-    #geolocation_json = geolocation_response.json()
-    print (geolocation_response)
+    geolocation_json = geolocation_response.json()
+    print (geolocation_json)
     geolocation_id = geolocation_json['result']['items']['id']
     return(geolocation_id)
 
