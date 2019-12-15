@@ -1453,8 +1453,11 @@ def tte_geolocation_api_get(ttesession,new_convention):
     geolocation_params = {'session_id': ttesession['id']}
     geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
-    print (geolocation_json)
-    geolocation_id = geolocation_json['result']['items']['id']
+    try:
+        geolocation_id = geolocation_json['result']['items']['id']
+    except:
+        print ('Could not find location', new_convention['location'], 'adding to TTE')
+        geolocation_id = tte_geolocation_api_post(ttesession,new_convention)
     return(geolocation_id)
 
 # -----------------------------------------------------------------------
@@ -1465,7 +1468,8 @@ def tte_geolocation_api_post(ttesession,new_convention):
     geolocation_params = {'session_id': ttesession['id'], 'name': new_convention['location']}
     geolocation_response = requests.post('https://tabletop.events', params= geolocation_params)
     geolocation_json = geolocation_response.json()
-    geolocation_id = geolocation_json['result']['id']
+    print (geolocation_json)
+    geolocation_id = geolocation_json['result']['items']['id']
     return(geolocation_id)
 
 
