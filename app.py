@@ -1597,9 +1597,10 @@ def create_convention():
             try:
                 tte_convention_convention_api_post(ttesession,new_convention)
                 print ('Convention ', new_convention['name'], ' created')
+                return render_template('newconvention.html', newconventionform=newconventionform)
             except:
-
-            return render_template('newconvention.html', newconventionform=newconventionform)
+                print ('Unable to create ', new_convention['name'])
+                return render_template('newconvention.html', newconventionform=newconventionform)
     return render_template('newconvention.html', newconventionform=newconventionform)
 
 # -----------------------------------------------------------------------
