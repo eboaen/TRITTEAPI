@@ -47,7 +47,6 @@
                 {% endwith %}
                 <form action="" method="post">
                   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-
                   <div class="input text">
                     <p class="lead text-left">{{ form.name.label }} {{ form.name }}</p>
                     <p class="lead text-left">{{ form.email.label }} {{ form.email }}</p>

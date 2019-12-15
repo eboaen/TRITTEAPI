@@ -30,6 +30,7 @@ import csv
 import json
 import requests
 from collections import OrderedDict
+import geonamescache
 #Debugging Tools
 import inspect
 
@@ -78,9 +79,9 @@ class Volunteers(db.Model):
 # Forms
 # -----------------------------------------------------------------------
 class LoginForm(FlaskForm):
-    name = TextField('Name:', validators=[validators.DataRequired()])
-    email = TextField('Email:', validators=[validators.DataRequired()])
-    password = TextField('Password:', validators=[validators.DataRequired()])
+    name = StringField('Name:', validators=[validators.DataRequired()])
+    email = StringField('Email:', validators=[validators.DataRequired()])
+    password = StringField('Password:', validators=[validators.DataRequired()])
 
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
@@ -98,6 +99,14 @@ class ConForm(FlaskForm):
 
 class LogoutForm(FlaskForm):
     logoutsubmit = SubmitField(label='Logout')
+
+class NewConventionForm(FlaskForm):
+    name = StringField('New Convention Name:', validators=[validators.DataRequired()])
+    location = StringField('City, Sate of the Convention', validators=[validators.DataRequired()])
+    description = TextAreaField('Description of the Convention', validators=[validators.DataRequired()])
+    phone_number = StringField('Please provide your phone number for volunteers to contact you at', validators=[validators.DataRequired()])
+    dates = TextAreaField('List each date of the Convention, date per line', validators=[validators.DataRequired()])
+    volunteer_greeting = TextAreaField('Give the volunteer greeting', validators=[validators.DataRequired()])
 
 # -----------------------------------------------------------------------
 # Internal Functions
@@ -225,8 +234,9 @@ def gettteconventions(ttesession):
 # -----------------------------------------------------------------------
 # Pull Convention Data from the TTE API
 # -----------------------------------------------------------------------
-def tte_convention_api_pull(ttesession,tteconvention_id):
-    # print ('tte_convention_api_pull testing')
+def tte_convention_api_get(ttesession,tteconvention_id):
+    # print ('tte_convention_api_get testing')
+    # Call the global so we can modify it in the function
     global tteconvention_data
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
@@ -252,8 +262,178 @@ def tte_convention_api_pull(ttesession,tteconvention_id):
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
-    #tteconvention_data['volunteers'] = volunteer_data
     return()
+
+# -----------------------------------------------------------------------
+# Creat a new Convention
+# -----------------------------------------------------------------------
+def tte_convention_convention_api_post(ttesession,new_convention)
+    # Declarations
+    # Shorten the geonamescache call
+    gc = geonamescache.GeonamesCache()
+    # Define countries, usstates, and cities
+    countries = gc.get_countries()
+    usstates = gc.get_us_states()
+    cities = gc.get_cities()
+
+    # Get the location defined by the user
+    location = new_convention['location'].split(', ')
+    possible_city = location[0]
+    website_uri = 'https://theroleinitiative.org'
+    # Check to see if the user entered in a valid city/state or city/country combination
+    # If it matches, call the functions to get the geo tte id or create a new location and return it's geo tte id
+    if location[0] in cities and location[1] in usstates:
+        try:
+            geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
+        except:
+            geolocation_id = tte_geolocation_api_post(ttesession,new_convention)
+    elif location[0] in cities and location[1] in countries:
+        try:
+            geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
+        except:
+            geolocation_id = tte_geolocation_api_post(ttesession,new_convention)
+    else:
+        flash('Please enter a valid location in the format of City, State or City, Country')
+        return redirect(request.url)
+    # Define parameters to create the convention
+    convention_url = '/api/convention'
+    convention_params = {
+                        'session_id': ttesession['id'],
+                        'name': new_convention['location'],
+                        'facebook_page': 'https://www.facebook.com/theroleinitiative/',
+                        'generic_ticket_price': 0,
+                        'group_id': config.tte_group_id,
+                        'slot_duration': 30,
+                        'twitter_handle': '@_roleinitiative',
+                        'email_address': 'events@theroleinitiative.org',
+                        'phone_number': new_convention['phone_number'],
+                        'geolocation_id': geolocation_id,
+                        'volunteer_scheduled_greeting': new_convention['volunteer_greeting'],
+                        'volunteer_custom_fields': [
+                            {
+                                "required" : 1,
+                                "label" : "Emergency Contact: Name, phone number, relationship",
+                                "name" : "volunteeremergencycontact",
+                                "edit" : 0,
+                                "type" : "text",
+                                "conditional" : 0,
+                                "view" : 1,
+                                "sequence_number" : 3
+                             },
+                             {
+                                "required" : 0,
+                                "label" : "Previous Convention/D&D Volunteer experience",
+                                "type" : "textarea",
+                                "conditional" : 0,
+                                "name" : "volunteerexperience",
+                                "edit" : 0,
+                                "sequence_number" : 2,
+                                "view" : 1
+                             },
+                             {
+                                "view" : 1,
+                                "sequence_number" : 4,
+                                "edit" : 0,
+                                "name" : "volunteerlevel",
+                                "type" : "select",
+                                "conditional" : 0,
+                                "options" : "Hotel\n4 Day\n1 day\n1 slot",
+                                "label" : "Volunteer Level - Hotel level requires committing to 24 hours over the 4 days of the convention.  Badge Level requires 12 hours, Day level requires 4 hours.  1 slot is 2 hours.  At this time we cannot confirm Hotels Slots will be available for the convention, but if you are interested in volunteering at that level still select that as an option please.",
+                                "required" : 1
+                             },
+                             {
+                                "required" : 0,
+                                "label" : "Shirt Size",
+                                "options" : "S\nM\nL\nXL\nXXL\n3X\n4X\n5X",
+                                "type" : "select",
+                                "conditional" : 0,
+                                "name" : "volunteershirtsize",
+                                "edit" : 0,
+                                "view" : 1,
+                                "sequence_number" : 7
+                             },
+                             {
+                                "label" : "Other comments (accommodations requests, allergies we should be aware of, other things you feel you should share, etc.)",
+                                "required" : 0,
+                                "type" : "textarea",
+                                "conditional" : 0,
+                                "edit" : 0,
+                                "name" : "volunteerother",
+                                "sequence_number" : 11,
+                                "view" : 1
+                             },
+                             {
+                                "sequence_number" : 9,
+                                "view" : 1,
+                                "conditional" : 0,
+                                "type" : "text",
+                                "edit" : 0,
+                                "name" : "volunteerlocation",
+                                "label" : "Where are you coming from (City/State)",
+                                "required" : 1
+                             },
+                             {
+                                "view" : 1,
+                                "sequence_number" : 1,
+                                "required" : 0,
+                                "label" : "What pronouns do you use for yourself?",
+                                "name" : "volunteerpronouns",
+                                "edit" : 0,
+                                "conditional" : 0,
+                                "type" : "text"
+                             },
+                             {
+                                "sequence_number" : 8,
+                                "view" : 1,
+                                "edit" : 0,
+                                "name" : "volunteersource",
+                                "conditional" : 0,
+                                "type" : "text",
+                                "label" : "How did you hear about us?",
+                                "required" : 1
+                             },
+                             {
+                                "options" : "None\n1\n2\n3\n4",
+                                "required" : 1,
+                                "label" : "Tier (What is the highest Tier you are comfortable GMing, enter None if you do not want to GM at all)",
+                                "name" : "volunteertiers",
+                                "edit" : 0,
+                                "conditional" : 0,
+                                "type" : "select",
+                                "sequence_number" : 6,
+                                "view" : 1
+                             },
+                             {
+                                "sequence_number" : 10,
+                                "view" : 1,
+                                "conditional_name" : "volunteerlevel",
+                                "edit" : 0,
+                                "conditional_value" : "Hotel",
+                                "name" : "volunteerhotelpref",
+                                "conditional" : 1,
+                                "type" : "select",
+                                "options" : "Male\nFemale\nAny",
+                                "label" : "Hotel Rooming Preference",
+                                "required" : 0
+                             },
+                             {
+                                "view" : 1,
+                                "sequence_number" : 5,
+                                "required" : 1,
+                                "label" : "What role are you interested in?  Admin roles are as follows: Runners work with the Admins assigned to the slot, they will help GMs with getting their badges and perform health checks.  Admins will help seat players at tables and check DMs in.  Head admin will be the escalation point for any issues that arise.",
+                                "options" : "DM - Adventurers League Only\nDM - Acquisitions Incorporated Only\nDM - Any\nAdmin\nAny",
+                                "conditional" : 0,
+                                "type" : "select",
+                                "name" : "volunteerrole",
+                                "edit" : 0
+                             }
+                         ]
+                        }
+    convention_response = requests.post('https://tabletop.events', params= convention_params)
+    convention_json = convention_response.json()
+    convention_id = convention_json['result']['id']
+    return(convention_id)
+
 
 # -----------------------------------------------------------------------
 # Pull Convention Data from the database
@@ -941,18 +1121,22 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print (event)
         #Get the event types from TTE
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
-        # Compare the Name and Tier of the event types with the provided Event Type
-        # If they match, return the TTE ID of the Type
-        # If they don't match, create a new Event Type and return the TTE ID for that Type
+        # Compare the Name and Tier of the event types (if any exist) with the provided type listed for the event
+        # If the event is a game, get a list of event types, checking if they have a tier or not.
+        # If the event isn't a game, return the list of event types that don't have tiers.
         if event['tier'] != None:
             event_type_l = [type for type in event_types if type['name'] == event['type'] and event['tier'] in type['custom_fields']]
         else:
             event_type_l = [type for type in event_types if type['name'] == event['type']]
-        if len(event_type_l)!=0:
-            for e in event_type_l:
-                event['type_id'] = e['id']
+        # If there are event types and a match is found, assign the id of the match to the event
+        if len(event_type_l) !=0:
+            event['type_id'] = e['id']
         else:
-            print ('Adding Event Type to TTE: ', event['type'], event['tier'])
+            # If there isn't a match, create a new Event Type and return the TTE id for that Type
+            if event['tier'] !='':
+                print ('Adding Event Type to TTE: ', event['type'], event['tier'])
+            else:
+                print ('Adding Event Type to TTE: ', event['type'])
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
@@ -996,17 +1180,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_data = event_data['result']
             print ('Added new Event to TTE: ', event_data['name'], event_data['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
-            # Add hosts to the Event if there are any hosts to add
-            print ('Adding hosts: ')
-            if len(host_id_l) is not 0:
-                for host in host_id_l:
-                    host_data = tte_event_host_post(ttesession,event_data['id'],host)
-                    if host_data['id']:
-                        print ('Added host to event:', host_data['real_name'], host, host_data['id'])
-                        all_hosts.append(host_json['id'])
-                        event['all_hosts'] = all_hosts
-                    else:
-                        print ('Unable to add host ', host)
             # Add slots for the event (assigns tables and times)
             for i in range(1,event['tablecount'],1):
                 for conslot in conventions_slots:
@@ -1213,6 +1386,7 @@ def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tteroo
         room_delete_data = room_delete_response.json()
         all_deleted.append(room_delete_data)
     return(room_delete_data)
+
 # -----------------------------------------------------------------------
 # Get Table Information
 # -----------------------------------------------------------------------
@@ -1287,6 +1461,33 @@ def tte_events_api_get(ttesession,tteconvention_id):
         elif events_start == events_total:
             break
     return(all_events)
+
+# -----------------------------------------------------------------------
+# Geolocation Functions
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
+# Query for a location id
+# -----------------------------------------------------------------------
+def tte_geolocation_api_get(ttesession,new_convention)
+    geolocation_url = '/api/geolocation' + '?query=' + new_convention['location']
+    geolocation_params = {'session_id': ttesession['id']}
+    geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
+    geolocation_json = geolocation_response.json()
+    geolocation_id = geolocation_data['result']['id']
+    return(geolocation_id)
+
+# -----------------------------------------------------------------------
+# Create a new location
+# -----------------------------------------------------------------------
+def tte_geolocation_api_post(ttesession,new_convention)
+    geolocation_url = '/api/geolocation'
+    geolocation_params = {'session_id': ttesession['id'], 'name': new_convention['location']}
+    geolocation_response = requests.post('https://tabletop.events', params= geolocation_params)
+    geolocation_json = geolocation_response.json()
+    geolocation_id = geolocation_json['result']['id']
+    return(geolocation_id)
+
+
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
@@ -1374,12 +1575,35 @@ def upload():
     return render_template('upload.html')
 
 # -----------------------------------------------------------------------
+# New Convention Route
+# -----------------------------------------------------------------------
+@app.route('/newconvention', methods=['GET', 'POST', 'PUT'])
+def create_convention():
+    # Declarations
+    new_convention = {}
+    # Call the global so we can modify it in the function with the API call.
+    ttesession = session.get('ttesession')
+    # Form Function calls
+    newconventionform = NewConventionForm(request.form)
+    if request.method == "POST":
+        new_convention['name'] = request.newconventionform['name']
+        new_convention['location'] = request.newconventionform['location']
+        new_convention['description'] = request.newconventionform['description']
+        new_convention['phone_number'] = request.newconventionform['phone_number']
+        new_convention['dates'] = request.newconventionform['dates']
+        new_convention['volunteer_greeting'] = request.newconventionform['volunteer_greeting']
+        if form.validate():
+            print ('Creating Convention')
+            tte_convention_convention_api_post(ttesession,new_convention)
+            return render_template('newconvention.html', newconventionform=newconventionform, newconvention_data)
+    return render_template('newconvention.html', newconventionform=newconventionform)
+
+# -----------------------------------------------------------------------
 # Conventions Route
 # -----------------------------------------------------------------------
 @app.route('/conventions', methods=['GET', 'POST', 'PUT'])
 def conventions():
     # Declarations
-    # Call the global so we can modify it in the function with the API call.
     name = session.get('name')
     ttesession = session.get('ttesession')
     folder = config.UPLOAD_FOLDER
@@ -1395,8 +1619,8 @@ def conventions():
         if request.form.get('consubmit'):
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
-            tte_convention_api_pull(ttesession,session['tteconvention_id'])
-            print (ttesession['id'],session['tteconvention_id'])
+            tte_convention_api_get(ttesession,session['tteconvention_id'])
+            print (ttesession,session['tteconvention_id'])
             event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
@@ -1424,7 +1648,7 @@ def conventions():
             location = os.path.join(folder,conventionselect)
             convention_info = convention_parse(location,tteconvention_id,tteconvention_name)
             savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
-            #pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
+            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
@@ -1459,7 +1683,6 @@ def conventions():
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
             tteshifts = tte_convention_volunteer_shift_api_get(ttesession,tteconvention_id)
-
             deleteshifts = tte_convention_volunteer_shift_api_delete(ttesession,tteconvention_id,tteshifts)
             convention_info = list_convention_info(tteconvention_id)
             databaseslotdelete = database_slot_delete(tteconvention_id)

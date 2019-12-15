@@ -1,0 +1,45 @@
+
+C551D1BE-0FDF-11EA-9A4D-436CB2C82C75 80B5EA32-0737-11EA-A34B-10BF4B10ACB6
+
+
+curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027&_include_relationships=1'
+
+
+curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/events -d 'session_id=C551D1BE-0FDF-11EA-9A4D-436CB2C82C75&'&_include_relationships=1'
+
+curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers/FE11ED12-0C07-11EA-92CB-2407BD109BF6 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers -d 'session_id=C551D1BE-0FDF-11EA-9A4D-436CB2C82C75'
+curl -X GET https://tabletop.events/api/event/27F84E70-0CE2-11EA-ADBA-C42CB2C82C75/dayparts -d 'session_id=C551D1BE-0FDF-11EA-9A4D-436CB2C82C75&'
+
+curl -X GET https://tabletop.events/api/user/FE18BF16-0C07-11EA-92CB-2407BD109BF6/eventhosts 'session_id=C551D1BE-0FDF-11EA-9A4D-436CB2C82C75'
+curl -X GET https://tabletop.events/api/user?query=noahk17@gmail.com -d 'session_id=C551D1BE-0FDF-11EA-9A4D-436CB2C82C75&&_include_relationships=1'
+
+
+
+/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers"
+
+curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers/FE11ED12-0C07-11EA-92CB-2407BD109BF6 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+
+curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6/eventtypes -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+1184FBAC-1115-11EA-A2B7-120948194027 B50C8666-0E4D-11EA-88D1-C7E4BC109BF6
+
+"custom_fields" : [
+               {
+                  "required" : 1,
+                  "options" : "1\n2\n3\n4",
+                  "type" : "text",
+                  "label" : "Tier",
+                  "name" : "tier",
+                  "conditional" : 0,
+                  "edit" : 0,
+                  "view" : 1,
+                  "sequence_number" : 1
+               }
+            ],
+
+
+curl -X GET https://tabletop.events/api/event/0173376E-0D24-11EA-A6F3-E906BD109BF6/slots?_page_number=1 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+
+
+curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6/volunteer/settings  -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!--[if IE]>
+    <meta http-equiv="X-UA-Compatible" content="IE=10">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="E. (Zand Vor) Boaen">
+
+    <title>The Role Initiative Scheduling Tool</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+  <main>
+  	<nav class="navbar navbar-expand-sm navbar-warning bg-warning">
+  		<a class="navbar-brand mb-0 h2">Welcome to The Role Initiative Scheduling Tool</a>
+  	</nav>
+    <div class="container"><!-- Introduction -->
+      <main role="main">
+        <div class="jumbotron">
+          <div class ="media">
+            <div class="media-body" >
+              <p class="lead text-left">Hello {{ name }}</p>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div> <!-- /container -->
+    <div class="container"> <!-- Select a convention to work on -->
+      <main role="main">
+        <div class="jumbotron">
+          <div class ="media">
+            <div class="container">
+              <form action="" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <div class="input text">
+                    <p class="lead text-left">{{ newconvention.name.label }} {{ newconvention.name }}</p>
+                    <p class="lead text-left">{{ newconvention.location.label }} {{ newconvention.location }}</p>
+                    <p class="lead text-left">{{ newconvention.phone_number.label }} {{ newconvention.phone_number }}</p>
+                    <p class="lead text-left">{{ newconvention.description.label }} {{ newconvention.description }}</p>
+                    <p class="lead text-left">{{ newconvention.dates.label }} {{ newconvention.dates }}</p>
+                    <p class="lead text-left">{{ newconvention.volunteer_greeting.label }} {{ newconvention.volunteer_greeting }}</p>
+
+                  </div>
+              </form>
+            </div><!-- /container -->
+          </div><!-- /media -->
+        </div><!-- /jumbotron -->
+      </main>
+    </div> <!-- /container -->
+</main>
+<footer class="container">
+  <p class="lead text-left"><a href="{{ url_for('index') }}">Return</a></p>
+	<a>DEBUGGING</a>
+</footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</body>
+</html>
