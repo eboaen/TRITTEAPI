@@ -1596,13 +1596,9 @@ def newconvention():
         new_convention['volunteer_greeting'] = request.form['volunteer_greeting']
         if newconventionform.validate():
             print ('Creating Convention')
-            try:
-                tte_convention_convention_api_post(ttesession,new_convention)
-                print ('Convention ', new_convention['name'], ' created')
-                return render_template('newconvention.html', newconventionform=newconventionform)
-            except:
-                print ('Unable to create ', new_convention['name'])
-                return render_template('newconvention.html', newconventionform=newconventionform)
+            tte_convention_convention_api_post(ttesession,new_convention)
+            print ('Convention ', new_convention['name'], ' created')
+            return render_template('newconvention.html', newconventionform=newconventionform)
     return render_template('newconvention.html', newconventionform=newconventionform)
 
 # -----------------------------------------------------------------------
