@@ -102,7 +102,7 @@ class LogoutForm(FlaskForm):
 
 class NewConventionForm(FlaskForm):
     name = StringField('New Convention Name:', validators=[validators.DataRequired()])
-    location = StringField('City, Sate of the Convention', validators=[validators.DataRequired()])
+    location = StringField('City, State of the Convention', validators=[validators.DataRequired()])
     description = TextAreaField('Description of the Convention', validators=[validators.DataRequired()])
     phone_number = StringField('Please provide your phone number for volunteers to contact you at', validators=[validators.DataRequired()])
     dates = TextAreaField('List each date of the Convention, date per line', validators=[validators.DataRequired()])
@@ -1585,7 +1585,7 @@ def newconvention():
     # Call the global so we can modify it in the function with the API call.
     ttesession = session.get('ttesession')
     # Form Function calls
-    newconventionform = NewConventionForm(request.form)
+    newconventionform = NewConventionForm(request.newconventionform)
     if request.method == "POST":
         new_convention['name'] = request.newconventionform['name']
         new_convention['location'] = request.newconventionform['location']
