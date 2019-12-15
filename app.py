@@ -271,29 +271,9 @@ def tte_convention_api_get(ttesession,tteconvention_id):
 def tte_convention_convention_api_post(ttesession,new_convention):
     print ('debug tte_convention_convention_api_post')
     # Declarations
-    # Shorten the geonamescache call
-    gc = geonamescache.GeonamesCache()
-    # Define countries, usstates, and cities
-    countries = gc.get_countries()
-    usstates = gc.get_us_states()
-    cities = gc.get_cities()
-    # Get the location defined by the user
-    location = new_convention['location'].split(', ')
-    # Check to see if the user entered in a valid city/state or city/country combination
-    # If it matches, call the functions to get the geo tte id or create a new location and return it's geo tte id
-    for city in cities:
-        if city == location[0]:
-            print (city)
-    if location[0] in cities and location[1] in usstates:
-        geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
-        print (location, geolocation_id)
-    elif location[0] in cities and location[1] in countries:
-        geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
-        print (location, geolocation_id)
-    else:
-        print ('Failed to find location')
-        flash('Please enter a valid location in the format of City, State or City, Country')
-        return redirect(request.url)
+    # Function Calls
+    geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
+    print (new_convention['location'], geolocation_id)
     # Define parameters to create the convention
     convention_url = '/api/convention'
     convention_params = {
