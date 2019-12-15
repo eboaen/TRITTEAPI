@@ -1578,7 +1578,7 @@ def upload():
 # New Convention Route
 # -----------------------------------------------------------------------
 @app.route('/newconvention', methods=['GET', 'POST', 'PUT'])
-def create_convention():
+def newconvention():
     # Declarations
     new_convention = {}
     # Call the global so we can modify it in the function with the API call.
