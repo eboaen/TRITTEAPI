@@ -665,7 +665,7 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
     all_dates = new_convention['dates'].split('\r\n')
     for date in all_dates:
         start_date = date + ' 12:00 AM'
-        start_day = datetime.datetime.strptime(date, "%m/%d/%Y %I:%M %p")
+        start_day = datetime.datetime.strptime(start_date, "%m/%d/%Y %I:%M %p")
         day_name = start_day.strftime('%a %b %m')
         end_day = start_day + timedelta(days=1)
         day_params = {
