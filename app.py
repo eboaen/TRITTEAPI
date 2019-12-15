@@ -1585,15 +1585,15 @@ def newconvention():
     # Call the global so we can modify it in the function with the API call.
     ttesession = session.get('ttesession')
     # Form Function calls
-    newconventionform = NewConventionForm(request.newconventionform)
+    newconventionform = NewConventionForm(request.form)
     if request.method == "POST":
-        print (request)
-        new_convention['name'] = request.newconventionform['name']
-        new_convention['location'] = request.newconventionform['location']
-        new_convention['description'] = request.newconventionform['description']
-        new_convention['phone_number'] = request.newconventionform['phone_number']
-        new_convention['dates'] = request.newconventionform['dates']
-        new_convention['volunteer_greeting'] = request.newconventionform['volunteer_greeting']
+        print (request.form)
+        new_convention['name'] = request.form['name']
+        new_convention['location'] = request.form['location']
+        new_convention['description'] = request.form['description']
+        new_convention['phone_number'] = request.form['phone_number']
+        new_convention['dates'] = request.form['dates']
+        new_convention['volunteer_greeting'] = request.form['volunteer_greeting']
         if form.validate():
             print ('Creating Convention')
             try:
