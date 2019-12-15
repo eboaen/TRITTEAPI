@@ -282,7 +282,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     # Check to see if the user entered in a valid city/state or city/country combination
     # If it matches, call the functions to get the geo tte id or create a new location and return it's geo tte id
     for city in cities:
-        if city == location[0]
+        if city == location[0]:
             print (city)
     if location[0] in cities and location[1] in usstates:
         geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
