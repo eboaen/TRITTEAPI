@@ -1469,7 +1469,7 @@ def tte_geolocation_api_post(ttesession,new_convention):
     geolocation_response = requests.post('https://tabletop.events' + geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
     print (geolocation_json)
-    geolocation_id = geolocation_json['result']['items']['id']
+    geolocation_id = geolocation_json['result']['id']
     return(geolocation_id)
 
 
