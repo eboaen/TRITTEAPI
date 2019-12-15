@@ -1587,6 +1587,7 @@ def newconvention():
     # Form Function calls
     newconventionform = NewConventionForm(request.newconventionform)
     if request.method == "POST":
+        print (request)
         new_convention['name'] = request.newconventionform['name']
         new_convention['location'] = request.newconventionform['location']
         new_convention['description'] = request.newconventionform['description']
