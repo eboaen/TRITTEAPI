@@ -107,6 +107,7 @@ class NewConventionForm(FlaskForm):
     phone_number = StringField('Please provide your phone number for volunteers to contact you at', validators=[validators.DataRequired()])
     dates = TextAreaField('List each date of the Convention, date per line', validators=[validators.DataRequired()])
     volunteer_greeting = TextAreaField('Give the volunteer greeting', validators=[validators.DataRequired()])
+    submit = SubmitField(label='Submit')
 
 # -----------------------------------------------------------------------
 # Internal Functions
