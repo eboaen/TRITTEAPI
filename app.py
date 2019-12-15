@@ -1468,7 +1468,7 @@ def tte_events_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Query for a location id
 # -----------------------------------------------------------------------
-def tte_geolocation_api_get(ttesession,new_convention)
+def tte_geolocation_api_get(ttesession,new_convention):
     geolocation_url = '/api/geolocation' + '?query=' + new_convention['location']
     geolocation_params = {'session_id': ttesession['id']}
     geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
@@ -1479,7 +1479,7 @@ def tte_geolocation_api_get(ttesession,new_convention)
 # -----------------------------------------------------------------------
 # Create a new location
 # -----------------------------------------------------------------------
-def tte_geolocation_api_post(ttesession,new_convention)
+def tte_geolocation_api_post(ttesession,new_convention):
     geolocation_url = '/api/geolocation'
     geolocation_params = {'session_id': ttesession['id'], 'name': new_convention['location']}
     geolocation_response = requests.post('https://tabletop.events', params= geolocation_params)
