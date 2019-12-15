@@ -433,7 +433,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         }
     convention_response = requests.post('https://tabletop.events', params= convention_params)
     convention_json = convention_response.json()
-    print (convention_json)
+    print (convention_response)
     convention_id = convention_json['result']['id']
     return(convention_id)
 
