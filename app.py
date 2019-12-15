@@ -277,23 +277,17 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     countries = gc.get_countries()
     usstates = gc.get_us_states()
     cities = gc.get_cities()
-
     # Get the location defined by the user
     location = new_convention['location'].split(', ')
     possible_city = location[0]
-    website_uri = 'https://theroleinitiative.org'
     # Check to see if the user entered in a valid city/state or city/country combination
     # If it matches, call the functions to get the geo tte id or create a new location and return it's geo tte id
     if location[0] in cities and location[1] in usstates:
-        try:
-            geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
-        except:
-            geolocation_id = tte_geolocation_api_post(ttesession,new_convention)
+        geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
+        print (location, geolocation_id)
     elif location[0] in cities and location[1] in countries:
-        try:
-            geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
-        except:
-            geolocation_id = tte_geolocation_api_post(ttesession,new_convention)
+        geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
+        print (location, geolocation_id)
     else:
         flash('Please enter a valid location in the format of City, State or City, Country')
         return redirect(request.url)
@@ -301,6 +295,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     convention_url = '/api/convention'
     convention_params = {
                         'session_id': ttesession['id'],
+                        'website_uri': 'https://theroleinitiative.org',
                         'name': new_convention['location'],
                         'facebook_page': 'https://www.facebook.com/theroleinitiative/',
                         'generic_ticket_price': 0,
@@ -433,7 +428,6 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         }
     convention_response = requests.post('https://tabletop.events', params= convention_params)
     convention_json = convention_response.json()
-    print (convention_response)
     convention_id = convention_json['result']['id']
     return(convention_id)
 
