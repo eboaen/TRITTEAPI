@@ -1594,7 +1594,7 @@ def newconvention():
         new_convention['phone_number'] = request.form['phone_number']
         new_convention['dates'] = request.form['dates']
         new_convention['volunteer_greeting'] = request.form['volunteer_greeting']
-        if form.validate():
+        if newconventionform.validate():
             print ('Creating Convention')
             try:
                 tte_convention_convention_api_post(ttesession,new_convention)
