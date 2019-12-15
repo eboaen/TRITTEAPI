@@ -267,7 +267,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Creat a new Convention
 # -----------------------------------------------------------------------
-def tte_convention_convention_api_post(ttesession,new_convention)
+def tte_convention_convention_api_post(ttesession,new_convention):
     # Declarations
     # Shorten the geonamescache call
     gc = geonamescache.GeonamesCache()
