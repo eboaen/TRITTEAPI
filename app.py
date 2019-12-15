@@ -663,6 +663,7 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
     # Declarations
     all_days = []
     all_dates = new_convention['dates'].split('\r\n')
+    tteconvention_days_url = 'https://tabletop.events/api/conventionday/'
     for date in all_dates:
         start_date = date + ' 12:00 AM'
         start_day = datetime.datetime.strptime(start_date, "%m/%d/%Y %I:%M %p")
@@ -676,7 +677,7 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
             'convention_id': tteconvention_id,
             'name': day_name
         }
-        day_response = requests.post('https://tabletop.events' + '/conventionday', params= day_params)
+        day_response = requests.post(tteconvention_days_url, params= day_params)
         day_json = day_response.json()
         current_day = day_json['result']['id'],day_json['result']['name']
         all_days.append(day_data)
