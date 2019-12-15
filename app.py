@@ -269,6 +269,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
 # Creat a new Convention
 # -----------------------------------------------------------------------
 def tte_convention_convention_api_post(ttesession,new_convention):
+    print ('debug tte_convention_convention_api_post')
     # Declarations
     # Shorten the geonamescache call
     gc = geonamescache.GeonamesCache()
@@ -432,6 +433,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         }
     convention_response = requests.post('https://tabletop.events', params= convention_params)
     convention_json = convention_response.json()
+    print (convention_json)
     convention_id = convention_json['result']['id']
     return(convention_id)
 
@@ -1596,8 +1598,8 @@ def newconvention():
         new_convention['volunteer_greeting'] = request.form['volunteer_greeting']
         if newconventionform.validate():
             print ('Creating Convention')
-            tte_convention_convention_api_post(ttesession,new_convention)
-            print ('Convention ', new_convention['name'], ' created')
+            created_convention = tte_convention_convention_api_post(ttesession,new_convention)
+            print ('Convention ', new_convention['name'], created_convention, ' created')
             return render_template('newconvention.html', newconventionform=newconventionform)
     return render_template('newconvention.html', newconventionform=newconventionform)
 
