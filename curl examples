@@ -19,7 +19,13 @@ curl -X GET https://tabletop.events/api/user?query=noahk17@gmail.com -d 'session
 /api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers"
 
 curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers/FE11ED12-0C07-11EA-92CB-2407BD109BF6 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
-curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6/volunteers -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6/shifts -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+
+
+curl -X GET https://tabletop.events/api/geolocation/00100292-3AD0-11E5-A40C-4CAC11D223F7 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+
+00100292-3AD0-11E5-A40C-4CAC11D223F7
+
 
 curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6/eventtypes -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
 1184FBAC-1115-11EA-A2B7-120948194027 B50C8666-0E4D-11EA-88D1-C7E4BC109BF6

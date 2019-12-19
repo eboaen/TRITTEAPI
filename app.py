@@ -244,7 +244,6 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
     # API Pull from TTE to get
-    print ('Getting Events')
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
         # Get the slots this event is assigned to
@@ -993,7 +992,16 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
             # Compare the dates of the slot and the shift to get the tteid to use to post the shift
             if slot_date == shift_date:
                 day_id = day['id']
-                shift_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': shift_name, 'quantity_of_volunteers': '255', 'start_time': shift_start, 'end_time': shift_end, 'conventionday_id': day_id, 'shifttype_id': shifttype_id}
+                shift_params = {
+                'session_id': ttesession['id'],
+                'convention_id': tteconvention_id,
+                'name': shift_name,
+                'quantity_of_volunteers': '255',
+                'start_time': shift_start,
+                'end_time': shift_end,
+                'conventionday_id': day_id,
+                'shifttype_id': shifttype_id
+                }
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                 shift_data = shift_response.json()
                 print (shift_data)
@@ -1637,7 +1645,7 @@ def conventions():
             print ('Getting Convention Information')
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             print (ttesession,session['tteconvention_id'])
-            event_data_csv(tteconvention_data['events'])
+            #event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
