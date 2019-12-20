@@ -968,16 +968,21 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     print ('tte_convention_volunteer_shift_api_post')
     # Get the information on Convention Days
     day_info = tte_convention_days_api_get(ttesession,tteconvention_id)
-    # Verify if the shift type exists
+    # Get the information on preexisting shifts
     shiftypes_info = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
+    # If there are any existing shifts, look for a match on the name
     if len(shiftypes_info) != 0:
         for shifttype in shiftypes_info:
             if 'Slot' in shifttype['name']:
                 shifttype_name = shifttype['name']
                 shifttype_id = shifttype['id']
+                print ('Found shift type ', shifttype_name,shifttype_id)
+            else:
+                pass
     else:
         shifttype_name = 'Slot'
         shifttype_id = tte_convention_volunteer_shifttypes_api_post(ttesession,tteconvention_id,shifttype_name)
+        print ('Created shift type ', shifttype_name,shifttype_id)
     # For each slot, get the information we need to be able to post the a volunteer shift
     for slot in convention_info['slots']:
         shift_name = 'Slot ' + slot['slot']
@@ -1003,9 +1008,9 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
                 'shifttype_id': shifttype_id
                 }
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
-                shift_data = shift_response.json()
-                print (shift_data)
-    return('saved')
+                shift_json = shift_response.json()
+                print (shift_json)
+    return(saved)
 
 # -----------------------------------------------------------------------
 # Pull shifts from TTE
@@ -1366,7 +1371,7 @@ def tte_convention_events_api_delete(ttesession,tteconvention_id,allevents):
 # Post Tables and Rooms to Convention
 # -----------------------------------------------------------------------
 def tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info):
-    # print ('tte_convention_roomnsandspaces_api_post:')
+    print ('tte_convention_roomnsandspaces_api_post:')
     all_spaces = []
     spaces_data = {}
     for room in convention_info['tables']:
@@ -1670,8 +1675,11 @@ def conventions():
             # Slot Management
             conventionselect = request.form.get('selectfile')
             location = os.path.join(folder,conventionselect)
+            print ('Parsing the Convention Matrix File')
             convention_info = convention_parse(location,tteconvention_id,tteconvention_name)
+            print ('Creating the Event Rooms and Spaces')
             savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
+            print ('Creating the Volunteer Shifts')
             pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
