@@ -1516,7 +1516,7 @@ def tte_geolocation_api_post(ttesession,new_convention):
 # Get a location name from a tte ID
 # -----------------------------------------------------------------------
 def tte_geolocation_byid_api_get(ttesession):
-    geolocation_url = '/api/geolocation/' + tteconvention['result']['geolocation_id']
+    geolocation_url = '/api/geolocation/' + tteconvention_data['result']['geolocation_id']
     geolocation_params = {'session_id': ttesession['id']}
     geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
