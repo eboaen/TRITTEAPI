@@ -1401,14 +1401,12 @@ def tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tteroo
         space_delete_url = 'https://tabletop.events/api/space/' + space['id']
         space_delete_response = requests.delete(space_delete_url, params= space_delete_params)
         space_delete_data = space_delete_response.json()
-        all_deleted.append(space_delete_data)
     for room in tterooms:
         room_delete_params = {'session_id': ttesession['id']}
         room_delete_url = 'https://tabletop.events/api/room/' + room['id']
         room_delete_response = requests.delete(room_delete_url, params= room_delete_params)
         room_delete_data = room_delete_response.json()
-        all_deleted.append(room_delete_data)
-    return(room_delete_data)
+    return()
 
 # -----------------------------------------------------------------------
 # Get Table Information
@@ -1738,7 +1736,7 @@ def conventions():
             tteconvention_name = tteconvention_data['result']['name']
             tterooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             ttespace = tte_convention_spaces_api_get(ttesession,tteconvention_id)
-            ttedeleteroomsandspace = tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace)
+            tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
