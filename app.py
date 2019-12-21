@@ -1520,7 +1520,7 @@ def tte_geolocation_byid_api_get(ttesession):
     geolocation_params = {'session_id': ttesession['id']}
     geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
-    geolociation_name = geolocation_json['result']['items']['name']
+    geolociation_name = geolocation_json['result']['name']
     return(geolociation_name)
 
 # -----------------------------------------------------------------------
