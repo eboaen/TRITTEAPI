@@ -99,7 +99,7 @@
                         <p class="lead text-left">{{ updateconform.phone_number.label }} {{ updateconform.phone_number }}</p>
                         <p class="lead text-left">{{ tteconvention_data['result']['description'] }}</p>
                         <p class="lead text-left">{{ updateconform.description.label }} {{ updateconform.description }}</p>
-                        {% for day in tteconvention_data['result']['']}
+                        {% for day in tteconvention_data['result']['days'] %}
                           <p class="lead text-left">{{ day['day_time']}}</p>
                         {% endfor %}
                         <p class="lead text-left">{{ updateconform.dates.label }} {{ updateconform.dates }}</p>
