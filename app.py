@@ -260,7 +260,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
-    tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)        
+    tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
     return()
@@ -1651,6 +1651,7 @@ def conventions():
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
+    updateconform = NewConventionForm(request.form, obj=tteconventions)
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
@@ -1659,7 +1660,7 @@ def conventions():
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
             })

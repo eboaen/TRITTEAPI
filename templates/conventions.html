@@ -92,20 +92,20 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                       <div class="input text">
                         <p class="lead text-left">{{ tteconvention_data['result']['name'] }}</p>
-                        <p class="lead text-left">{{ newconventionform.name.label }} {{ newconventionform.name }}</p>
+                        <p class="lead text-left">{{ updateconform.name.label }} {{ updateconform.name }}</p>
                         <p class="lead text-left">{{ tteconvention_data['result']['geolocation_ame'] }}</p>
-                        <p class="lead text-left">{{ newconventionform.location.label }} {{ newconventionform.location }}</p>
+                        <p class="lead text-left">{{ updateconform.location.label }} {{ updateconform.location }}</p>
                         <p class="lead text-left">{{ tteconvention_data['result']['phone_number'] }}</p>
-                        <p class="lead text-left">{{ newconventionform.phone_number.label }} {{ newconventionform.phone_number }}</p>
+                        <p class="lead text-left">{{ updateconform.phone_number.label }} {{ updateconform.phone_number }}</p>
                         <p class="lead text-left">{{ tteconvention_data['result']['description'] }}</p>
-                        <p class="lead text-left">{{ newconventionform.description.label }} {{ newconventionform.description }}</p>
+                        <p class="lead text-left">{{ updateconform.description.label }} {{ updateconform.description }}</p>
                         {% for day in tteconvention_data['result']['']}
                           <p class="lead text-left">{{ day['day_time']}}</p>
                         {% endfor %}
-                        <p class="lead text-left">{{ newconventionform.dates.label }} {{ newconventionform.dates }}</p>
+                        <p class="lead text-left">{{ updateconform.dates.label }} {{ updateconform.dates }}</p>
                         <p class="lead text-left">{{ tteconvention_data['result']['volunteer_scheduled_greeting	'] }}</p>
-                        <p class="lead text-left">{{ newconventionform.volunteer_greeting.label }} {{ newconventionform.volunteer_greeting }}</p>
-                        {{ newconventionform.conventionsubmit}}
+                        <p class="lead text-left">{{ updateconform.volunteer_greeting.label }} {{ updateconform.volunteer_greeting }}</p>
+                        {{ updateconform.conventionsubmit}}
                       </div>
                   </form>
                 </div><!-- /container -->
