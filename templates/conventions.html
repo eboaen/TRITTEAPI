@@ -82,36 +82,36 @@
         </div><!-- /jumbotron -->
       </div><!-- main -->
     </div> <!-- /container -->
-    {% endif %}
-    {% if tteconvention_data %}
     <div class="jumbotron">
         <div class ="main">
-          <div class="container">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="col-xs-1">Event Number</th>
-                  <th scope="col" class="col-xs-1">Event</th>
-                  <th scope="col" class="col-xs-1">Start Time</th>
-                  <th scope="col" class="col-xs-1">Length</th>
-                  <th scope="col" class="col-xs-1">Tables</th>
-                  <th scope="col" class="col-xs-1">Number of hosts</th>
-              </tr>
-              </thead>
-              <tbody>
-                {% for event in tteconvention_data.events|sort(attribute='event_number')  %}
-                  <tr>
-                    <td>{{ event.event_number }}</td>
-                    <td>{{ event.name }}</td>
-                    <td>{{ event.startdaypart_name }}</td>
-                    <td>{{ event.duration }}</td>
-                    <td>{{ event.event_tables}}</td>
-                    <td>{{ event.host_count}}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-        </div><!-- /container -->
+          <div class="container"> <!-- Select a convention to work on -->
+            <div class="jumbotron">
+              <div class ="media">
+                <div class="container">
+                  <form action="" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                      <div class="input text">
+                        <p class="lead text-left">{{ tteconvention_data['result']['name'] }}</p>
+                        <p class="lead text-left">{{ newconventionform.name.label }} {{ newconventionform.name }}</p>
+                        <p class="lead text-left">{{ tteconvention_data['result']['geolocation_ame'] }}</p>
+                        <p class="lead text-left">{{ newconventionform.location.label }} {{ newconventionform.location }}</p>
+                        <p class="lead text-left">{{ tteconvention_data['result']['phone_number'] }}</p>
+                        <p class="lead text-left">{{ newconventionform.phone_number.label }} {{ newconventionform.phone_number }}</p>
+                        <p class="lead text-left">{{ tteconvention_data['result']['description'] }}</p>
+                        <p class="lead text-left">{{ newconventionform.description.label }} {{ newconventionform.description }}</p>
+                        {% for day in tteconvention_data['result']['']}
+                          <p class="lead text-left">{{ day['day_time']}}</p>
+                        {% endfor %}
+                        <p class="lead text-left">{{ newconventionform.dates.label }} {{ newconventionform.dates }}</p>
+                        <p class="lead text-left">{{ tteconvention_data['result']['volunteer_scheduled_greeting	'] }}</p>
+                        <p class="lead text-left">{{ newconventionform.volunteer_greeting.label }} {{ newconventionform.volunteer_greeting }}</p>
+                        {{ newconventionform.conventionsubmit}}
+                      </div>
+                  </form>
+                </div><!-- /container -->
+              </div><!-- /media -->
+            </div><!-- /jumbotron -->
+          </div> <!-- /container -->
       </div><!-- /media -->
     </div><!-- /jumbotron -->
     {% endif %}

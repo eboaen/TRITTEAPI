@@ -106,7 +106,7 @@ class NewConventionForm(FlaskForm):
     phone_number = StringField('Please provide your phone number for volunteers to contact you at', validators=[validators.DataRequired()])
     dates = TextAreaField('List each date of the Convention, date per line', validators=[validators.DataRequired()])
     volunteer_greeting = TextAreaField('Give the volunteer greeting', validators=[validators.DataRequired()])
-    submit = SubmitField(label='Submit')
+    conventionsubmit = SubmitField(label='Submit')
 
 # -----------------------------------------------------------------------
 # Internal Functions
@@ -259,6 +259,8 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     # API Pull from TTE to get the volunteer information
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
     # Populate dictionary with the info pulled from TTE
+    tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
+    tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)        
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
     return()
@@ -411,9 +413,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     print (convention_response)
     convention_json = convention_response.json()
     tteconvention_id = convention_json['result']['id']
-    #tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
     return(tteconvention_id)
-
 
 # -----------------------------------------------------------------------
 # Pull Convention Data from the database
@@ -1512,6 +1512,16 @@ def tte_geolocation_api_post(ttesession,new_convention):
     geolocation_id = geolocation_json['result']['id']
     return(geolocation_id)
 
+# -----------------------------------------------------------------------
+# Get a location name from a tte ID
+# -----------------------------------------------------------------------
+def tte_geolocation_byid_api_get(ttesession):
+    geolocation_url = '/api/geolocation/' + tteconvention['result']['geolocation_id']
+    geolocation_params = {'session_id': ttesession['id']}
+    geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
+    geolocation_json = geolocation_response.json()
+    geolociation_name = geolocation_json['result']['items']['name']
+    return(geolociation_name)
 
 # -----------------------------------------------------------------------
 # Login to server route
