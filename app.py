@@ -1010,7 +1010,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
                 shift_response = requests.post(config.tte_url + '/shift', params= shift_params)
                 shift_json = shift_response.json()
                 print (shift_json)
-    return(saved)
+    return()
 
 # -----------------------------------------------------------------------
 # Pull shifts from TTE
@@ -1678,7 +1678,7 @@ def conventions():
             print ('Creating the Event Rooms and Spaces')
             savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
             print ('Creating the Volunteer Shifts')
-            pushshifts = tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
+            tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
             return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
