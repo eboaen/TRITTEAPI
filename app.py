@@ -1067,7 +1067,7 @@ def tte_convention_volunteer_shifts_api_get(ttesession,tteconvention_id):
     # Get the data on the convention
     tteconvention_shifts_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['shifts']
     while shifts_total >= shifts_start:
-        shifts_params = {'session_id': ttesession['id'], '_include_related_objects': shifttype}
+        shifts_params = {'session_id': ttesession['id'], '_include_related_objects': 'shifttype'}
         shifts_response = requests.get(tteconvention_shifts_url, params= shifts_params)
         shifts_json = shifts_response.json()
         shifts_total = int(shifts_json['result']['paging']['total_pages'])
