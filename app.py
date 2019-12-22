@@ -1664,7 +1664,8 @@ def conventions():
             convention['phone_number'] = tteconvention_data['result']['phone_number']
             convention['description'] = tteconvention_data['result']['description']
             for day in tteconvention_data['result']['days']:
-                dayonly = day.strftime('%m/%d/%y') + '\n'
+                print (day)
+                dayonly = day
                 all_days.append(dayonly)
             convention['dates'] = all_days
             convention['volunteer_scheduled_greeting'] = tteconvention_data['result']['volunteer_scheduled_greeting']
