@@ -105,7 +105,6 @@ class NewConventionForm(FlaskForm):
     description = TextAreaField('Description of the Convention', validators=[validators.DataRequired()])
     phone_number = StringField('Please provide your phone number for volunteers to contact you at', validators=[validators.DataRequired()])
     dates = TextAreaField('List each date of the Convention, date per line', validators=[validators.DataRequired()])
-    volunteer_greeting = TextAreaField('Give the volunteer greeting', validators=[validators.DataRequired()])
     conventionsubmit = SubmitField(label='Submit')
 
 # -----------------------------------------------------------------------
@@ -288,7 +287,6 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'email_address': 'events@theroleinitiative.org',
                         'phone_number': new_convention['phone_number'],
                         'geolocation_id': geolocation_id,
-                        'volunteer_scheduled_greeting': new_convention['volunteer_greeting'],
                         'volunteer_custom_fields': [
                             {
                                 "required" : 1,
