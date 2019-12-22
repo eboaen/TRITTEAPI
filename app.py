@@ -55,6 +55,22 @@ migrate = Migrate(app, db)
 # init global
 tteconvention_data = {}
 
+
+# -----------------------------------------------------------------------
+#  Classes
+# -----------------------------------------------------------------------
+class Convention:
+    def __init__(self, name):
+        self.name = name
+    def add_location_name(self, geolocation_name):
+        self.location_name = location_name
+    def add_description(self, description):
+        self.description = description
+    def add_phone_number(self, phone_number):
+        self.phone_number = phone_number
+    def add_dates(self, dates):
+        self.dates = dates
+
 # -----------------------------------------------------------------------
 # Database models
 # -----------------------------------------------------------------------
@@ -1652,22 +1668,22 @@ def conventions():
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
-            convention = {}
+            this_convention = Convention()
             all_days = []
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
             tte_convention_api_get(ttesession,session['tteconvention_id'])
-            convention['name'] = tteconvention_data['result']['name']
-            convention['geolocation_name'] = tteconvention_data['result']['geolocation_name']
-            convention['phone_number'] = tteconvention_data['result']['phone_number']
-            convention['description'] = tteconvention_data['result']['description']
+            this_convention(name) = tteconvention_data['result']['name']
+            this_convention.location_name(tteconvention_data['result']['geolocation_name'])
+            this_convention.phone_number(tteconvention_data['result']['phone_number'])
+            this_convention.description(tteconvention_data['result']['description'])
             for day in tteconvention_data['result']['days']:
                 print (day)
                 dayonly = day
                 all_days.append(dayonly)
-            convention['dates'] = all_days
-            updateconform = NewConventionForm(request.form, obj=convention)
-            updateconform.populate_obj(convention)
+            this_convention.dates(all_days)
+            updateconform = NewConventionForm(request.form, obj=this_convention)
+            updateconform.populate_obj(this_convention)
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
