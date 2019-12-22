@@ -1654,6 +1654,7 @@ def conventions():
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
+            convention = {}
             all_days = []
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
