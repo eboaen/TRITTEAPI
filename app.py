@@ -1668,12 +1668,12 @@ def conventions():
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
-            this_convention = Convention()
             all_days = []
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
             tte_convention_api_get(ttesession,session['tteconvention_id'])
-            this_convention(name) = tteconvention_data['result']['name']
+            this_convention = Convention()
+            this_convention(tteconvention_data['result']['name'])
             this_convention.location_name(tteconvention_data['result']['geolocation_name'])
             this_convention.phone_number(tteconvention_data['result']['phone_number'])
             this_convention.description(tteconvention_data['result']['description'])
