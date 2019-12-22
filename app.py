@@ -282,7 +282,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     return()
 
 # -----------------------------------------------------------------------
-# Creat a new Convention
+# Create a new Convention
 # -----------------------------------------------------------------------
 def tte_convention_convention_api_post(ttesession,new_convention):
     print ('debug tte_convention_convention_api_post')
@@ -296,6 +296,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'session_id': ttesession['id'],
                         'website_uri': 'https://theroleinitiative.org',
                         'name': new_convention['name'],
+                        'description': new_convention['description']
                         'facebook_page': 'https://www.facebook.com/theroleinitiative/',
                         'generic_ticket_price': 0,
                         'group_id': config.tte_group_id,
@@ -429,6 +430,25 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     convention_json = convention_response.json()
     tteconvention_id = convention_json['result']['id']
     return(tteconvention_id)
+
+# -----------------------------------------------------------------------
+# Update a Convention
+# -----------------------------------------------------------------------
+def tte_convention_convention_api_post(ttesession,session['tteconvention_id'],update_convention):
+    geolocation_id = tte_geolocation_api_get(ttesession,update_convention)
+    convention_url = '/api/convention/' + session['tteconvention_id']
+    convention_params = {
+                        'session_id': ttesession['id'],
+                        'name': update_convention['name'],
+                        'phone_number': update_convention['phone_number'],
+                        'geolocation_id': geolocation_id,
+                        'description': update_convention['description']
+                        }
+    convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
+    print (convention_response)
+    convention_json = convention_response.json()
+    tteconvention_id = convention_json['result']['id']
+    return()
 
 # -----------------------------------------------------------------------
 # Pull Convention Data from the database
@@ -1678,18 +1698,42 @@ def conventions():
             this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
             this_convention.add_description(tteconvention_data['result']['description'])
             for day in tteconvention_data['result']['days']:
-                print (day)
                 dayonly = day['day_time'].strftime('%m/%d/%Y')
                 all_days.append(dayonly)
             this_convention.add_dates(all_days)
             updateconform = NewConventionForm(request.form, obj=this_convention)
-            updateconform.populate_obj(this_convention)
+            updateconform.populate_obj(this_convention)]
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
             })
+        if request.form.get('conventionsubmit') and session.get('tteconvention_id') is not None:
+                all_days = []
+                session['tteconvention_id'] = request.form.get('selectcon',None)
+                print ('Updatinging the convention')
+                update_convention['name'] = request.form['name']
+                update_convention['location'] = request.form['location']
+                update_convention['description'] = request.form['description']
+                update_convention['phone_number'] = request.form['phone_number']
+                update_convention['dates'] = request.form['dates']
+                tte_convention_api_put(ttesession,session['tteconvention_id'],update_convention)
+                print ('Getting Convention Information')
+                this_convention = Convention(tteconvention_data['result']['name'])
+                this_convention.add_location(tteconvention_data['result']['geolocation_name'])
+                this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
+                this_convention.add_description(tteconvention_data['result']['description'])
+                for day in tteconvention_data['result']['days']:
+                    dayonly = day['day_time'].strftime('%m/%d/%Y')
+                    all_days.append(dayonly)
+                this_convention.add_dates(all_days)
+                updateconform = NewConventionForm(request.form, obj=this_convention)
+                updateconform.populate_obj(this_convention)]
+                return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+                'tteconventions' : tteconventions,
+                'tteconvention_data' : tteconvention_data,
+                })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']

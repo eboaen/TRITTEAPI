@@ -37,12 +37,14 @@
               <form action="" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <div class="input text">
-                    <p class="lead text-left">{{ newconventionform.name.label }} {{ newconventionform.name }}</p>
-                    <p class="lead text-left">{{ newconventionform.location.label }} {{ newconventionform.location }}</p>
-                    <p class="lead text-left">{{ newconventionform.phone_number.label }} {{ newconventionform.phone_number }}</p>
-                    <p class="lead text-left">{{ newconventionform.description.label }} {{ newconventionform.description }}</p>
-                    <p class="lead text-left">{{ newconventionform.dates.label }} {{ newconventionform.dates }}</p>
-                    {{ newconventionform.conventionsubmit}}
+                    <p>{{ newconventionform.name.label }} {{ newconventionform.name }}</p>
+                    <p>{{ newconventionform.location.label }} {{ newconventionform.location }}</p>
+                    <p>{{ newconventionform.phone_number.label }} {{ newconventionform.phone_number }}</p>
+                    <p>{{ newconventionform.description.label }}</p>
+                    <p>{{ newconventionform.description(cols="100", rows="40") }}</p>
+                    <p>{{ newconventionform.dates.label }}</p>
+                    <p>{{ newconventionform.dates(cols="20", rows="5") }}</p>
+                    <p>{{ newconventionform.conventionsubmit }}</p>
                   </div>
               </form>
             </div><!-- /container -->
