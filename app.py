@@ -240,7 +240,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     global tteconvention_data
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
-    con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description'}
+    con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description', '_include': 'volunteer_scheduled_greeting'}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
     # API Pull from TTE to get
@@ -1668,7 +1668,7 @@ def conventions():
                 dayonly = day
                 all_days.append(dayonly)
             convention['dates'] = all_days
-            convention['volunteer_scheduled_greeting'] = tteconvention_data['result']['volunteer_scheduled_greeting']
+            convention['volunteer_greeting'] = tteconvention_data['result']['volunteer_scheduled_greeting']
             updateconform = NewConventionForm(request.form, obj=convention)
             updateconform.populate_obj(convention)
             print (ttesession,session['tteconvention_id'])
