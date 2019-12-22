@@ -1702,7 +1702,7 @@ def conventions():
                 all_days.append(dayonly)
             this_convention.add_dates(all_days)
             updateconform = NewConventionForm(request.form, obj=this_convention)
-            updateconform.populate_obj(this_convention)]
+            updateconform.populate_obj(this_convention)
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
@@ -1729,7 +1729,7 @@ def conventions():
                     all_days.append(dayonly)
                 this_convention.add_dates(all_days)
                 updateconform = NewConventionForm(request.form, obj=this_convention)
-                updateconform.populate_obj(this_convention)]
+                updateconform.populate_obj(this_convention)
                 return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
                 'tteconventions' : tteconventions,
                 'tteconvention_data' : tteconvention_data,
