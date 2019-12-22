@@ -1662,7 +1662,7 @@ def conventions():
             convention['geolocation_name'] = tteconvention_data['result']['geolocation_name']
             convention['phone_number'] = tteconvention_data['result']['phone_number']
             convention['description'] = tteconvention_data['result']['description']
-            for day in tteconvention_data['result']['days']
+            for day in tteconvention_data['result']['days']:
                 dayonly = day.strftime('%m/%d/%y') + '\n'
                 all_days.append(dayonly)
             convention['dates'] = all_days
