@@ -296,7 +296,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'session_id': ttesession['id'],
                         'website_uri': 'https://theroleinitiative.org',
                         'name': new_convention['name'],
-                        'description': new_convention['description']
+                        'description': new_convention['description'],
                         'facebook_page': 'https://www.facebook.com/theroleinitiative/',
                         'generic_ticket_price': 0,
                         'group_id': config.tte_group_id,
