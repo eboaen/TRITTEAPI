@@ -1674,14 +1674,14 @@ def conventions():
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             this_convention = Convention()
             this_convention(tteconvention_data['result']['name'])
-            this_convention.location_name(tteconvention_data['result']['geolocation_name'])
-            this_convention.phone_number(tteconvention_data['result']['phone_number'])
-            this_convention.description(tteconvention_data['result']['description'])
+            this_convention.add_location(tteconvention_data['result']['geolocation_name'])
+            this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
+            this_convention.add_description(tteconvention_data['result']['description'])
             for day in tteconvention_data['result']['days']:
                 print (day)
                 dayonly = day
                 all_days.append(dayonly)
-            this_convention.dates(all_days)
+            this_convention.add_dates(all_days)
             updateconform = NewConventionForm(request.form, obj=this_convention)
             updateconform.populate_obj(this_convention)
             print (ttesession,session['tteconvention_id'])
