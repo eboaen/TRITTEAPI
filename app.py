@@ -62,7 +62,7 @@ tteconvention_data = {}
 class Convention:
     def __init__(self, name):
         self.name = name
-    def add_location_name(self, geolocation_name):
+    def add_location(self, geolocation_name):
         self.location_name = location_name
     def add_description(self, description):
         self.description = description
