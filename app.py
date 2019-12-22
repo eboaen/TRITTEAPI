@@ -1651,13 +1651,24 @@ def conventions():
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
-    updateconform = NewConventionForm(request.form, obj=tteconventions)
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
+            all_days = []
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
             tte_convention_api_get(ttesession,session['tteconvention_id'])
+            convention['name'] = tteconvention_data['result']['name']
+            convention['geolocation_name'] = tteconvention_data['result']['geolocation_name']
+            convention['phone_number'] = tteconvention_data['result']['phone_number']
+            convention['description'] = tteconvention_data['result']['description']
+            for day in tteconvention_data['result']['days']
+                dayonly = day.strftime('%m/%d/%y') + '\n'
+                all_days.append(dayonly)
+            convention['dates'] = all_days
+            convention['volunteer_scheduled_greeting'] = tteconvention_data['result']['volunteer_scheduled_greeting']
+            updateconform = NewConventionForm(request.form, obj=convention)
+            updateconform.populate_obj(convention)
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
