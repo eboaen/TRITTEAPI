@@ -118,10 +118,10 @@ class LogoutForm(FlaskForm):
 
 class NewConventionForm(FlaskForm):
     name = StringField('New Convention Name:', validators=[validators.DataRequired()])
-    location = StringField('City, State of the Convention', validators=[validators.DataRequired()])
-    description = TextAreaField('Description of the Convention', widget=TextArea(), validators=[validators.DataRequired()])
-    phone_number = StringField('Please provide your phone number for volunteers to contact you at', validators=[validators.DataRequired()])
-    dates = TextAreaField('List each date of the Convention, date per line', widget=TextArea(), validators=[validators.DataRequired()])
+    location = StringField('City, State of the Convention:', validators=[validators.DataRequired()])
+    description = TextAreaField('Description of the Convention:', widget=TextArea(), validators=[validators.DataRequired()])
+    phone_number = StringField('Please provide your phone number for volunteers to contact you: ', validators=[validators.DataRequired()])
+    dates = TextAreaField('List each date of the Convention, one date per line:', widget=TextArea(), validators=[validators.DataRequired()])
     conventionsubmit = SubmitField(label='Submit')
 
 # -----------------------------------------------------------------------
