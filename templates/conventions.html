@@ -91,12 +91,12 @@
                   <form action="" method="post">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                       <div class="input text">
-                        <p class="lead text-left">{{ updateconform.name.label }} {{ updateconform.name }}</p>
-                        <p class="lead text-left">{{ updateconform.location.label }} {{ updateconform.location }}</p>
-                        <p class="lead text-left">{{ updateconform.phone_number.label }} {{ updateconform.phone_number }}</p>
-                        <p class="lead text-left">{{ updateconform.description.label }} {{ updateconform.description(cols="30", rows="10") }}</p>
-                        <p class="lead text-left">{{ updateconform.dates.label }} {{ updateconform.dates(cols="20", rows="10") }}</p>
-                        {{ updateconform.conventionsubmit}}
+                        {{ updateconform.name.label }} {{ updateconform.name }}
+                        {{ updateconform.location.label }} {{ updateconform.location }}
+                        {{ updateconform.phone_number.label }} {{ updateconform.phone_number }}
+                        {{ updateconform.description.label }} {{ updateconform.description(cols="60", rows="20") }}
+                        {{ updateconform.dates.label }} {{ updateconform.dates(cols="20", rows="5") }}
+                        {{ updateconform.conventionsubmit }}
                       </div>
                   </form>
                 </div><!-- /container -->
