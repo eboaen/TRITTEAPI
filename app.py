@@ -240,7 +240,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     global tteconvention_data
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
-    con_params = {'session_id': ttesession['id'], "_include_relationships": 1}
+    con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description'}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
     # API Pull from TTE to get
