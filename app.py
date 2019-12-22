@@ -9,6 +9,7 @@ from flask import send_from_directory
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import TextField, PasswordField, TextAreaField, validators, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
+from wtforms.widgets import TextArea
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -118,9 +119,9 @@ class LogoutForm(FlaskForm):
 class NewConventionForm(FlaskForm):
     name = StringField('New Convention Name:', validators=[validators.DataRequired()])
     location = StringField('City, State of the Convention', validators=[validators.DataRequired()])
-    description = TextAreaField('Description of the Convention', validators=[validators.DataRequired()])
+    description = TextAreaField('Description of the Convention', widget=TextArea(), validators=[validators.DataRequired()])
     phone_number = StringField('Please provide your phone number for volunteers to contact you at', validators=[validators.DataRequired()])
-    dates = TextAreaField('List each date of the Convention, date per line', validators=[validators.DataRequired()])
+    dates = TextAreaField('List each date of the Convention, date per line', widget=TextArea(), validators=[validators.DataRequired()])
     conventionsubmit = SubmitField(label='Submit')
 
 # -----------------------------------------------------------------------
