@@ -1678,7 +1678,7 @@ def conventions():
             this_convention.add_description(tteconvention_data['result']['description'])
             for day in tteconvention_data['result']['days']:
                 print (day)
-                dayonly = day
+                dayonly = day['day_time'].strftime('%m/%d/%Y')
                 all_days.append(dayonly)
             this_convention.add_dates(all_days)
             updateconform = NewConventionForm(request.form, obj=this_convention)
