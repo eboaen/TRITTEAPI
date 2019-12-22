@@ -63,7 +63,7 @@ class Convention:
     def __init__(self, name):
         self.name = name
     def add_location(self, geolocation_name):
-        self.location_name = location_name
+        self.location = geolocation_name
     def add_description(self, description):
         self.description = description
     def add_phone_number(self, phone_number):
