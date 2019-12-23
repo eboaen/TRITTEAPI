@@ -1711,14 +1711,13 @@ def conventions():
             })
         if request.form.get('conventionsubmit') and session.get('tteconvention_id') is not None:
                 all_days = []
-                session['tteconvention_id'] = request.form.get('selectcon',None)
                 print ('Updatinging the convention')
                 update_convention['name'] = request.form['name']
                 update_convention['location'] = request.form['location']
                 update_convention['description'] = request.form['description']
                 update_convention['phone_number'] = request.form['phone_number']
                 update_convention['dates'] = request.form['dates']
-                tte_convention_api_put(ttesession,session['tteconvention_id'],update_convention)
+                tte_convention_convention_api_put(ttesession,update_convention)
                 print ('Getting Convention Information')
                 this_convention = Convention(tteconvention_data['result']['name'])
                 this_convention.add_location(tteconvention_data['result']['geolocation_name'])
