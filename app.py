@@ -177,7 +177,7 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
     event_dayparts = tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id)
     # Pull the information on the event itself
     event = tte_event_api_get(ttesession,tteconvention_id,event_id)
-    # Iterate through the types of shifts and the shifts in the convention to get the shift(s) that cover the event
+    # Iterate through the types of shifts and the shifts in the convention to get the tte ids of the shift(s) that cover the event
     for type in convention_shift_types:
         for shift in convention_shifts:
             if shift['shifttype_id'] == type['id']:
