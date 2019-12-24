@@ -1695,10 +1695,11 @@ def tte_geolocation_api_get(ttesession,convention_info):
     geolocation_params = {'session_id': ttesession['id']}
     geolocation_response = requests.get(geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
+    old_date = None
     print (geolocation_json)
     for location in geolocation_json['result']['items']:
         new_date = datetime.datetime.strptime(location['date_created'],'%Y-%m-%d %H:%M:%S')
-        if new_date > old_date:
+        if new_date > old_date or old_date == None:
             old_date = new_date
             geolocation_id = location['id']
             print (old_date, 'updated')
