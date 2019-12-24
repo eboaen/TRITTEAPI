@@ -455,6 +455,149 @@ def tte_convention_convention_api_put(ttesession,update_convention):
     return()
 
 # -----------------------------------------------------------------------
+# Update an existing Convention with TRI standard information
+# -----------------------------------------------------------------------
+def tte_convention_convention_tristandard_api_put(ttesession):
+    print ('debug tte_convention_convention_tristandard_api_put')
+    # Declarations
+    # Define parameters to update the convention
+    convention_url = '/api/convention/' + tteconvention_data['result']['id']
+    convention_params = {
+                        'session_id': ttesession['id'],
+                        'website_uri': 'https://theroleinitiative.org',
+                        'facebook_page': 'https://www.facebook.com/theroleinitiative/',
+                        'generic_ticket_price': 0,
+                        'group_id': config.tte_group_id,
+                        'slot_duration': 30,
+                        'twitter_handle': '@_roleinitiative',
+                        'email_address': 'events@theroleinitiative.org',
+                        'volunteer_custom_fields': [
+                            {
+                                "required" : 1,
+                                "label" : "Emergency Contact: Nam e, phone number, relationship",
+                                "name" : "volunteeremergencycontact",
+                                "edit" : 0,
+                                "type" : "text",
+                                "conditional" : 0,
+                                "view" : 1,
+                                "sequence_number" : 3
+                             },
+                             {
+                                "required" : 0,
+                                "label" : "Previous Convention/D&D Volunteer experience",
+                                "type" : "textarea",
+                                "conditional" : 0,
+                                "name" : "volunteerexperience",
+                                "edit" : 0,
+                                "sequence_number" : 2,
+                                "view" : 1
+                             },
+                             {
+                                "view" : 1,
+                                "sequence_number" : 4,
+                                "edit" : 0,
+                                "name" : "volunteerlevel",
+                                "type" : "select",
+                                "conditional" : 0,
+                                "options" : "Hotel\n4 Day\n1 day\n1 slot",
+                                "label" : "Volunteer Level - Hotel level requires committing to 24 hours over the 4 days of the convention.  Badge Level requires 12 hours, Day level requires 4 hours.  1 slot is 2 hours.  At this time we cannot confirm Hotels Slots will be available for the convention, but if you are interested in volunteering at that level still select that as an option please.",
+                                "required" : 1
+                             },
+                             {
+                                "required" : 0,
+                                "label" : "Shirt Size",
+                                "options" : "S\nM\nL\nXL\nXXL\n3X\n4X\n5X",
+                                "type" : "select",
+                                "conditional" : 0,
+                                "name" : "volunteershirtsize",
+                                "edit" : 0,
+                                "view" : 1,
+                                "sequence_number" : 7
+                             },
+                             {
+                                "label" : "Other comments (accommodations requests, allergies we should be aware of, other things you feel you should share, etc.)",
+                                "required" : 0,
+                                "type" : "textarea",
+                                "conditional" : 0,
+                                "edit" : 0,
+                                "name" : "volunteerother",
+                                "sequence_number" : 11,
+                                "view" : 1
+                             },
+                             {
+                                "sequence_number" : 9,
+                                "view" : 1,
+                                "conditional" : 0,
+                                "type" : "text",
+                                "edit" : 0,
+                                "name" : "volunteerlocation",
+                                "label" : "Where are you coming from (City/State)",
+                                "required" : 1
+                             },
+                             {
+                                "view" : 1,
+                                "sequence_number" : 1,
+                                "required" : 0,
+                                "label" : "What pronouns do you use for yourself?",
+                                "name" : "volunteerpronouns",
+                                "edit" : 0,
+                                "conditional" : 0,
+                                "type" : "text"
+                             },
+                             {
+                                "sequence_number" : 8,
+                                "view" : 1,
+                                "edit" : 0,
+                                "name" : "volunteersource",
+                                "conditional" : 0,
+                                "type" : "text",
+                                "label" : "How did you hear about us?",
+                                "required" : 1
+                             },
+                             {
+                                "options" : "None\n1\n2\n3\n4",
+                                "required" : 1,
+                                "label" : "Tier (What is the highest Tier you are comfortable GMing, enter None if you do not want to GM at all)",
+                                "name" : "volunteertiers",
+                                "edit" : 0,
+                                "conditional" : 0,
+                                "type" : "select",
+                                "sequence_number" : 6,
+                                "view" : 1
+                             },
+                             {
+                                "sequence_number" : 10,
+                                "view" : 1,
+                                "conditional_name" : "volunteerlevel",
+                                "edit" : 0,
+                                "conditional_value" : "Hotel",
+                                "name" : "volunteerhotelpref",
+                                "conditional" : 1,
+                                "type" : "select",
+                                "options" : "Male\nFemale\nAny",
+                                "label" : "Hotel Rooming Preference",
+                                "required" : 0
+                             },
+                             {
+                                "view" : 1,
+                                "sequence_number" : 5,
+                                "required" : 1,
+                                "label" : "What role are you interested in?  Admin roles are as follows: Runners work with the Admins assigned to the slot, they will help GMs with getting their badges and perform health checks.  Admins will help seat players at tables and check DMs in.  Head admin will be the escalation point for any issues that arise.",
+                                "options" : "DM - Adventurers League Only\nDM - Acquisitions Incorporated Only\nDM - Any\nAdmin\nAny",
+                                "conditional" : 0,
+                                "type" : "select",
+                                "name" : "volunteerrole",
+                                "edit" : 0
+                             }
+                         ]
+                        }
+    convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
+    print (convention_response)
+    convention_json = convention_response.json()
+    tteconvention_id = convention_json['result']['id']
+    return()
+
+# -----------------------------------------------------------------------
 # Pull Convention Data from the database
 # -----------------------------------------------------------------------
 def list_convention_info(tteconvention_id):
@@ -1728,6 +1871,7 @@ def conventions():
                 update_convention['phone_number'] = request.form['phone_number']
                 update_convention['dates'] = request.form['dates']
                 print ('Getting Convention Information')
+                tte_convention_convention_tristandard_api_put(ttesession)
                 tte_convention_convention_api_put(ttesession,update_convention)
                 this_convention = Convention(tteconvention_data['result']['name'])
                 this_convention.add_location(tteconvention_data['result']['geolocation_name'])
