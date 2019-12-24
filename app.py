@@ -1695,7 +1695,7 @@ def tte_geolocation_api_get(ttesession,convention_info):
     geolocation_params = {'session_id': ttesession['id']}
     geolocation_response = requests.get(geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
-    print geolocation_json
+    print (geolocation_json)
     try:
         geolocation_id = geolocation_json['result']['id']
     except:
