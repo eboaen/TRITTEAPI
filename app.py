@@ -1697,11 +1697,10 @@ def tte_geolocation_api_get(ttesession,convention_info):
     geolocation_json = geolocation_response.json()
     print (geolocation_json)
     try:
-        geolocation_id = geolocation_json['result']['id']
+        geolocation_id = geolocation_json['result']['items']['id']
     except:
         print ('Could not find location', convention_info, 'adding to TTE')
         geolocation_id = tte_geolocation_api_post(ttesession,convention_info)
-
     return(geolocation_id)
 
 # -----------------------------------------------------------------------
