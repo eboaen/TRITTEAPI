@@ -484,10 +484,9 @@ def tte_convention_convention_tristandard_api_put(ttesession):
     convention_url = 'https://tabletop.events/api/convention/' + tteconvention_data['result']['id']
     convention_params = {
                         'session_id': ttesession['id'],
+                        '_include': 'volunteer_custom_fields',
                         'website_uri': 'https://theroleinitiative.org',
                         'facebook_page': 'https://www.facebook.com/theroleinitiative/',
-                        'generic_ticket_price': 0,
-                        'group_id': config.tte_group_id,
                         'twitter_handle': '@_roleinitiative',
                         'email_address': 'events@theroleinitiative.org',
                         'volunteer_custom_fields': [
