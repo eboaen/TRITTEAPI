@@ -469,7 +469,7 @@ def tte_convention_convention_api_put(ttesession,update_convention):
                         'geolocation_id': geolocation_id,
                         'description': update_convention['description']
                         }
-    convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
+    convention_response = requests.put('https://tabletop.events' + convention_url, params= convention_params)
     convention_json = convention_response.json()
     print (convention_json)
     return()
