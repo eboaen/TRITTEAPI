@@ -1697,7 +1697,7 @@ def tte_geolocation_api_get(ttesession,convention_info):
     geolocation_json = geolocation_response.json()
     print (geolocation_json)
     try:
-        for location in geolocation_json['result']['items']
+        for location in geolocation_json['result']['items']:
             new_date = datetime.datetime(location['date_created'])
             if new_date > old_date:
                 old_date = new_date
