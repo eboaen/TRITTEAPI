@@ -1721,6 +1721,7 @@ def conventions():
                 update_convention['name'] = request.form['name']
                 update_convention['location'] = request.form['location']
                 update_convention['description'] = request.form['description']
+                update_convention['email'] = request.form['email']
                 update_convention['phone_number'] = request.form['phone_number']
                 update_convention['dates'] = request.form['dates']
                 tte_convention_convention_api_put(ttesession,update_convention)
