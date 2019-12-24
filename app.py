@@ -437,13 +437,14 @@ def tte_convention_convention_api_post(ttesession,new_convention):
 # -----------------------------------------------------------------------
 # Update a Convention
 # -----------------------------------------------------------------------
-def tte_convention_convention_api_post(ttesession,tteconvention_id,update_convention):
+def tte_convention_convention_api_put(ttesession,tteconvention_id,update_convention):
     geolocation_id = tte_geolocation_api_get(ttesession,update_convention)
     convention_url = '/api/convention/' + tteconvention_id
     convention_params = {
                         'session_id': ttesession['id'],
                         'name': update_convention['name'],
                         'phone_number': update_convention['phone_number'],
+                        'email_address': update_convention['email_address'],
                         'geolocation_id': geolocation_id,
                         'description': update_convention['description']
                         }
