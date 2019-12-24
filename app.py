@@ -488,7 +488,6 @@ def tte_convention_convention_tristandard_api_put(ttesession):
                         'facebook_page': 'https://www.facebook.com/theroleinitiative/',
                         'generic_ticket_price': 0,
                         'group_id': config.tte_group_id,
-                        'slot_duration': 30,
                         'twitter_handle': '@_roleinitiative',
                         'email_address': 'events@theroleinitiative.org',
                         'volunteer_custom_fields': [
@@ -1692,14 +1691,15 @@ def tte_events_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_geolocation_api_get(ttesession,convention_info):
     geolocation_name = convention_info['location']
-    geolocation_url = '/api/geolocation' + '?query=' + convention_info['location']
+    geolocation_url = 'https://tabletop.events/api/geolocation' + '?query=' + convention_info['location']
     geolocation_params = {'session_id': ttesession['id']}
-    geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
+    geolocation_response = requests.get(geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
+    print geolocation_json
     try:
         geolocation_id = geolocation_json['result']['id']
     except:
-        print ('Could not find location', new_convention['location'], 'adding to TTE')
+        print ('Could not find location', convention_info, 'adding to TTE')
         geolocation_id = tte_geolocation_api_post(ttesession,convention_info)
 
     return(geolocation_id)
