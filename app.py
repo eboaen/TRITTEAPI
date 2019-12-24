@@ -1706,9 +1706,9 @@ def tte_geolocation_api_get(ttesession,convention_info):
             print (new_date)
             geolocation_id = location['id']
             pass
-    except:
-        print ('Could not find location', convention_info, 'adding to TTE')
-        geolocation_id = tte_geolocation_api_post(ttesession,convention_info)
+    # except:
+        # print ('Could not find location', convention_info, 'adding to TTE')
+        # geolocation_id = tte_geolocation_api_post(ttesession,convention_info)
     return(geolocation_id)
 
 # -----------------------------------------------------------------------
