@@ -612,9 +612,8 @@ def tte_convention_convention_tristandard_api_put(ttesession):
                          ]
                         }
     convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
-    print (convention_response)
     convention_json = convention_response.json()
-    tteconvention_id = convention_json['result']['id']
+    print (convention_json)
     return()
 
 # -----------------------------------------------------------------------
