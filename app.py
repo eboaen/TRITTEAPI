@@ -279,7 +279,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     global tteconvention_data
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
-    con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description'}
+    con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description', '_include': 'volunteer_custom_fields'}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
     # API Pull from TTE to get
@@ -333,7 +333,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'volunteer_custom_fields': [
                             {
                                 "required" : 1,
-                                "label" : "Emergency Contact: Nam e, phone number, relationship",
+                                "label" : "Emergency Contact: Name, phone number, relationship",
                                 "name" : "volunteeremergencycontact",
                                 "edit" : 0,
                                 "type" : "text",
