@@ -1715,6 +1715,7 @@ def conventions():
             })
         if request.form.get('conventionsubmit') and session.get('tteconvention_id') is not None:
                 all_days = []
+                update_convention = {}
                 print ('Updatinging the convention')
                 update_convention['name'] = request.form['name']
                 update_convention['location'] = request.form['location']
@@ -1726,6 +1727,7 @@ def conventions():
                 this_convention = Convention(tteconvention_data['result']['name'])
                 this_convention.add_location(tteconvention_data['result']['geolocation_name'])
                 this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
+                this_convention.add_email(tteconvention_data['result']['email_address'])
                 this_convention.add_description(tteconvention_data['result']['description'])
                 for day in tteconvention_data['result']['days']:
                     dayonly = day['day_time'].strftime('%m/%d/%Y')
