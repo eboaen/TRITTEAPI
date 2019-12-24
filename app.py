@@ -445,7 +445,7 @@ def tte_convention_convention_api_put(ttesession,update_convention):
                         'session_id': ttesession['id'],
                         'name': update_convention['name'],
                         'phone_number': update_convention['phone_number'],
-                        'email_address': update_convention['email_address'],
+                        'email_address': update_convention['email'],
                         'geolocation_id': geolocation_id,
                         'description': update_convention['description']
                         }
