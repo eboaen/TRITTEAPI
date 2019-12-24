@@ -69,6 +69,8 @@ class Convention:
         self.description = description
     def add_phone_number(self, phone_number):
         self.phone_number = phone_number
+    def add_email(self, email):
+        self.email = email
     def add_dates(self, dates):
         self.dates = dates
 
@@ -121,6 +123,7 @@ class NewConventionForm(FlaskForm):
     location = StringField('City, State of the Convention:', validators=[validators.DataRequired()])
     description = TextAreaField('Description of the Convention:', widget=TextArea(), validators=[validators.DataRequired()])
     phone_number = StringField('Please provide your phone number for volunteers to contact you: ', validators=[validators.DataRequired()])
+    email = StringField('Please provide your email for volunteers to contact you: ', validators=[validators.DataRequired()])
     dates = TextAreaField('List each date of the Convention, one date per line:', widget=TextArea(), validators=[validators.DataRequired()])
     conventionsubmit = SubmitField(label='Submit')
 
