@@ -1696,18 +1696,19 @@ def tte_geolocation_api_get(ttesession,convention_info):
     geolocation_response = requests.get(geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
     print (geolocation_json)
-    try:
-        for location in geolocation_json['result']['items']:
-            new_date = datetime.datetime(location['date_created'])
-            if new_date > old_date:
-                old_date = new_date
-                geolocation_id = location['id']
-            else:
-                geolocation_id = location['id']
-                pass
-    except:
-        print ('Could not find location', convention_info, 'adding to TTE')
-        geolocation_id = tte_geolocation_api_post(ttesession,convention_info)
+    for location in geolocation_json['result']['items']:
+        new_date = datetime.datetime(location['date_created'])
+        if new_date > old_date:
+            old_date = new_date
+            geolocation_id = location['id']
+            print (old_date, 'updated')
+        else:
+            print (new_date)
+            geolocation_id = location['id']
+            pass
+    #except:
+        # print ('Could not find location', convention_info, 'adding to TTE')
+        # geolocation_id = tte_geolocation_api_post(ttesession,convention_info)
     return(geolocation_id)
 
 # -----------------------------------------------------------------------
