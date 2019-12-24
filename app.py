@@ -278,6 +278,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     # API Pull from TTE to get the volunteer information
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
     # Populate dictionary with the info pulled from TTE
+    print(tteconvention_data)
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
     tteconvention_data['events'] = event_data
@@ -1699,6 +1700,7 @@ def conventions():
             print ('Getting Convention Information')
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             this_convention = Convention(tteconvention_data['result']['name'])
+            this_convention.add_email(tteconvention_data['result']['email_address'])
             this_convention.add_location(tteconvention_data['result']['geolocation_name'])
             this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
             this_convention.add_description(tteconvention_data['result']['description'])
@@ -1717,15 +1719,15 @@ def conventions():
         if request.form.get('conventionsubmit') and session.get('tteconvention_id') is not None:
                 all_days = []
                 update_convention = {}
-                print ('Updatinging the convention')
+                print ('Updating the convention')
                 update_convention['name'] = request.form['name']
                 update_convention['location'] = request.form['location']
                 update_convention['description'] = request.form['description']
                 update_convention['email'] = request.form['email']
                 update_convention['phone_number'] = request.form['phone_number']
                 update_convention['dates'] = request.form['dates']
-                tte_convention_convention_api_put(ttesession,update_convention)
                 print ('Getting Convention Information')
+                tte_convention_convention_api_put(ttesession,update_convention)
                 this_convention = Convention(tteconvention_data['result']['name'])
                 this_convention.add_location(tteconvention_data['result']['geolocation_name'])
                 this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
