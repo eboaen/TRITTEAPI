@@ -484,15 +484,10 @@ def tte_convention_convention_tristandard_api_put(ttesession):
     convention_url = 'https://tabletop.events/api/convention/' + tteconvention_data['result']['id']
     convention_params = {
                         'session_id': ttesession['id'],
-                        '_include': 'volunteer_custom_fields',
-                        'website_uri': 'https://theroleinitiative.org',
-                        'facebook_page': 'https://www.facebook.com/theroleinitiative/',
-                        'twitter_handle': '@_roleinitiative',
-                        'email_address': 'events@theroleinitiative.org',
                         'volunteer_custom_fields': [
                             {
                                 "required" : 1,
-                                "label" : "Emergency Contact: Nam e, phone number, relationship",
+                                "label" : "Emergency Contact: Name, phone number, relationship",
                                 "name" : "volunteeremergencycontact",
                                 "edit" : 0,
                                 "type" : "text",
@@ -609,7 +604,7 @@ def tte_convention_convention_tristandard_api_put(ttesession):
                              }
                          ]
                         }
-    convention_response = requests.put(convention_url, params= convention_params)
+    convention_response = requests.put(convention_url, data= convention_params)
     convention_json = convention_response.json()
     print (convention_json)
     return()
