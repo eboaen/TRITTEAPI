@@ -1664,6 +1664,7 @@ def newconvention():
         new_convention['location'] = request.form['location']
         new_convention['description'] = request.form['description']
         new_convention['phone_number'] = request.form['phone_number']
+        new_convention['email'] = request.form['email']
         new_convention['dates'] = request.form['dates']
         new_convention['volunteer_greeting'] = request.form['volunteer_greeting']
         if newconventionform.validate():
