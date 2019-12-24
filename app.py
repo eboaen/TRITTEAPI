@@ -329,7 +329,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'email_address': 'events@theroleinitiative.org',
                         'phone_number': new_convention['phone_number'],
                         'geolocation_id': geolocation_id,
-                        'volunteer_management': 'enabled'
+                        'volunteer_management': 'enabled',
                         'volunteer_custom_fields': [
                             {
                                 "required" : 1,
