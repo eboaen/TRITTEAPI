@@ -611,7 +611,7 @@ def tte_convention_convention_tristandard_api_put(ttesession):
                              }
                          ]
                         }
-    convention_response = requests.post(convention_url, params= convention_params)
+    convention_response = requests.put(convention_url, params= convention_params)
     convention_json = convention_response.json()
     print (convention_json)
     return()
