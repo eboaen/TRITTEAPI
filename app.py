@@ -282,6 +282,9 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description', '_include': 'volunteer_custom_fields'}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
+    tteconvention_json = json.loads(tteconvention_data)
+    tteconvention_formatted = json.dumps(tteconvention_json, indent=2)
+    print(tteconvention_formatted)
     # API Pull from TTE to get
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
@@ -298,7 +301,6 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     # API Pull from TTE to get the volunteer information
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
     # Populate dictionary with the info pulled from TTE
-    print(tteconvention_data)
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
     tteconvention_data['events'] = event_data
