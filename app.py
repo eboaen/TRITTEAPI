@@ -481,7 +481,7 @@ def tte_convention_convention_tristandard_api_put(ttesession):
     print ('debug tte_convention_convention_tristandard_api_put')
     # Declarations
     # Define parameters to update the convention
-    convention_url = '/api/convention/' + tteconvention_data['result']['id']
+    convention_url = 'https://tabletop.events/api/convention/' + tteconvention_data['result']['id']
     convention_params = {
                         'session_id': ttesession['id'],
                         'website_uri': 'https://theroleinitiative.org',
@@ -611,7 +611,7 @@ def tte_convention_convention_tristandard_api_put(ttesession):
                              }
                          ]
                         }
-    convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
+    convention_response = requests.post(convention_url, params= convention_params)
     convention_json = convention_response.json()
     print (convention_json)
     return()
