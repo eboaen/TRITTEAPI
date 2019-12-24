@@ -1984,7 +1984,7 @@ def conventions():
             return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name })
 
     else:
-        return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+        return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
         })
 # -----------------------------------------------------------------------
 # Run Program
