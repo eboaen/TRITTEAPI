@@ -270,7 +270,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     convention_json = convention_response.json()
     tteconvention_id = convention_json['result']['id']
     # Create each day of the convention
-    tte_convention_days_api_put(ttesession,tteconvention_id,new_convention)
+    tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
     # Due to how TTE handles the Volunteer Custom Fields, after the convention is created we have to get the id of the json object, then append those fields via the randomized endpoint id.
     con_jparams = {'session_id': ttesession['id']}
     convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
@@ -806,11 +806,11 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Post the Convention Days
 # -----------------------------------------------------------------------
-def tte_convention_days_api_put(ttesession,tteconvention_id,new_convention):
+def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
     # Declarations
     all_days = []
     all_dates = new_convention['dates'].split('\r\n')
-    tteconvention_days_url = 'https://tabletop.events/api/convention/' + tteconvention_id + '/days'
+    tteconvention_days_url = 'https://tabletop.events/api/conventionday'
     for date in all_dates:
         start_date = date + ' 12:00 AM'
         start_day = datetime.datetime.strptime(start_date, "%m/%d/%Y %I:%M %p")
@@ -821,10 +821,10 @@ def tte_convention_days_api_put(ttesession,tteconvention_id,new_convention):
             'attendee_end_date': end_day,
             'start_date': start_day,
             'end_date': end_day,
-            #'convention_id': tteconvention_id,
+            'convention_id': tteconvention_id,
             'name': day_name
         }
-        day_response = requests.put(tteconvention_days_url, params= day_params)
+        day_response = requests.post(tteconvention_days_url, params= day_params)
         day_json = day_response.json()
         print (day_json)
         current_day = day_json['id'],day_json['name']
