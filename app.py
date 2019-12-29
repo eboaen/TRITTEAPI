@@ -824,7 +824,7 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
             #'convention_id': tteconvention_id,
             'name': day_name
         }
-        day_response = requests.post(tteconvention_days_url, params= day_params)
+        day_response = requests.put(tteconvention_days_url, params= day_params)
         day_json = day_response.json()
         print (day_json)
         current_day = day_json['id'],day_json['name']
