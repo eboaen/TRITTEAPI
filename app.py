@@ -819,6 +819,7 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
         day_name = start_day.strftime('%a %b %m')
         end_day = start_day + datetime.timedelta(days=1)
         day_params = {
+            'session_id': ttesession['id'],
             'attendee_start_date': start_day,
             'attendee_end_date': end_day,
             'start_date': start_day,
