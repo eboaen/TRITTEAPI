@@ -266,12 +266,16 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'geolocation_id': geolocation_id,
                         'volunteer_management': 'enabled'
                         }
-    convention_response = requests.post('https://tabletop.events' + convention_url, json= convention_params)
+    convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
     convention_json = convention_response.json()
-    # Due to how TTE handles the Volunteer Custom Fields, after the convention is created we have to get the id of the json object, then append those fields via the randomized endpoint id.
     tteconvention_id = convention_json['result']['id']
+    # Create each day of the convention
+    tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
+    # Due to how TTE handles the Volunteer Custom Fields, after the convention is created we have to get the id of the json object, then append those fields via the randomized endpoint id.
+
     con_jparams = {'session_id': ttesession['id']}
     convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
+    print (convention_jresponse.url)
     convention_jjson = convention_jresponse.json()
     print(convention_jjson)
     # Find the json object for the "volunteer_custom_fields"
