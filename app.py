@@ -400,7 +400,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                              }
                          ]
                         }
-    convention_externaljson_response = requests.put('https://tabletop.events/api/conventionjson/tteconvention_volunteer_custom_fields_id', params= convention_externaljson_params)
+    convention_externaljson_response = requests.put('https://tabletop.events/api/conventionjson/' + tteconvention_volunteer_custom_fields_id, params= convention_externaljson_params)
     convention_externaljson_json = convention_externaljson_response.json()
     print (convention_externaljson_json)
     return(tteconvention_id)
