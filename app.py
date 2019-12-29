@@ -820,10 +820,8 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
         end_date_utc = start_date_utc + datetime.timedelta(days=1)
         end_day = end_date_utc.strftime('%Y-%m-%d %H:%M:%S')
         day_name = start_date.strftime('%a %b %d')
-        headers = {
-                'session_id': ttesession['id']
-                }
         day_params = {
+            'session_id': ttesession['id'],
             'attendee_start_date': start_day,
             'attendee_end_date': end_day,
             'start_date': start_day,
@@ -831,7 +829,7 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
             'convention_id': tteconvention_id,
             'name': day_name
         }
-        day_response = requests.post(tteconvention_days_url, headers=headers, json= day_params)
+        day_response = requests.post(tteconvention_days_url, json= day_params)
         print (day_response.url)
         day_json = day_response.json()
         print (day_json)
