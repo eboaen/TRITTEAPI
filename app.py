@@ -165,74 +165,6 @@ def tte_session():
     return (session)
 
 # -----------------------------------------------------------------------
-# Schedule Creator Addon
-# -----------------------------------------------------------------------
-def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_type):
-    # Pull the information regarding the volunteer shifts in the convention
-    convention_shifts = tte_convention_volunteer_shifts_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the volunteer shifttypes in the convention
-    convention_shift_types = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the days of each convention
-    convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
-    # Pull the information of each of the dayparrts of the convention
-    convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the dayparts that comprise the event
-    event_dayparts = tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id)
-    # Pull the information on the event itself
-    event = tte_event_api_get(ttesession,tteconvention_id,event_id)
-    # Iterate through the types of shifts and the shifts in the convention to get the shift(s) that cover the event
-    for type in convention_shift_types:
-        for shift in convention_shifts:
-            if shift['shifttype_id'] == type['id']:
-                shift['type_name'] = type['name']
-            while event['shift_durations'] != event['duration']:
-                if shift['start_time'] == event['start_date'] and shift['type_name'] == event_type:
-                    shift['start_time'] = datetime.datetime.strptime(shift['start_time'], '%Y-%m-%d %H:%M:%S')
-                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
-                    shift_td = shift['end_time'] - shift['start_time']
-                    shift['duration'] = int(shift_td.seconds / 60)
-                    event['shift_durations'] = event['shift_durations'] + shift['duration']
-                    event['next_shift_time'] = shift['end_time']
-                    event['shifts'].append(shift)
-                elif shift['start_time'] == event['next_shift_time'] and shift['type_name'] == event_type:
-                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
-                    shift_td = shift['end_time'] - event['next_shift_time']
-                    shift['duration'] = int(shift_td.seconds / 60)
-                    event['shift_durations'] = event['shift_durations'] + shift['duration']
-                    event['next_shift_time'] = shift['end_time']
-                    event['shifts'].append(shift)
-    # Itereate through the volunteers as many times as there are tables for the event to compare all volunteer shift ids, content, and difficulty to the event.
-    # If there is a match, check if the volunteer isn't already scheduled for the time, and if the volunteer is under 8 hours for the day.
-    # If all those don't conflict, add the volunteer to the event as a host
-    for tc in range(1,event_tablecount,1):
-        for volunteer in convention_data['volunteers']:
-            # Get the shifts the volunteer applied for
-            volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['user_id'])
-            # Find if there are matches between the volunteer shift ids and the event shift ids
-            for volunteer_shift in volunteer['shifts']:
-                for event_shift in event['shifts']:
-                    if volunteer_shift['id'] == event_shift['id']:
-                        # Get a list of events the volunteer is already scheduled for
-                        volunteer['events'] = tte_user_events_api_get(ttesession,volunteer['user_id'])
-                        # If there are any events already hosted by the volunteer, get their information
-                        if len(volunteer['events']) != 0:
-                            for volunteer_event in volunteer['events']:
-                                volunteer_event['detail'] = tte_event_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                                volunteer_event['dayparts'] = tte_eventdayparts_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                                # Make sure the dayparts of the volunteer's events don't conflict with the dayparts of the event
-                                for volunteer_event_daypart in volunteer_event['dayparts']:
-                                    if volunteer_event_daypart['id'] in event_dayparts:
-                                        volunteer_event_daypart_count = volunteer_event_daypart_count + 1
-                                    else:
-                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                if volunteer_event_daypart_count < 1:
-                                    for event_daypart in event_dayparts:
-                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                    if volunteer['maxtime'] < 480:
-                                        host_data = tte_event_host_post(ttesession,event_id,volunteer['id'])
-                                        return(host_data)
-
-# -----------------------------------------------------------------------
 # Create the updateconform object to display pre-existing data for a convention
 # -----------------------------------------------------------------------
 def conform_info():
@@ -282,6 +214,11 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description', '_include': 'volunteer_custom_fields'}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
+    # API Pull from TTE to get the external json information
+    con_jparams = {'session_id': ttesession['id']}
+    convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
+    convention_jjson = convention_jresponse.json()
+    tteconvention_data['result']['external_jsons'] = convention_jjson['result']['items']
     # API Pull from TTE to get
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
@@ -312,6 +249,8 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     # Declarations
     # Function Calls
     geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
+    # Get the id of the json object for "volunteer_custom_fields" for this convention
+
     print (new_convention['location'], geolocation_id)
     # Define parameters to create the convention
     convention_url = '/api/convention'
@@ -328,7 +267,9 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'email_address': 'events@theroleinitiative.org',
                         'phone_number': new_convention['phone_number'],
                         'geolocation_id': geolocation_id,
-                        'volunteer_management': 'enabled',
+                        'volunteer_management': 'enabled'
+                        }
+    convention_jparams = {
                         'volunteer_custom_fields': [
                             {
                                 "required" : "1",
@@ -1462,6 +1403,7 @@ def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
     events_type_json = events_type_response.json()
     events_type_id = events_type_json['result']['id']
     return(events_type_id)
+
 # -----------------------------------------------------------------------
 # Add host to an event
 # -----------------------------------------------------------------------
