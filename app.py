@@ -816,9 +816,9 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
         day_date = date + ' 12:00:00 AM'
         start_date = datetime.datetime.strptime(day_date, "%m/%d/%Y %I:%M:%S %p")
         start_date_utc = datetime_utc_convert(ttesession,tteconvention_id,start_date)
-        start_day = start_date_utc.strftime("%m/%d/%Y %H:%M:%S")
+        start_day = start_date_utc.strftime("%Y-%m-%d %H:%M:%S")
         end_date_utc = start_date_utc + datetime.timedelta(days=1)
-        end_day = end_date_utc.strftime("%m/%d/%Y %H:%M:%S")
+        end_day = end_date_utc.strftime("%Y-%m-%d %H:%M:%S")
         day_name = start_date.strftime('%a %b %d')
         day_params = {
             'session_id': ttesession['id'],
