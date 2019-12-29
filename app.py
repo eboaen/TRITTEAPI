@@ -827,7 +827,8 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
             'start_date': start_day,
             'end_date': end_day,
             'convention_id': tteconvention_id,
-            'name': day_name
+            'name': day_name,
+            'day_type': 'events'
         }
         day_response = requests.post(tteconvention_days_url, json= day_params)
         print (day_response.url)
