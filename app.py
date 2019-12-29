@@ -264,10 +264,12 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'email_address': 'events@theroleinitiative.org',
                         'phone_number': new_convention['phone_number'],
                         'geolocation_id': geolocation_id,
-                        'volunteer_management': 'enabled'
+                        'volunteer_management': 'enabled',
+                        '_include_relationships':1
                         }
     convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
     convention_json = convention_response.json()
+    print (convention_json)
     tteconvention_id = convention_json['result']['id']
     # Create each day of the convention
     tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
