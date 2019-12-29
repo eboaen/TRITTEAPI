@@ -813,7 +813,7 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
     all_dates = new_convention['dates'].split('\r\n')
     tteconvention_days_url = 'https://tabletop.events/api/conventionday'
     for date in all_dates:
-        day_date = date + '12:00 00:00:00 AM'
+        day_date = date + ' 12:00 00:00:00 AM'
         start_date = datetime.datetime.strptime(day_date, "%m/%d/%Y %I:%M:%S %p")
         start_date_utc = datetime_utc_convert(ttesession,tteconvention_id,start_date)
         start_day = start_date_utc.strftime("%m/%d/%Y %H:%M:%S")
