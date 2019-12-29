@@ -817,14 +817,14 @@ def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
         start_date = datetime.datetime.strptime(day_date, "%m/%d/%Y %I:%M:%S %p")
         start_date_utc = datetime_utc_convert(ttesession,tteconvention_id,start_date)
         start_day = start_date_utc.strftime("%m/%d/%Y %H:%M:%S")
-        end_day = start_day + datetime.timedelta(days=1)
+        end_date_utc = start_date_utc + datetime.timedelta(days=1)
         day_name = start_date.strftime('%a %b %d')
         day_params = {
             'session_id': ttesession['id'],
-            'attendee_start_date': start_day,
-            'attendee_end_date': end_day,
-            'start_date': start_day,
-            'end_date': end_day,
+            'attendee_start_date': start_date_utc,
+            'attendee_end_date': end_date_utc,
+            'start_date': start_date_utc,
+            'end_date': end_date_utc,
             'convention_id': tteconvention_id,
             'name': day_name
         }
