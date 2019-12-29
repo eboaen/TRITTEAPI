@@ -249,9 +249,6 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     # Declarations
     # Function Calls
     geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
-    # Get the id of the json object for "volunteer_custom_fields" for this convention
-
-    print (new_convention['location'], geolocation_id)
     # Define parameters to create the convention
     convention_url = '/api/convention'
     convention_params = {
@@ -269,8 +266,21 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'geolocation_id': geolocation_id,
                         'volunteer_management': 'enabled'
                         }
-    convention_jparams = {
-                        'volunteer_custom_fields': [
+    convention_response = requests.post('https://tabletop.events' + convention_url, json= convention_params)
+    convention_json = convention_response.json()
+    # Due to how TTE handles the Volunteer Custom Fields, after the convention is created we have to get the id of the json object, then append those fields via the randomized endpoint id.
+    tteconvention_id = convention_json['result']['id']
+    con_jparams = {'session_id': ttesession['id']}
+    convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
+    convention_jjson = convention_jresponse.json()
+    # Find the json object for the "volunteer_custom_fields"
+    for object in convention_jjson['result']['items']:
+        if object['name'] == 'volunteer_custom_fields'
+        # Get the id of the object
+            tteconvention_volunteer_custom_fields_id = object['id']
+    convention_externaljson_params = {
+                        'session_id': ttesession['id'],
+                        'json': [
                             {
                                 "required" : "1",
                                 "label" : "Emergency Contact: Name, phone number, relationship",
@@ -390,11 +400,8 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                              }
                          ]
                         }
-    convention_response = requests.post('https://tabletop.events' + convention_url, json= convention_params)
-    print (convention_response.url)
-    convention_json = convention_response.json()
-    print (convention_json)
-    tteconvention_id = convention_json['result']['id']
+    convention_externaljson_response = requests.put('https://tabletop.events/api/conventionjson/tteconvention_volunteer_custom_fields_id', params= convention_externaljson_params)
+    convention_externaljson_json = convention_externaljson_response.json()
     return(tteconvention_id)
 
 # -----------------------------------------------------------------------
