@@ -270,7 +270,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     convention_json = convention_response.json()
     tteconvention_id = convention_json['result']['id']
     # Create each day of the convention
-    tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
+    tte_convention_days_api_put(ttesession,tteconvention_id,new_convention)
     # Due to how TTE handles the Volunteer Custom Fields, after the convention is created we have to get the id of the json object, then append those fields via the randomized endpoint id.
     con_jparams = {'session_id': ttesession['id']}
     convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
@@ -806,7 +806,7 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Post the Convention Days
 # -----------------------------------------------------------------------
-def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
+def tte_convention_days_api_put(ttesession,tteconvention_id,new_convention):
     # Declarations
     all_days = []
     all_dates = new_convention['dates'].split('\r\n')
