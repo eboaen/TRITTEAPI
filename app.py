@@ -399,8 +399,8 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                          ]
                         }
     convention_externaljson_response = requests.put('https://tabletop.events/api/conventionjson', params= convention_externaljson_params)
+    print (convention_externaljson_response.url)
     convention_externaljson_json = convention_externaljson_response.json()
-    print (convention_externaljson_json.url)
     print (json.dumps(convention_externaljson_json,indent=2))
     return(tteconvention_id)
 
