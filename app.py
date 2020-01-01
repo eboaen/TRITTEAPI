@@ -219,6 +219,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
     convention_jjson = convention_jresponse.json()
     tteconvention_data['result']['external_jsons'] = convention_jjson['result']['items']
+    print(json.dumps(tteconvention_data, indent=2))
     # API Pull from TTE to get
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
@@ -239,7 +240,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
-    print(json.dumps(tteconvention_data, indent=2))
+
     return()
 
 # -----------------------------------------------------------------------
