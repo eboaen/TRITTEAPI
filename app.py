@@ -211,7 +211,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     global tteconvention_data
     convention_info = {}
     # API Pull from TTE to get the convention information and urls needed to process the convention.
-    con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description', '_include': 'description'}
+    con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description'}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
     # API Pull from TTE to get the external json information
@@ -267,11 +267,9 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'geolocation_id': geolocation_id,
                         'volunteer_management': 'enabled',
                         '_include_relationships':1,
-                        '_include': 'external_jsons'
                         }
     convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
     convention_json = convention_response.json()
-    print (json.dumps(convention_json,indent=2))
     tteconvention_id = convention_json['result']['id']
     # Create each day of the convention
     tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
@@ -279,8 +277,9 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     con_jparams = {'session_id': ttesession['id']}
     convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
     convention_jjson = convention_jresponse.json()
+    print (json.dumps(convention_jjson. indent=2))
     # Find the json object for the "volunteer_custom_fields"
-    for object in convention_json['result']['external_jsons']:
+    for object in convention_jjson['result']['external_jsons']:
         if object['name'] == 'volunteer_custom_fields':
             # Get the id of the object
             tteconvention_volunteer_custom_fields_id = object['id']
