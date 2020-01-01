@@ -277,11 +277,9 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     # Due to how TTE handles the Volunteer Custom Fields, after the convention is created we have to get the id of the json object, then append those fields via the randomized endpoint id.
     con_jparams = {'session_id': ttesession['id']}
     convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
-    print (convention_jresponse.url)
     convention_jjson = convention_jresponse.json()
-    print(convention_jjson)
     # Find the json object for the "volunteer_custom_fields"
-    for object in convention_json['result']['items']['external_jsons']:
+    for object in convention_json['result']['external_jsons']:
         if object['name'] == 'volunteer_custom_fields':
             # Get the id of the object
             tteconvention_volunteer_custom_fields_id = object['id']
