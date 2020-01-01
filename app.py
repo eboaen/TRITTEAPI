@@ -273,19 +273,10 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     tteconvention_id = convention_json['result']['id']
     # Create each day of the convention
     tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
-    # Due to how TTE handles the Volunteer Custom Fields, after the convention is created we have to get the id of the json object, then append those fields via the randomized endpoint id.
-    con_jparams = {'session_id': ttesession['id']}
-    convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
-    convention_jjson = convention_jresponse.json()
-    print (json.dumps(convention_jjson, indent=2))
-    # Find the json object for the "volunteer_custom_fields"
-    for object in convention_jjson['result']['external_jsons']:
-        if object['name'] == 'volunteer_custom_fields':
-            # Get the id of the object
-            tteconvention_volunteer_custom_fields_id = object['id']
-    # Create the standard TRI custom form
+        # Create the standard TRI custom form
     convention_externaljson_params = {
                         'session_id': ttesession['id'],
+                        'name': 'volunteer_custom_fields'
                         'json': [
                             {
                                 "required" : "1",
@@ -406,7 +397,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                              }
                          ]
                         }
-    convention_externaljson_response = requests.put('https://tabletop.events/api/conventionjson/' + tteconvention_volunteer_custom_fields_id, params= convention_externaljson_params)
+    convention_externaljson_response = requests.put('https://tabletop.events/api/conventionjson/', params= convention_externaljson_params)
     convention_externaljson_json = convention_externaljson_response.json()
     print (convention_externaljson_json)
     return(tteconvention_id)
