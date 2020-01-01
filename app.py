@@ -281,7 +281,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     convention_jjson = convention_jresponse.json()
     print(convention_jjson)
     # Find the json object for the "volunteer_custom_fields"
-    for object in convention_jjson['result']['items']:
+    for object in convention_json['result']['items']['external_jsons']:
         if object['name'] == 'volunteer_custom_fields':
             # Get the id of the object
             tteconvention_volunteer_custom_fields_id = object['id']
