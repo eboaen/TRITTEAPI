@@ -239,6 +239,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
+    print(json.dumps(tteconvention_data, indent=2))
     return()
 
 # -----------------------------------------------------------------------
