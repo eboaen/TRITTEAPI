@@ -283,6 +283,7 @@ def tte_convention_convention_api_post(ttesession,new_convention):
         if object['name'] == 'volunteer_custom_fields':
             # Get the id of the object
             tteconvention_volunteer_custom_fields_id = object['id']
+    # Create the standard TRI custom form
     convention_externaljson_params = {
                         'session_id': ttesession['id'],
                         'json': [
