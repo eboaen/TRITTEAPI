@@ -276,7 +276,8 @@ def tte_convention_convention_api_post(ttesession,new_convention):
         # Create the standard TRI custom form
     convention_externaljson_params = {
                         'session_id': ttesession['id'],
-                        'name': 'volunteer_custom_fields'
+                        'name': 'volunteer_custom_fields',
+                        'convention_id': 'tteconvention_id'
                         'json': [
                             {
                                 "required" : "1",
