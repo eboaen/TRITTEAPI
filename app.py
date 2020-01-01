@@ -266,7 +266,8 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'phone_number': new_convention['phone_number'],
                         'geolocation_id': geolocation_id,
                         'volunteer_management': 'enabled',
-                        '_include_relationships':1
+                        '_include_relationships':1,
+                        '_include': 'external_jsons'
                         }
     convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
     convention_json = convention_response.json()
