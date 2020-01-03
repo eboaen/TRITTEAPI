@@ -583,16 +583,16 @@ def list_convention_info(tteconvention_id):
     return(convention_data)
 
 # -----------------------------------------------------------------------
-# Pull Slots Data from the TTE API for the whole convention
+# Pull Slots Data from the TTE API for the whole convention that match the time submitt and the event room id
 # -----------------------------------------------------------------------
-def tte_convention_slots_api_get(ttesession,tteconvention_id):
+def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
     print ('debug tte_convention_slots_api_get')
     slots_start = 1
     slots_total = 1000
     all_slots = list()
     slots_url = tteconvention_data['result']['_relationships']['slots']
     while slots_total >= slots_start:
-        slots_params = {'session_id': ttesession['id'], '_page_number': slots_start}
+        slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': daypart_event_time['id'], 'room_id': event['type_room_id']}
         slots_response = requests.get('https://tabletop.events' + slots_url, params= slots_params)
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
@@ -1325,30 +1325,38 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
         print (event['day_id'])
-        # Get the slots for the convention
-        conventions_slots = tte_convention_slots_api_get(ttesession,tteconvention_id)
         # Define a list to be filled with the slot times used (in increments of 30 minutes) in the event
-        all_slot_times = []
-        # Define a list to be filled with the slot info (id and datetime) of the event
-        slot_list = []
+        all_event_times = []
         for x in range(event['duration'],30):
-            slot_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
-            all_slot_times.append(slot_time)
-        print (all_slot_times)
+            event_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
+            all_event_times.append(event_time)
+        print (all_event_times)
         # Parse through the convention dayparts and the times of the event
         # Compare to see if there are matches to determine the TTE ID of the times of the event
         print (event['datetime_utc'])
+        # Define a list to be filled with the ids and datetimes of the times of the event
+        event_time_info = []
         for dayparts in convention_dayparts:
-            for slot_time in all_slot_times:
-                print (dayparts['datetime'],slot_time)
-                # Find the id of the daypart for the start of the event
+            for event_time in all_event_times:
+                print (dayparts['datetime'],event_time)
+                # Find the id of the daypart for the start of the event and add that to the event dict
                 # Add to the list of slot times and ids
-                if dayparts['datetime'] == slot_time and event['datetime_utc'] == dayparts['datetime']:
-                    slot_info.append(dayparts['id'], dayparts['datetime'])
+                if dayparts['datetime'] == event_time and event['datetime_utc'] == dayparts['datetime']:
+                    daypart_event_time['id'] = dayparts['id']
+                    daypart_event_time['datetime'] = dayparts['datetime']
+                    event_time_info.append(daypart_event_time)
                     event['dayparts_start_id'] = dayparts['id']
                 # Add other ids of correspdonging slot times that fall within the event
-                elif dayparts['datetime'] == slot_time and event['datetime_utc'] != dayparts['datetime']:
-                        slot_info.append(dayparts['id'], dayparts['datetime'])
+                elif dayparts['datetime'] == event_time and event['datetime_utc'] != dayparts['datetime']:
+                    daypart_event_time['id'] = dayparts['id']
+                    daypart_event_time['datetime'] = dayparts['datetime']
+                    event_time_info.append(daypart_event_time)
+        # Declare a list to fill with the convention slots that match the daypart_event_time, and the event room id
+        convention_slots_info = []
+        # Get the slots for the convention that span the daypart_event_time, and the event room id
+        for daypart_event_time in event_time_info:
+            convention_slots = tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
+            convention_slots_info.append(convention_slots)
         # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
@@ -1360,9 +1368,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event['id'] = event_data['id']
             # Add slots for the event (assigns tables and times)
             for i in range(1,event['tablecount'],1):
-                for conslot in conventions_slots:
+                for conslot in convention_slot_info:
                     if conslot['room_id'] == event_data['room_id']:
-                        for eventslot in slot_info:
+                        for eventslot in event_time_info:
                             if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
                                 event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
                                 event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
