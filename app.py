@@ -1327,8 +1327,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             all_slot_times.append(slot_time)
         # Parse through the convention dayparts and the times of the event
         # Compare to see if there are matches to determine the TTE ID of the times of the event
+        print (event['datetime_utc'])
         for dayparts in convention_dayparts:
             for slot_time in all_slot_times:
+                print (dayparts['datetime'],slot_time)
                 # Find the id of the daypart for the start of the event
                 # Add to the list of slot times and ids
                 if dayparts['datetime'] == slot_time and event['datetime_utc'] == dayparts['datetime']:
