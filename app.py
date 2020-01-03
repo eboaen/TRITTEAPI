@@ -599,7 +599,7 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id):
         for slots in convention_slots:
             all_slots.append(slots)
         if slots_start < slots_total:
-            slots_start = int(slots_data['result']['paging']['next_page_number'])
+            slots_start = int(slots_json['result']['paging']['next_page_number'])
         elif slots_start == slots_total:
             break
     return(all_slots)
