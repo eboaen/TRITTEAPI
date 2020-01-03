@@ -1315,12 +1315,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
         #Convert the datetime value to UTC
         event['datetime_utc'] = datetime_utc_convert(ttesession,tteconvention_id,event['unconverted_datetime'])
+        print (event['unconverted_datetime'],event['datetime_utc'])
         # Identify the Day Id for the convention
         for day in convention_days:
             day['date_check'] = datetime.date(day['day_time'].year,day['day_time'].month,day['day_time'].day)
             event['date_check'] = datetime.date(event['datetime_utc'].year,event['datetime_utc'].month,event['datetime_utc'].day)
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
+        print (event['day_id'])
         # Get the slots for the convention
         conventions_slots = tte_convention_slots_api_get(ttesession,tteconvention_id)
         # Define a list to be filled with the slot times used (in increments of 30 minutes) in the event
@@ -1330,6 +1332,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         for x in range(event['duration'],30):
             slot_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
             all_slot_times.append(slot_time)
+        print (all_slot_times)
         # Parse through the convention dayparts and the times of the event
         # Compare to see if there are matches to determine the TTE ID of the times of the event
         print (event['datetime_utc'])
