@@ -1325,9 +1325,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         for x in range(event['duration'],30):
             slot_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
             all_slot_times.append(slot_time)
-        # Parse through the convention dayparts to find the
-        # Then compare to see if they are equal to determine the TTE ID of the time
-        # Parse through the datetimes of the day and the slottimes of the event
+        # Parse through the convention dayparts and the times of the event
+        # Compare to see if there are matches to determine the TTE ID of the times of the event
         for dayparts in convention_dayparts:
             for slot_time in all_slot_times:
                 # Find the id of the daypart for the start of the event
@@ -1403,13 +1402,27 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
 def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
     #print ('tte_convention_events_type_api_post')
     if event_type['tier'] != None:
-        custom_tier = {'required': 1, 'type': 'text', 'label': 'Tier', 'name': 'tier', 'conditional': 0, 'edit': 0, 'view': 1}
-        events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0, 'custom_fields': custom_tier}
+        custom_tier =
+        {
+        'custom_fields': [{
+        'required': '1',
+        'type': 'text',
+        'label': 'Tier' + event_type['tier'],
+        'name': 'tier',
+        'conditional': 0,
+        'edit': 0,
+        'view': 1
+        }]
+        }
+        events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0}
+        events_type_response = requests.post(config.tte_url + '/eventtype', json=custom_tier params= events_type_params)
+        events_type_json = events_type_response.json()
+        events_type_id = events_type_json['result']['id']
     else:
         events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0}
-    events_type_response = requests.post(config.tte_url + '/eventtype', params= events_type_params)
-    events_type_json = events_type_response.json()
-    events_type_id = events_type_json['result']['id']
+        events_type_response = requests.post(config.tte_url + '/eventtype', params= events_type_params)
+        events_type_json = events_type_response.json()
+        events_type_id = events_type_json['result']['id']
     return(events_type_id)
 
 # -----------------------------------------------------------------------
@@ -1834,7 +1847,6 @@ def conventions():
                 update_convention['email'] = request.form['email']
                 update_convention['phone_number'] = request.form['phone_number']
                 update_convention['dates'] = request.form['dates']
-                tte_convention_convention_tristandard_api_put(ttesession)
                 tte_convention_convention_api_put(ttesession,update_convention)
                 updateconform = conform_info()
                 return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
