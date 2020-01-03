@@ -280,7 +280,6 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'name': 'volunteer_custom_fields'
                         }
     convention_conventionjson_json_data = {
-                        ,
                         'json': [
                         {
                             "required" : "1",
