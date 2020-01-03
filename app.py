@@ -586,6 +586,7 @@ def list_convention_info(tteconvention_id):
 # Pull Slots Data from the TTE API for the whole convention
 # -----------------------------------------------------------------------
 def tte_convention_slots_api_get(ttesession,tteconvention_id):
+    print ('debug tte_convention_slots_api_get')
     slots_start = 1
     slots_total = 1000
     all_slots = list()
@@ -596,6 +597,7 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id):
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
         slots_total = int(slots_json['result']['paging']['total_pages'])
+        print (convention_slots)
         for slots in convention_slots:
             all_slots.append(slots)
         if slots_start < slots_total:
