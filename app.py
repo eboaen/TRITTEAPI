@@ -1306,7 +1306,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 print ('Adding Event Type to TTE: ', event['type'], event['tier'])
             else:
                 print ('Adding Event Type to TTE: ', event['type'])
+            # Create the event type
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
+            # Assign the room that matches the event type and return that id.
+            event['type_room_id'] = tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event)
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
@@ -1428,6 +1431,20 @@ def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
         events_type_json = events_type_response.json()
         events_type_id = events_type_json['result']['id']
     return(events_type_id)
+
+# -----------------------------------------------------------------------
+# Add an event type room with the allowed event type
+# -----------------------------------------------------------------------
+def tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event):
+    all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
+    for room in all_rooms:
+        if event['type'] == room['name']:
+            event['type_room_id'] = room['id']
+    event_type_room_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'eventtype_id': event['type_id'],event['type_room_id']}
+    event_type_room_response = requests.post(config.tte_url + '/eventtyperoom', params = event_type_room_params)
+    event_type_room_id_json = event_type_room_response.json()
+    event_type_room_id = event_type_room_id_json['result']['id']
+    return(event_type_room_id)
 
 # -----------------------------------------------------------------------
 # Add host to an event
