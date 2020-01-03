@@ -1297,7 +1297,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_type_l = [type for type in event_types if type['name'] == event['type']]
         # If there are event types and a match is found, assign the id of the match to the event
         if len(event_type_l) !=0:
-            event['type_id'] = e['id']
+            for e in event_type_l:
+                if e['name'] = event['type']
+                event['type_id'] = e['id']
         else:
             # If there isn't a match, create a new Event Type and return the TTE id for that Type
             if event['tier'] !='':
@@ -1339,7 +1341,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 # Add other ids of correspdonging slot times that fall within the event
                 elif dayparts['datetime'] == slot_time and event['datetime_utc'] != dayparts['datetime']:
                         slot_info.append(dayparts['id'], dayparts['datetime'])
-        # Verify an events has a ID for the day, ID for the Event Type, and ID for the Day Part
+        # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
