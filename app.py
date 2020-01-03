@@ -1298,8 +1298,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If there are event types and a match is found, assign the id of the match to the event
         if len(event_type_l) !=0:
             for e in event_type_l:
-                if e['name'] = event['type']
-                event['type_id'] = e['id']
+                if e['name'] == event['type']
+                    event['type_id'] = e['id']
         else:
             # If there isn't a match, create a new Event Type and return the TTE id for that Type
             if event['tier'] !='':
