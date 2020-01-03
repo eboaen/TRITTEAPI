@@ -276,10 +276,11 @@ def tte_convention_convention_api_post(ttesession,new_convention):
         # Create the standard TRI custom form
     convention_conventionjson_params = {
                         'session_id': ttesession['id'],
-                        'convention_id': tteconvention_id
+                        'convention_id': tteconvention_id,
+                        'name': 'volunteer_custom_fields'
                         }
     convention_conventionjson_json_data = {
-                        'name': 'volunteer_custom_fields',
+                        ,
                         'json': [
                         {
                             "required" : "1",
