@@ -1338,12 +1338,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 elif dayparts['datetime'] == slot_time and event['datetime_utc'] != dayparts['datetime']:
                         slot_info.append(dayparts['id'], dayparts['datetime'])
         # Verify an events has a ID for the day, ID for the Event Type, and ID for the Day Part
-        if event['day_id'] and event['type_id'] and event['dayparts_id']:
+        if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_json = event_response.json()
-            event_data = event_data['result']
+            event_data = event_json['result']
             print ('Added new Event to TTE: ', event_data['name'], event_data['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
             # Add slots for the event (assigns tables and times)
