@@ -1405,16 +1405,17 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
     #print ('tte_convention_events_type_api_post')
-    if event_type['tier'] != None:
+    if event_type['tier'] != '':
         custom_tier = {
         'custom_fields': [{
         'required': '1',
         'type': 'text',
-        'label': 'Tier' + event_type['tier'],
+        'label': 'Tier ' + str(event_type['tier']),
         'name': 'tier',
-        'conditional': 0,
-        'edit': 0,
-        'view': 1
+        'conditional': '0',
+        'edit': '0',
+        'view': '1',
+        'sequence_number': '1',
         }]
         }
         events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0}
