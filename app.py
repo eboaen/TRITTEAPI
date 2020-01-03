@@ -1440,7 +1440,7 @@ def tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event):
     for room in all_rooms:
         if event['type'] == room['name']:
             event['type_room_id'] = room['id']
-    event_type_room_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'eventtype_id': event['type_id'],event['type_room_id']}
+    event_type_room_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'eventtype_id': event['type_id'], 'room_id': event['type_room_id']}
     event_type_room_response = requests.post(config.tte_url + '/eventtyperoom', params = event_type_room_params)
     event_type_room_id_json = event_type_room_response.json()
     event_type_room_id = event_type_room_id_json['result']['id']
