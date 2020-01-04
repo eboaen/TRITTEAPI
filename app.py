@@ -598,7 +598,6 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,
         print (slots_json)
         convention_slots = slots_json['result']['items']
         slots_total = int(slots_json['result']['paging']['total_pages'])
-        print (convention_slots)
         for slots in convention_slots:
             all_slots.append(slots)
         if slots_start < slots_total:
@@ -1291,7 +1290,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print (event)
         #Get the event types from TTE
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
-        print (event_types)
         # Compare the Name and Tier of the event types (if any exist) with the provided type listed for the event
         # If the event is a game, get a list of event types, checking if they have a tier or not.
         # If the event isn't a game, return the list of event types that don't have tiers.
@@ -1330,22 +1328,18 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event['date_check'] = datetime.date(event['datetime_utc'].year,event['datetime_utc'].month,event['datetime_utc'].day)
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
-        print (event['day_id'])
         # Define a list to be filled with the slot times used (in increments of 30 minutes) in the event
         all_event_times = []
         for x in range(0,event['duration'],30):
             event_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
             all_event_times.append(event_time)
-        print (all_event_times)
         # Parse through the convention dayparts and the times of the event
         # Compare to see if there are matches to determine the TTE ID of the times of the event
-        print (event['datetime_utc'])
         # Define a list to be filled with the ids and datetimes of the times of the event
         event_time_info = []
         for event_time in all_event_times:
             for dayparts in convention_dayparts:
                 daypart_event_time = {}
-                print (dayparts['datetime'],event_time)
                 # Find the id of the daypart for the start of the event and add that to the event dict
                 # Add to the list of slot times and ids
                 if dayparts['datetime'] == event_time and event['datetime_utc'] == dayparts['datetime']:
