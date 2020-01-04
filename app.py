@@ -1300,9 +1300,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_type_l = [type for type in event_types if type['name'] == event['type']]
         # If there are event types and a match is found, assign the id of the match to the event
         if len(event_type_l) !=0:
+            all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             for e in event_type_l:
                 if e['name'] == event['type']:
                     event['type_id'] = e['id']
+            for room in all_rooms:
+                if event['type'] == room['name']:
+                    event['type_room_id'] = room['id']
         else:
             # If there isn't a match, create a new Event Type and return the TTE id for that Type
             if event['tier'] !='':
@@ -1337,8 +1341,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print (event['datetime_utc'])
         # Define a list to be filled with the ids and datetimes of the times of the event
         event_time_info = []
-        for dayparts in convention_dayparts:
-            for event_time in all_event_times:
+        for event_time in all_event_times:
+            for dayparts in convention_dayparts:
                 daypart_event_time = {}
                 print (dayparts['datetime'],event_time)
                 # Find the id of the daypart for the start of the event and add that to the event dict
