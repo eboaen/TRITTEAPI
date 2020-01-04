@@ -1328,7 +1328,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print (event['day_id'])
         # Define a list to be filled with the slot times used (in increments of 30 minutes) in the event
         all_event_times = []
-        for x in range(event['duration'],30):
+        for x in range(0,event['duration'],30):
             event_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
             all_event_times.append(event_time)
         print (all_event_times)
