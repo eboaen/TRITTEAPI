@@ -1407,16 +1407,13 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
       tteconvention_eventtypes_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['eventtypes']
       # Loop through the eventtypes for the convention
       while eventtypes_total >= eventtypes_start:
-        eventtypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+        eventtypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_include': 'custom_fields'}
         eventtypes_response = requests.get(tteconvention_eventtypes_url, params= eventtypes_params)
         eventtypes_json = eventtypes_response.json()
         eventtypes_data = eventtypes_json['result']['items']
         eventtypes_total = int(eventtypes_json['result']['paging']['total_pages'])
         for eventtypes in eventtypes_data:
-            eventtypes_d = dict()
-            eventtypes_d['id'] = eventtypes['id']
-            eventtypes_d['name'] = eventtypes['name']
-            all_eventtypes.append(eventtypes_d)
+            all_eventtypes.append(eventtypes)
         if eventtypes_start < eventtypes_total:
             eventtypes_start = int(eventtypes_json['result']['paging']['next_page_number'])
         elif eventtypes_start == eventtypes_total:
@@ -1880,20 +1877,20 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             })
         if request.form.get('conventionsubmit') and session.get('tteconvention_id') is not None:
-                update_convention = {}
-                print ('Updating the convention')
-                update_convention['name'] = request.form['name']
-                update_convention['location'] = request.form['location']
-                update_convention['description'] = request.form['description']
-                update_convention['email'] = request.form['email']
-                update_convention['phone_number'] = request.form['phone_number']
-                update_convention['dates'] = request.form['dates']
-                tte_convention_convention_api_put(ttesession,update_convention)
-                updateconform = conform_info()
-                return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
-                'tteconventions' : tteconventions,
-                'tteconvention_data' : tteconvention_data,
-                })
+            update_convention = {}
+            print ('Updating the convention')
+            update_convention['name'] = request.form['name']
+            update_convention['location'] = request.form['location']
+            update_convention['description'] = request.form['description']
+            update_convention['email'] = request.form['email']
+            update_convention['phone_number'] = request.form['phone_number']
+            update_convention['dates'] = request.form['dates']
+            tte_convention_convention_api_put(ttesession,update_convention)
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_data' : tteconvention_data,
+            })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
