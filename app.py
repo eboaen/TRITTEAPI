@@ -594,8 +594,8 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,
     while slots_total >= slots_start:
         slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': daypart_event_time['id'], 'room_id': event['type_room_id']}
         slots_response = requests.get('https://tabletop.events' + slots_url, params= slots_params)
-        print (slots_response)
         slots_json = slots_response.json()
+        print (slots_json)
         convention_slots = slots_json['result']['items']
         slots_total = int(slots_json['result']['paging']['total_pages'])
         print (convention_slots)
