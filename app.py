@@ -585,7 +585,7 @@ def list_convention_info(tteconvention_id):
 # -----------------------------------------------------------------------
 # Pull Slots Data from the TTE API for the whole convention that match the time submitt and the event room id
 # -----------------------------------------------------------------------
-def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
+def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event):
     print ('debug tte_convention_slots_api_get')
     slots_start = 1
     slots_total = 1000
