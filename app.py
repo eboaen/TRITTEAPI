@@ -1290,10 +1290,11 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print (event)
         #Get the event types from TTE
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
+        print (event_types)
         # Compare the Name and Tier of the event types (if any exist) with the provided type listed for the event
         # If the event is a game, get a list of event types, checking if they have a tier or not.
         # If the event isn't a game, return the list of event types that don't have tiers.
-        if event['tier'] != None:
+        if event['tier'] != '':
             event_type_l = [type for type in event_types if type['name'] == event['type'] and event['tier'] in type['custom_fields']]
         else:
             event_type_l = [type for type in event_types if type['name'] == event['type']]
