@@ -1339,6 +1339,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         event_time_info = []
         for dayparts in convention_dayparts:
             for event_time in all_event_times:
+                daypart_event_time = {}
                 print (dayparts['datetime'],event_time)
                 # Find the id of the daypart for the start of the event and add that to the event dict
                 # Add to the list of slot times and ids
