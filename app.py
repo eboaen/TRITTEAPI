@@ -1432,7 +1432,7 @@ def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
         'custom_fields': [{
         'required': '1',
         'type': 'text',
-        'label': str(event_type['tier']),
+        'label': 'Tier',
         'name': 'tier',
         'conditional': '0',
         'edit': '0',
