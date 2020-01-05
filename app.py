@@ -1297,7 +1297,9 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_type_l = [type for type in event_types if type['name'] == event['type'] and event['tier'] in type['custom_fields']]
         else:
             event_type_l = [type for type in event_types if type['name'] == event['type']]
-        # If there are event types and a match is found, assign the id of the match to the event
+        # If there are event types and a match is found, assign the id of the match to the event'
+        print (event['type'])
+        print (event_type_l)
         if len(event_type_l) !=0 and event['type'] in event_type_l:
             all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             for e in event_type_l:
