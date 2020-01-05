@@ -1318,7 +1318,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                             print (event['type'], 'Event Type ID: ', event['type_id'])
                             print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
                 elif e['name'] == event['type'] and e['custom_fields'] != None:
-                    if event['tier'] == e['custom_fields']['label']:
+                    if event['tier'] == e['custom_fields'][0]['label']:
                         event['type_id'] = e['id']
                         for room in all_rooms:
                             if event['type'] == room['name']:
