@@ -593,10 +593,10 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,
     slots_url = tteconvention_data['result']['_relationships']['slots']
     while slots_total >= slots_start:
         slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': daypart_event_time['id'], 'room_id': event['type_room_id']}
+        print ('Slots Parameters: ', slots_params)
         slots_response = requests.get('https://tabletop.events' + slots_url, params= slots_params)
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
-        print (convention_slots)
         slots_total = int(slots_json['result']['paging']['total_pages'])
         for slots in convention_slots:
             all_slots.append(slots)
@@ -604,6 +604,7 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,
             slots_start = int(slots_json['result']['paging']['next_page_number'])
         elif slots_start == slots_total:
             break
+    print ('All slots data: ', all_slots)
     return(all_slots)
 
 # -----------------------------------------------------------------------
@@ -1305,7 +1306,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for e in event_type_l:
                 if e['name'] == event['type']:
                     event['type_id'] = e['id']
-                    print (e['name'], 'Event Type ID: ', event['type_id'])
+                    print (event['name'], 'Event Type ID: ', event['type_id'])
             for room in all_rooms:
                 if event['type'] == room['name']:
                     event['type_room_id'] = room['id']
@@ -1320,6 +1321,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
             # Assign the room that matches the event type and return that id.
             event['type_room_id'] = tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event)
+            print (event['name'], 'Event Type ID: ', event['type_id'])
+            print (event['name'], 'Event Room Type ID: ', event['type_room_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
