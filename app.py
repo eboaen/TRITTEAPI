@@ -1359,7 +1359,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # Get the slots for the convention that span the daypart_event_time, and the event room id
         for daypart_event_time in event_time_info:
             convention_slots = tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
-            convention_slots_info.append(convention_slots)
+            convention_slots_info.extend(convention_slots)
         print (convention_slots_info)
         # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
