@@ -1426,12 +1426,12 @@ def tte_event_api_post(ttesession,tteconvention_id,event):
         event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
         event_response = requests.post('https://tabletop.events/api/event', json=event_tier, params= event_params)
         event_json = event_response.json()
+        print (event_json)
         event_data = event_json['result']
     else:
         event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
         event_response = requests.post('https://tabletop.events/api/event', params= event_params)
         event_json = event_response.json()
-        print ('event_json')
         event_data = event_json['result']
     return(event_data)
 
