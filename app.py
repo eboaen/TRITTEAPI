@@ -1363,10 +1363,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
             event_data = tte_event_api_post(ttesession,tteconvention_id,event)
-
-
-
-            print (event_json)
             print ('Added new Event to TTE: ', event_data['name'], event['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
             # Add slots for the event (assigns tables and times)
