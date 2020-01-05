@@ -1382,7 +1382,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                                 event_slot_l.append(event_slot_json['result']['id'])
                                 event['slots'] = event_slot_l
                                 print ('Added event to slot ', event_slot_json['result']['name'])
-                            else:
+                            except:
                                 print ('Unable to add slot', eventslot)
                         else:
                             print ('Unable to add slot ', eventslot)
