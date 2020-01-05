@@ -1281,6 +1281,16 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     print ('tte_convention_events_api_post testing')
     all_events = []
+    # Function to create event type and event room type
+    def add_event_type(ttesession,tteconvention_id,event):
+        # Create the event type
+        event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
+        # Assign the room that matches the event type and return that id.
+        event['type_room_id'] = tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event)
+        print (event['name'], 'Event Type ID: ', event['type_id'])
+        print (event['name'], 'Event Room Type ID: ', event['type_room_id'])
+        return(event)
+
     # For each event, gather the information needed to post the event
     # Get the convention days information
     convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
@@ -1301,28 +1311,26 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If there are event types and a match is found, assign the id of the match to the event'
         print (event['type'])
         print (event_type_l)
-        if len(event_type_l) !=0 and event['type'] in event_type_l:
+        if len(event_type_l) !=0:
             all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             for e in event_type_l:
                 if e['name'] == event['type']:
                     event['type_id'] = e['id']
-                    print (event['name'], 'Event Type ID: ', event['type_id'])
-            for room in all_rooms:
-                if event['type'] == room['name']:
-                    event['type_room_id'] = room['id']
-                    print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
-        # Otherwise, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
+                    for room in all_rooms:
+                        if event['type'] == room['name']:
+                            event['type_room_id'] = room['id']
+                            print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
+                else:
+                    event = add_event_type(ttesession,tteconvention_id,event)
+        # If no event types exist, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
         else:
             if event['tier'] !='':
                 print ('Adding Event Type to TTE: ', event['type'], event['tier'])
             else:
                 print ('Adding Event Type to TTE: ', event['type'])
-            # Create the event type
-            event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
-            # Assign the room that matches the event type and return that id.
-            event['type_room_id'] = tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event)
-            print (event['name'], 'Event Type ID: ', event['type_id'])
-            print (event['name'], 'Event Room Type ID: ', event['type_room_id'])
+            event = add_event_type(ttesession,tteconvention_id,event)
+        print (event['name'], 'Event Type ID: ', event['type_id'])
+        print (event['name'], 'Event Room Type ID: ', event['type_room_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
