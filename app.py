@@ -1288,8 +1288,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
         # Assign the room that matches the event type and return that id.
         event['type_room_id'] = tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event)
-        print (event['name'], 'Event Type ID: ', event['type_id'])
-        print (event['name'], 'Event Room Type ID: ', event['type_room_id'])
         return(event)
 
     # For each event, gather the information needed to post the event
