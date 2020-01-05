@@ -1369,23 +1369,21 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             # Add slots for the event (assigns tables and times)
             for i in range(1,int(event['tablecount']),1):
                 for conslot in convention_slot_info:
-                    if conslot['room_id'] == event_data['room_id']:
-                        for eventslot in event_time_info:
-                            if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
-                                event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
-                                event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
-                                event_slot_response = requests.put(event_slot_url, params=event_slot_params)
-                                event_slot_json = event_slot_response.json()
-                                if event_slot_json['id']:
-                                    event_slot_l.append(event_slot_json['id'])
-                                    event['slots'] = event_slot_l
-                                    print ('Added event to slot ', event_slot_json['name'])
-                                else:
-                                    print ('Unable to add slot', eventslot)
+                    for eventslot in event_time_info:
+                        print ('Con Slot: ' conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
+                        if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
+                            event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
+                            event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
+                            event_slot_response = requests.put(event_slot_url, params=event_slot_params)
+                            event_slot_json = event_slot_response.json()
+                            if event_slot_json['id']:
+                                event_slot_l.append(event_slot_json['id'])
+                                event['slots'] = event_slot_l
+                                print ('Added event to slot ', event_slot_json['name'])
                             else:
-                                print ('Unable to add slot ', eventslot)
-                    else:
-                        print ('No matching room found for event')
+                                print ('Unable to add slot', eventslot)
+                        else:
+                            print ('Unable to add slot ', eventslot)
             all_events.append(event)
     return(all_events)
 
@@ -1427,7 +1425,6 @@ def tte_event_api_post(ttesession,tteconvention_id,event):
         event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
         event_response = requests.post('https://tabletop.events/api/event', json=event_tier, params= event_params)
         event_json = event_response.json()
-        print (event_json)
         event_data = event_json['result']
     else:
         event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
