@@ -1310,14 +1310,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         if len(event_type_l) !=0:
             all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             for e in event_type_l:
-                if e['name'] == event['type'] and event['tier'] == e['custom_fields']['label']:
+                if e['name'] == event['type'] and event['tier'] == '':
                     event['type_id'] = e['id']
                     for room in all_rooms:
                         if event['type'] == room['name']:
                             event['type_room_id'] = room['id']
                             print (event['type'], 'Event Type ID: ', event['type_id'])
                             print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
-                if e['name'] == event['type'] and event['tier'] == '':
+                if e['name'] == event['type'] and event['tier'] == e['custom_fields']['label']:
                     event['type_id'] = e['id']
                     for room in all_rooms:
                         if event['type'] == room['name']:
