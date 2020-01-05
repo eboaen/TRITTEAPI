@@ -1377,10 +1377,11 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                             event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
                             event_slot_response = requests.put(event_slot_url, params=event_slot_params)
                             event_slot_json = event_slot_response.json()
-                            if event_slot_json['id']:
-                                event_slot_l.append(event_slot_json['id'])
+                            print (event_slot_json)
+                            try:
+                                event_slot_l.append(event_slot_json['result']['id'])
                                 event['slots'] = event_slot_l
-                                print ('Added event to slot ', event_slot_json['name'])
+                                print ('Added event to slot ', event_slot_json['result']['name'])
                             else:
                                 print ('Unable to add slot', eventslot)
                         else:
