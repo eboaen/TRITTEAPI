@@ -1301,8 +1301,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # Compare the Name of the event types (if any exist) with the provided type listed for the event
         event_type_l = [type for type in event_types if type['name'] == event['type']]
         # If there are event types and a match is found, assign the id of the match to the event'
-        print (event['type'])
-        print (event_type_l)
         if len(event_type_l) !=0:
             all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             for e in event_type_l:
@@ -1311,16 +1309,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     for room in all_rooms:
                         if event['type'] == room['name']:
                             event['type_room_id'] = room['id']
-                            print (event['type'], 'Event Type ID: ', event['type_id'])
-                            print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
                 elif e['name'] == event['type'] and e['custom_fields'] != None:
                     if event['tier'] == e['custom_fields'][0]['label']:
                         event['type_id'] = e['id']
                         for room in all_rooms:
                             if event['type'] == room['name']:
                                 event['type_room_id'] = room['id']
-                                print (event['type'], 'Event Type ID: ', event['type_id'])
-                                print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
                 else:
                     event = add_event_type(ttesession,tteconvention_id,event)
         # If no event types exist, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
@@ -1330,8 +1324,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             else:
                 print ('Adding Event Type to TTE: ', event['type'])
             event = add_event_type(ttesession,tteconvention_id,event)
-            print (event['type'], 'Event Type ID: ', event['type_id'])
-            print (event['type'], 'Event Room Type ID: ', event['type_room_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
@@ -1379,6 +1371,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_json = event_response.json()
+            print (event_json)
             event_data = event_json['result']
             print ('Added new Event to TTE: ', event_data['name'], event['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
