@@ -1367,7 +1367,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             print ('Added new Event to TTE: ', event_data['name'], event['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
             # Add slots for the event (assigns tables and times)
-            for i in range(1,int(event['tablecount']),1):
+            for i in range(0,int(event['tablecount']),1):
                 for conslot in convention_slot_info:
                     for eventslot in event_time_info:
                         print ('Con Slot: ' conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
