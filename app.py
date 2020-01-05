@@ -1370,7 +1370,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             for i in range(0,int(event['tablecount']),1):
                 for conslot in convention_slot_info:
                     for eventslot in event_time_info:
-                        print ('Con Slot: ' conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
+                        print ('Con Slot: ', conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
                         if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
                             event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
                             event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
