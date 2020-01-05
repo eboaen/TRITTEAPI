@@ -223,6 +223,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     # API Pull from TTE to get
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
+        print (event)
         # Get the slots this event is assigned to
         slots_url = 'https://tabletop.events' + event['_relationships']['slots']
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
