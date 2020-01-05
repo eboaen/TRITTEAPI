@@ -1317,13 +1317,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                             event['type_room_id'] = room['id']
                             print (event['type'], 'Event Type ID: ', event['type_id'])
                             print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
-                if e['name'] == event['type'] and event['tier'] == e['custom_fields']['label']:
-                    event['type_id'] = e['id']
-                    for room in all_rooms:
-                        if event['type'] == room['name']:
-                            event['type_room_id'] = room['id']
-                            print (event['type'], 'Event Type ID: ', event['type_id'])
-                            print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
+                if e['name'] == event['type'] and e['custom_fields'] != None:
+                    if event['tier'] == e['custom_fields']['label']:
+                        event['type_id'] = e['id']
+                        for room in all_rooms:
+                            if event['type'] == room['name']:
+                                event['type_room_id'] = room['id']
+                                print (event['type'], 'Event Type ID: ', event['type_id'])
+                                print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
                 else:
                     event = add_event_type(ttesession,tteconvention_id,event)
         # If no event types exist, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
