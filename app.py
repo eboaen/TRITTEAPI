@@ -1302,31 +1302,34 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print (event)
         #Get the event types from TTE
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
-        # Compare the Name and Tier of the event types (if any exist) with the provided type listed for the event
-        # If the event is a game, get a list of event types, checking if they have a tier or not.
-        # If the event isn't a game, return the list of event types that don't have tiers.
-        if event['tier'] != '':
-            event_type_l = [type for type in event_types if type['name'] == event['type'] and event['tier'] in type['custom_fields']]
-        else:
-            event_type_l = [type for type in event_types if type['name'] == event['type']]
+        # Compare the Name of the event types (if any exist) with the provided type listed for the event
+        event_type_l = [type for type in event_types if type['name'] == event['type']]
         # If there are event types and a match is found, assign the id of the match to the event'
         print (event['type'])
         print (event_type_l)
         if len(event_type_l) !=0:
             all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             for e in event_type_l:
-                if e['name'] == event['type']:
+                if e['name'] == event['type'] and event['tier'] == e['custom_fields']['label']:
                     event['type_id'] = e['id']
                     for room in all_rooms:
                         if event['type'] == room['name']:
                             event['type_room_id'] = room['id']
+                            print (event['type'], 'Event Type ID: ', event['type_id'])
+                            print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
+                if e['name'] == event['type'] and event['tier'] == '':
+                    event['type_id'] = e['id']
+                    for room in all_rooms:
+                        if event['type'] == room['name']:
+                            event['type_room_id'] = room['id']
+                            print (event['type'], 'Event Type ID: ', event['type_id'])
                             print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
                 else:
                     event = add_event_type(ttesession,tteconvention_id,event)
         # If no event types exist, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
         else:
             if event['tier'] !='':
-                print ('Adding Event Type to TTE: ', event['type'], event['tier'])
+                print ('Adding Event Type to TTE: ', event['type'], ' Tier: ', event['tier'])
             else:
                 print ('Adding Event Type to TTE: ', event['type'])
             event = add_event_type(ttesession,tteconvention_id,event)
@@ -1439,7 +1442,7 @@ def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
         'custom_fields': [{
         'required': '1',
         'type': 'text',
-        'label': 'Tier ' + str(event_type['tier']),
+        'label': str(event_type['tier']),
         'name': 'tier',
         'conditional': '0',
         'edit': '0',
