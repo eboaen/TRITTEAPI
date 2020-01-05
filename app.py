@@ -594,7 +594,7 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,
     while slots_total >= slots_start:
         slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': daypart_event_time['id'], 'room_id': event['type_room_id']}
         print ('Slots Parameters: ', slots_params)
-        slots_response = requests.get('https://tabletop.events' + slots_url, params= slots_params)
+        slots_response = requests.get('https://tabletop.events' + slots_url, json= slots_params)
         print (slots_response.url)
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
@@ -605,7 +605,7 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,
             slots_start = int(slots_json['result']['paging']['next_page_number'])
         elif slots_start == slots_total:
             break
-    print ('All slots data: ', all_slots)
+    # print ('All slots data: ', all_slots)
     return(all_slots)
 
 # -----------------------------------------------------------------------
@@ -1282,6 +1282,7 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     print ('tte_convention_events_api_post testing')
     all_events = []
+
     # Function to create event type and event room type
     def add_event_type(ttesession,tteconvention_id,event):
         # Create the event type
