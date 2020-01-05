@@ -1304,17 +1304,11 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         if len(event_type_l) !=0:
             all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             for e in event_type_l:
-                if e['name'] == event['type'] and event['tier'] == '':
+                if e['name'] == event['type']:
                     event['type_id'] = e['id']
                     for room in all_rooms:
                         if event['type'] == room['name']:
                             event['type_room_id'] = room['id']
-                elif e['name'] == event['type'] and e['custom_fields'] != None:
-                    if event['tier'] == e['custom_fields'][0]['label']:
-                        event['type_id'] = e['id']
-                        for room in all_rooms:
-                            if event['type'] == room['name']:
-                                event['type_room_id'] = room['id']
                 else:
                     event = add_event_type(ttesession,tteconvention_id,event)
         # If no event types exist, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
@@ -1368,11 +1362,11 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
-            event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
-            event_response = requests.post('https://tabletop.events/api/event', params= event_params)
-            event_json = event_response.json()
+            event_data = tte_event_api_post(ttesession,tteconvention_id,event)
+
+
+
             print (event_json)
-            event_data = event_json['result']
             print ('Added new Event to TTE: ', event_data['name'], event['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
             # Add slots for the event (assigns tables and times)
@@ -1421,6 +1415,29 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
         elif eventtypes_start == eventtypes_total:
             break
       return(all_eventtypes)
+
+# -----------------------------------------------------------------------
+# Create a new Event
+# -----------------------------------------------------------------------
+def tte_event_api_post(ttesession,tteconvention_id,event):
+    print ('testing tte_event_api_post')
+    if event['tier'] != '':
+        event_tier = {
+        'custom_fields': [{
+        'tier': event['tier']
+        }]
+        }
+        event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
+        event_response = requests.post('https://tabletop.events/api/event', json=event_tier  params= event_params)
+        event_json = event_response.json()
+        event_data = event_json['result']
+    else:
+        event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
+        event_response = requests.post('https://tabletop.events/api/event', params= event_params)
+        event_json = event_response.json()
+        print ('event_json')
+        event_data = event_json['result']
+    return(event_data)
 
 # -----------------------------------------------------------------------
 # Post a new Event Type
