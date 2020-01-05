@@ -595,6 +595,7 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,
         slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': daypart_event_time['id'], 'room_id': event['type_room_id']}
         print ('Slots Parameters: ', slots_params)
         slots_response = requests.get('https://tabletop.events' + slots_url, params= slots_params)
+        print (slots_response.url)
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
         slots_total = int(slots_json['result']['paging']['total_pages'])
@@ -1329,8 +1330,8 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             else:
                 print ('Adding Event Type to TTE: ', event['type'])
             event = add_event_type(ttesession,tteconvention_id,event)
-        print (event['name'], 'Event Type ID: ', event['type_id'])
-        print (event['name'], 'Event Room Type ID: ', event['type_room_id'])
+            print (event['type'], 'Event Type ID: ', event['type_id'])
+            print (event['type'], 'Event Room Type ID: ', event['type_room_id'])
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
