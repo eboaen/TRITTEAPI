@@ -221,8 +221,8 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     tteconvention_data['result']['external_jsons'] = convention_jjson['result']['items']
     print(json.dumps(tteconvention_data, indent=2))
     # API Pull from TTE to get
-    event_json = tte_events_api_get(ttesession,tteconvention_id)
-    for event in event_json:
+    event_data = tte_events_api_get(ttesession,tteconvention_id)
+    for event in event_data:
         # Get the slots this event is assigned to
         slots_url = 'https://tabletop.events' + event['_relationships']['slots']
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
@@ -238,7 +238,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
-    tteconvention_data['events'] = event_json
+    tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
     return()
 
@@ -642,7 +642,7 @@ def slots_parse(event_slots):
 # -----------------------------------------------------------------------
 # Save the event data to CSV
 # -----------------------------------------------------------------------
-def event_json_csv(events):
+def event_data_csv(events):
     folder = config.UPLOAD_FOLDER
     saveloc = folder + '/eventdata.csv'
     with open(saveloc, mode='w') as csv_file:
@@ -1379,13 +1379,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
             event_response = requests.post('https://tabletop.events/api/event', params= event_params)
             event_json = event_response.json()
-            print (event_json)
-            print ('Added new Event to TTE: ', event_json['name'], event['unconverted_datetime'], event_json['id'])
-            event['id'] = event_json['id']
+            event_data = event_json['result']
+            print ('Added new Event to TTE: ', event_data['name'], event['unconverted_datetime'], event_data['id'])
+            event['id'] = event_data['id']
             # Add slots for the event (assigns tables and times)
             for i in range(1,int(event['tablecount']),1):
                 for conslot in convention_slot_info:
-                    if conslot['room_id'] == event_json['room_id']:
+                    if conslot['room_id'] == event_data['room_id']:
                         for eventslot in event_time_info:
                             if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
                                 event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
@@ -1544,14 +1544,14 @@ def tte_event_api_get(ttesession,tteconvention_id,event_id):
     while event_total >= event_start:
         event_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': event_start, '_include_relationships': 1}
         event_response = requests.get(tteeevnt_url, params= event_params)
-        event_json = event_response.json()
-        convention_event = event_json['result']['items']
-        event_total = int(event_json['result']['paging']['total_pages'])
-        event_start = int(event_json['result']['paging']['page_number'])
+        event_data = event_response.json()
+        convention_event = event_data['result']['items']
+        event_total = int(event_data['result']['paging']['total_pages'])
+        event_start = int(event_data['result']['paging']['page_number'])
         for event in convention_event:
             all_event.append(event)
         if event_start < event_total:
-            event_start = int(event_json['result']['paging']['next_page_number'])
+            event_start = int(event_data['result']['paging']['next_page_number'])
         elif event_start == event_total:
             break
         else:
@@ -1880,7 +1880,7 @@ def conventions():
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
             print (ttesession,session['tteconvention_id'])
-            #event_json_csv(tteconvention_data['events'])
+            #event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
