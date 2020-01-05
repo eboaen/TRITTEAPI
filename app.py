@@ -1300,14 +1300,14 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         # If there are event types and a match is found, assign the id of the match to the event
         if len(event_type_l) !=0 and event['type'] in event_type_l:
             all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
-                for e in event_type_l:
-                    if e['name'] == event['type']:
-                        event['type_id'] = e['id']
-                        print (e['name'], 'Event Type ID: ', event['type_id'])
-                for room in all_rooms:
-                    if event['type'] == room['name']:
-                        event['type_room_id'] = room['id']
-                        print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
+            for e in event_type_l:
+                if e['name'] == event['type']:
+                    event['type_id'] = e['id']
+                    print (e['name'], 'Event Type ID: ', event['type_id'])
+            for room in all_rooms:
+                if event['type'] == room['name']:
+                    event['type_room_id'] = room['id']
+                    print (room['name'], 'Event Room Type ID: ', event['type_room_id'])
         # Otherwise, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
         else:
             if event['tier'] !='':
