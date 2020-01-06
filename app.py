@@ -1354,12 +1354,13 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     daypart_event_time['id'] = dayparts['id']
                     daypart_event_time['datetime'] = dayparts['datetime']
                     event_time_info.append(daypart_event_time)
-        # Declare a list to fill with the convention slots that match the daypart_event_time, and the event room id
-        convention_slots_info = []
-        # Get the slots for the convention that span the daypart_event_time, and the event room id
-        for daypart_event_time in event_time_info:
-            convention_slots = tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
-            convention_slots_info.extend(convention_slots)
+
+
+
+
+
+        convention_slots_info = (slot for slot in convention_slots_data if )
+
         print (convention_slots_info)
         # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
@@ -1367,9 +1368,29 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event_data = tte_event_api_post(ttesession,tteconvention_id,event)
             print ('Added new Event to TTE: ', event_data['name'], event['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
-            # Add slots for the event (assigns tables and times)
+            # Add slots for the event (assigns tables and times) as many times as there are tables for the event
             for i in range(0,int(event['tablecount']),1):
+                convention_slots_info = []
                 for eventslot in event_time_info:
+                    # Get the slots for the convention that span the daypart_event_time, and the event room id
+                    convention_slots = tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
+                    convention_slots_info.extend(convention_slots)
+                # Find slots that are at the same space (table) and are available
+                for y in range(0,len(event_time_info),1):
+                    old_space = None
+                    for x in range(0,len(convention_slots_info),1):
+                        if old_space == None:
+                            old_space = convention_slots_info[x]['space_id']
+                        elif old_space == convention_slots_info[x]['space_id']
+                            
+
+                            convention_slots_info[x]['']
+                        old_space =
+
+
+                        convention_slots_info
+
+
                     for conslot in convention_slots_info:
                         print ('Con Slot: ', conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
                         if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
