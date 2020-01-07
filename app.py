@@ -69,6 +69,8 @@ class Convention:
         self.description = description
     def add_phone_number(self, phone_number):
         self.phone_number = phone_number
+    def add_email(self, email):
+        self.email = email
     def add_dates(self, dates):
         self.dates = dates
 
@@ -121,6 +123,7 @@ class NewConventionForm(FlaskForm):
     location = StringField('City, State of the Convention:', validators=[validators.DataRequired()])
     description = TextAreaField('Description of the Convention:', widget=TextArea(), validators=[validators.DataRequired()])
     phone_number = StringField('Please provide your phone number for volunteers to contact you: ', validators=[validators.DataRequired()])
+    email = StringField('Please provide your email for volunteers to contact you: ', validators=[validators.DataRequired()])
     dates = TextAreaField('List each date of the Convention, one date per line:', widget=TextArea(), validators=[validators.DataRequired()])
     conventionsubmit = SubmitField(label='Submit')
 
@@ -162,72 +165,24 @@ def tte_session():
     return (session)
 
 # -----------------------------------------------------------------------
-# Schedule Creator Addon
+# Create the updateconform object to display pre-existing data for a convention
 # -----------------------------------------------------------------------
-def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_type):
-    # Pull the information regarding the volunteer shifts in the convention
-    convention_shifts = tte_convention_volunteer_shifts_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the volunteer shifttypes in the convention
-    convention_shift_types = tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the days of each convention
-    convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
-    # Pull the information of each of the dayparrts of the convention
-    convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
-    # Pull the information regarding the dayparts that comprise the event
-    event_dayparts = tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id)
-    # Pull the information on the event itself
-    event = tte_event_api_get(ttesession,tteconvention_id,event_id)
-    # Iterate through the types of shifts and the shifts in the convention to get the tte ids of the shift(s) that cover the event
-    for type in convention_shift_types:
-        for shift in convention_shifts:
-            if shift['shifttype_id'] == type['id']:
-                shift['type_name'] = type['name']
-            while event['shift_durations'] != event['duration']:
-                if shift['start_time'] == event['start_date'] and shift['type_name'] == event_type:
-                    shift['start_time'] = datetime.datetime.strptime(shift['start_time'], '%Y-%m-%d %H:%M:%S')
-                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
-                    shift_td = shift['end_time'] - shift['start_time']
-                    shift['duration'] = int(shift_td.seconds / 60)
-                    event['shift_durations'] = event['shift_durations'] + shift['duration']
-                    event['next_shift_time'] = shift['end_time']
-                    event['shifts'].append(shift)
-                elif shift['start_time'] == event['next_shift_time'] and shift['type_name'] == event_type:
-                    shift['end_time'] = datetime.datetime.strptime(shift['end_time'], '%Y-%m-%d %H:%M:%S')
-                    shift_td = shift['end_time'] - event['next_shift_time']
-                    shift['duration'] = int(shift_td.seconds / 60)
-                    event['shift_durations'] = event['shift_durations'] + shift['duration']
-                    event['next_shift_time'] = shift['end_time']
-                    event['shifts'].append(shift)
-    # Itereate through the volunteers as many times as there are tables for the event to compare all volunteer shift ids, content, and difficulty to the event.
-    # If there is a match, check if the volunteer isn't already scheduled for the time, and if the volunteer is under 8 hours for the day.
-    # If all those don't conflict, add the volunteer to the event as a host
-    for tc in range(1,event_tablecount,1):
-        for volunteer in convention_data['volunteers']:
-            # Get the shifts the volunteer applied for
-            volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['user_id'])
-            # Find if there are matches between the volunteer shift ids and the event shift ids
-            for volunteer_shift in volunteer['shifts']:
-                for event_shift in event['shifts']:
-                    if volunteer_shift['id'] == event_shift['id']:
-                        # Get a list of events the volunteer is already scheduled for
-                        volunteer['events'] = tte_user_events_api_get(ttesession,volunteer['user_id'])
-                        # If there are any events already hosted by the volunteer, get their information
-                        if len(volunteer['events']) != 0:
-                            for volunteer_event in volunteer['events']:
-                                volunteer_event['detail'] = tte_event_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                                volunteer_event['dayparts'] = tte_eventdayparts_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                                # Make sure the dayparts of the volunteer's events don't conflict with the dayparts of the event
-                                for volunteer_event_daypart in volunteer_event['dayparts']:
-                                    if volunteer_event_daypart['id'] in event_dayparts:
-                                        volunteer_event_daypart_count = volunteer_event_daypart_count + 1
-                                    else:
-                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                if volunteer_event_daypart_count < 1:
-                                    for event_daypart in event_dayparts:
-                                        volunteer['maxtime'] = volunteer['maxtime'] + 30
-                                    if volunteer['maxtime'] < 480:
-                                        host_data = tte_event_host_post(ttesession,event_id,volunteer['id'])
-                                        return(host_data)
+def conform_info():
+    all_days = []
+    #Create and populate a new instance of the Convention class
+    this_convention = Convention(tteconvention_data['result']['name'])
+    this_convention.add_location(tteconvention_data['result']['geolocation_name'])
+    this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
+    this_convention.add_email(tteconvention_data['result']['email_address'])
+    this_convention.add_description(tteconvention_data['result']['description'])
+    for day in tteconvention_data['result']['days']:
+        dayonly = day['day_time'].strftime('%m/%d/%Y')
+        all_days.append(dayonly)
+    this_convention.add_dates(all_days)
+    updateconform = NewConventionForm(request.form, obj=this_convention)
+    updateconform.populate_obj(this_convention)
+    return(updateconform)
+
 
 # -----------------------------------------------------------------------
 # Convention Functions
@@ -259,9 +214,16 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     con_params = {'session_id': ttesession['id'], '_include_relationships': 1, '_include': 'description'}
     convention_response = requests.get(config.tte_url + "/convention/" + tteconvention_id, params= con_params)
     tteconvention_data = convention_response.json()
+    # API Pull from TTE to get the external json information
+    con_jparams = {'session_id': ttesession['id']}
+    convention_jresponse = requests.get(config.tte_url + "/convention/" + tteconvention_id + '/external_jsons', params= con_jparams)
+    convention_jjson = convention_jresponse.json()
+    tteconvention_data['result']['external_jsons'] = convention_jjson['result']['items']
+    print(json.dumps(tteconvention_data, indent=2))
     # API Pull from TTE to get
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
+        print (event)
         # Get the slots this event is assigned to
         slots_url = 'https://tabletop.events' + event['_relationships']['slots']
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
@@ -289,7 +251,6 @@ def tte_convention_convention_api_post(ttesession,new_convention):
     # Declarations
     # Function Calls
     geolocation_id = tte_geolocation_api_get(ttesession,new_convention)
-    print (new_convention['location'], geolocation_id)
     # Define parameters to create the convention
     convention_url = '/api/convention'
     convention_params = {
@@ -305,149 +266,298 @@ def tte_convention_convention_api_post(ttesession,new_convention):
                         'email_address': 'events@theroleinitiative.org',
                         'phone_number': new_convention['phone_number'],
                         'geolocation_id': geolocation_id,
-                        'volunteer_custom_fields': [
-                            {
-                                "required" : 1,
-                                "label" : "Emergency Contact: Name, phone number, relationship",
-                                "name" : "volunteeremergencycontact",
-                                "edit" : 0,
-                                "type" : "text",
-                                "conditional" : 0,
-                                "view" : 1,
-                                "sequence_number" : 3
-                             },
-                             {
-                                "required" : 0,
-                                "label" : "Previous Convention/D&D Volunteer experience",
-                                "type" : "textarea",
-                                "conditional" : 0,
-                                "name" : "volunteerexperience",
-                                "edit" : 0,
-                                "sequence_number" : 2,
-                                "view" : 1
-                             },
-                             {
-                                "view" : 1,
-                                "sequence_number" : 4,
-                                "edit" : 0,
-                                "name" : "volunteerlevel",
-                                "type" : "select",
-                                "conditional" : 0,
-                                "options" : "Hotel\n4 Day\n1 day\n1 slot",
-                                "label" : "Volunteer Level - Hotel level requires committing to 24 hours over the 4 days of the convention.  Badge Level requires 12 hours, Day level requires 4 hours.  1 slot is 2 hours.  At this time we cannot confirm Hotels Slots will be available for the convention, but if you are interested in volunteering at that level still select that as an option please.",
-                                "required" : 1
-                             },
-                             {
-                                "required" : 0,
-                                "label" : "Shirt Size",
-                                "options" : "S\nM\nL\nXL\nXXL\n3X\n4X\n5X",
-                                "type" : "select",
-                                "conditional" : 0,
-                                "name" : "volunteershirtsize",
-                                "edit" : 0,
-                                "view" : 1,
-                                "sequence_number" : 7
-                             },
-                             {
-                                "label" : "Other comments (accommodations requests, allergies we should be aware of, other things you feel you should share, etc.)",
-                                "required" : 0,
-                                "type" : "textarea",
-                                "conditional" : 0,
-                                "edit" : 0,
-                                "name" : "volunteerother",
-                                "sequence_number" : 11,
-                                "view" : 1
-                             },
-                             {
-                                "sequence_number" : 9,
-                                "view" : 1,
-                                "conditional" : 0,
-                                "type" : "text",
-                                "edit" : 0,
-                                "name" : "volunteerlocation",
-                                "label" : "Where are you coming from (City/State)",
-                                "required" : 1
-                             },
-                             {
-                                "view" : 1,
-                                "sequence_number" : 1,
-                                "required" : 0,
-                                "label" : "What pronouns do you use for yourself?",
-                                "name" : "volunteerpronouns",
-                                "edit" : 0,
-                                "conditional" : 0,
-                                "type" : "text"
-                             },
-                             {
-                                "sequence_number" : 8,
-                                "view" : 1,
-                                "edit" : 0,
-                                "name" : "volunteersource",
-                                "conditional" : 0,
-                                "type" : "text",
-                                "label" : "How did you hear about us?",
-                                "required" : 1
-                             },
-                             {
-                                "options" : "None\n1\n2\n3\n4",
-                                "required" : 1,
-                                "label" : "Tier (What is the highest Tier you are comfortable GMing, enter None if you do not want to GM at all)",
-                                "name" : "volunteertiers",
-                                "edit" : 0,
-                                "conditional" : 0,
-                                "type" : "select",
-                                "sequence_number" : 6,
-                                "view" : 1
-                             },
-                             {
-                                "sequence_number" : 10,
-                                "view" : 1,
-                                "conditional_name" : "volunteerlevel",
-                                "edit" : 0,
-                                "conditional_value" : "Hotel",
-                                "name" : "volunteerhotelpref",
-                                "conditional" : 1,
-                                "type" : "select",
-                                "options" : "Male\nFemale\nAny",
-                                "label" : "Hotel Rooming Preference",
-                                "required" : 0
-                             },
-                             {
-                                "view" : 1,
-                                "sequence_number" : 5,
-                                "required" : 1,
-                                "label" : "What role are you interested in?  Admin roles are as follows: Runners work with the Admins assigned to the slot, they will help GMs with getting their badges and perform health checks.  Admins will help seat players at tables and check DMs in.  Head admin will be the escalation point for any issues that arise.",
-                                "options" : "DM - Adventurers League Only\nDM - Acquisitions Incorporated Only\nDM - Any\nAdmin\nAny",
-                                "conditional" : 0,
-                                "type" : "select",
-                                "name" : "volunteerrole",
-                                "edit" : 0
-                             }
-                         ]
+                        'volunteer_management': 'enabled',
+                        '_include_relationships':1,
                         }
     convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
-    print (convention_response)
     convention_json = convention_response.json()
     tteconvention_id = convention_json['result']['id']
+    # Create each day of the convention
+    tte_convention_days_api_post(ttesession,tteconvention_id,new_convention)
+        # Create the standard TRI custom form
+    convention_conventionjson_params = {
+                        'session_id': ttesession['id'],
+                        'convention_id': tteconvention_id,
+                        'name': 'volunteer_custom_fields'
+                        }
+    convention_conventionjson_json_data = {
+                        'json': [
+                        {
+                            "required" : "1",
+                            "label" : "Emergency Contact: Name, phone number, relationship",
+                            "name" : "volunteeremergencycontact",
+                            "edit" : "0",
+                            "type" : "text",
+                            "conditional" : "0",
+                            "view" : "1",
+                            "sequence_number" : "3"
+                         },
+                         {
+                            "required" : "0",
+                            "label" : "Previous Convention/D&D Volunteer experience",
+                            "type" : "textarea",
+                            "conditional" : "0",
+                            "name" : "volunteerexperience",
+                            "edit" : "0",
+                            "sequence_number" : "2",
+                            "view" : "1"
+                         },
+                         {
+                            "view" : "1",
+                            "sequence_number" : "4",
+                            "edit" : "0",
+                            "name" : "volunteerlevel",
+                            "type" : "select",
+                            "conditional" : "0",
+                            "options" : "Hotel\n4 Day\n1 day\n1 slot",
+                            "label" : "Volunteer Level - Hotel level requires committing to 24 hours over the 4 days of the convention.  Badge Level requires 12 hours, Day level requires 4 hours.  1 slot is 2 hours.  At this time we cannot confirm Hotels Slots will be available for the convention, but if you are interested in volunteering at that level still select that as an option please.",
+                            "required" : "1"
+                         },
+                         {
+                            "required" : "0",
+                            "label" : "Shirt Size",
+                            "options" : "S\nM\nL\nXL\nXXL\n3X\n4X\n5X",
+                            "type" : "select",
+                            "conditional" : "0",
+                            "name" : "volunteershirtsize",
+                            "edit" : "0",
+                            "view" : "1",
+                            "sequence_number" : "7"
+                         },
+                         {
+                            "label" : "Other comments (accommodations requests, allergies we should be aware of, other things you feel you should share, etc.)",
+                            "required" : "0",
+                            "type" : "textarea",
+                            "conditional" : "0",
+                            "edit" : "0",
+                            "name" : "volunteerother",
+                            "sequence_number" : "11",
+                            "view" : "1"
+                         },
+                         {
+                            "sequence_number" : "9",
+                            "view" : "1",
+                            "conditional" : "0",
+                            "type" : "text",
+                            "edit" : "0",
+                            "name" : "volunteerlocation",
+                            "label" : "Where are you coming from (City/State)",
+                            "required" : "1"
+                         },
+                         {
+                            "view" : "1",
+                            "sequence_number" : "1",
+                            "required" : "0",
+                            "label" : "What pronouns do you use for yourself?",
+                            "name" : "volunteerpronouns",
+                            "edit" : "0",
+                            "conditional" : "0",
+                            "type" : "text"
+                         },
+                         {
+                            "sequence_number" : "8",
+                            "view" : "1",
+                            "edit" : "0",
+                            "name" : "volunteersource",
+                            "conditional" : "0",
+                            "type" : "text",
+                            "label" : "How did you hear about us?",
+                            "required" : "1"
+                         },
+                         {
+                            "options" : "None\n1\n2\n3\n4",
+                            "required" : "1",
+                            "label" : "Tier (What is the highest Tier you are comfortable GMing, enter None if you do not want to GM at all)",
+                            "name" : "volunteertiers",
+                            "edit" : "0",
+                            "conditional" : "0",
+                            "type" : "select",
+                            "sequence_number" : "6",
+                            "view" : "1"
+                         },
+                         {
+                            "sequence_number" : "10",
+                            "view" : "1",
+                            "conditional_name" : "volunteerlevel",
+                            "edit" : "0",
+                            "conditional_value" : "Hotel",
+                            "name" : "volunteerhotelpref",
+                            "conditional" : "1",
+                            "type" : "select",
+                            "options" : "Male\nFemale\nAny",
+                            "label" : "Hotel Rooming Preference",
+                            "required" : "0"
+                         },
+                         {
+                            "view" : "1",
+                            "sequence_number" : "5",
+                            "required" : "1",
+                            "label" : "What role are you interested in?  Admin roles are as follows: Runners work with the Admins assigned to the slot, they will help GMs with getting their badges and perform health checks.  Admins will help seat players at tables and check DMs in.  Head admin will be the escalation point for any issues that arise.",
+                            "options" : "DM - Adventurers League Only\nDM - Acquisitions Incorporated Only\nDM - Any\nAdmin\nAny",
+                            "conditional" : "0",
+                            "type" : "select",
+                            "name" : "volunteerrole",
+                            "edit" : "0"
+                         }
+                     ]}
+    convention_conventionjson_response = requests.post('https://tabletop.events/api/conventionjson', json=convention_conventionjson_json_data, params= convention_conventionjson_params)
+    print (convention_conventionjson_response.url)
+    convention_conventionjson_json = convention_conventionjson_response.json()
+    print (json.dumps(convention_conventionjson_json,indent=2))
     return(tteconvention_id)
 
 # -----------------------------------------------------------------------
 # Update a Convention
 # -----------------------------------------------------------------------
-def tte_convention_convention_api_post(ttesession,tteconvention_id,update_convention):
+def tte_convention_convention_api_put(ttesession,update_convention):
     geolocation_id = tte_geolocation_api_get(ttesession,update_convention)
-    convention_url = '/api/convention/' + tteconvention_id
+    convention_url = '/api/convention/' + tteconvention_data['result']['id']
     convention_params = {
                         'session_id': ttesession['id'],
                         'name': update_convention['name'],
                         'phone_number': update_convention['phone_number'],
+                        'email_address': update_convention['email'],
                         'geolocation_id': geolocation_id,
                         'description': update_convention['description']
                         }
-    convention_response = requests.post('https://tabletop.events' + convention_url, params= convention_params)
-    print (convention_response)
+    convention_response = requests.put('https://tabletop.events' + convention_url, params= convention_params)
     convention_json = convention_response.json()
-    tteconvention_id = convention_json['result']['id']
+    print (convention_json)
+    return()
+
+# -----------------------------------------------------------------------
+# Update an existing Convention with TRI standard information
+# -----------------------------------------------------------------------
+def tte_convention_convention_tristandard_api_put(ttesession):
+    print ('debug tte_convention_convention_tristandard_api_put')
+    # Declarations
+    # Define parameters to update the convention
+    convention_url = 'https://tabletop.events/api/convention/' + tteconvention_data['result']['id']
+    convention_params = {
+                        'session_id': ttesession['id'],
+                        'volunteer_custom_fields': [
+                            {
+                                "required" : "1",
+                                "label" : "Emergency Contact: Name, phone number, relationship",
+                                "name" : "volunteeremergencycontact",
+                                "edit" : "0",
+                                "type" : "text",
+                                "conditional" : "0",
+                                "view" : "1",
+                                "sequence_number" : "3"
+                             },
+                             {
+                                "required" : "0",
+                                "label" : "Previous Convention/D&D Volunteer experience",
+                                "type" : "textarea",
+                                "conditional" : "0",
+                                "name" : "volunteerexperience",
+                                "edit" : "0",
+                                "sequence_number" : "2",
+                                "view" : "1"
+                             },
+                             {
+                                "view" : "1",
+                                "sequence_number" : "4",
+                                "edit" : "0",
+                                "name" : "volunteerlevel",
+                                "type" : "select",
+                                "conditional" : "0",
+                                "options" : "Hotel\n4 Day\n1 day\n1 slot",
+                                "label" : "Volunteer Level - Hotel level requires committing to 24 hours over the 4 days of the convention.  Badge Level requires 12 hours, Day level requires 4 hours.  1 slot is 2 hours.  At this time we cannot confirm Hotels Slots will be available for the convention, but if you are interested in volunteering at that level still select that as an option please.",
+                                "required" : "1"
+                             },
+                             {
+                                "required" : "0",
+                                "label" : "Shirt Size",
+                                "options" : "S\nM\nL\nXL\nXXL\n3X\n4X\n5X",
+                                "type" : "select",
+                                "conditional" : "0",
+                                "name" : "volunteershirtsize",
+                                "edit" : "0",
+                                "view" : "1",
+                                "sequence_number" : "7"
+                             },
+                             {
+                                "label" : "Other comments (accommodations requests, allergies we should be aware of, other things you feel you should share, etc.)",
+                                "required" : "0",
+                                "type" : "textarea",
+                                "conditional" : "0",
+                                "edit" : "0",
+                                "name" : "volunteerother",
+                                "sequence_number" : "11",
+                                "view" : "1"
+                             },
+                             {
+                                "sequence_number" : "9",
+                                "view" : "1",
+                                "conditional" : "0",
+                                "type" : "text",
+                                "edit" : "0",
+                                "name" : "volunteerlocation",
+                                "label" : "Where are you coming from (City/State)",
+                                "required" : "1"
+                             },
+                             {
+                                "view" : "1",
+                                "sequence_number" : "1",
+                                "required" : "0",
+                                "label" : "What pronouns do you use for yourself?",
+                                "name" : "volunteerpronouns",
+                                "edit" : "0",
+                                "conditional" : "0",
+                                "type" : "text"
+                             },
+                             {
+                                "sequence_number" : "8",
+                                "view" : "1",
+                                "edit" : "0",
+                                "name" : "volunteersource",
+                                "conditional" : "0",
+                                "type" : "text",
+                                "label" : "How did you hear about us?",
+                                "required" : "1"
+                             },
+                             {
+                                "options" : "None\n1\n2\n3\n4",
+                                "required" : "1",
+                                "label" : "Tier (What is the highest Tier you are comfortable GMing, enter None if you do not want to GM at all)",
+                                "name" : "volunteertiers",
+                                "edit" : "0",
+                                "conditional" : "0",
+                                "type" : "select",
+                                "sequence_number" : "6",
+                                "view" : "1"
+                             },
+                             {
+                                "sequence_number" : "10",
+                                "view" : "1",
+                                "conditional_name" : "volunteerlevel",
+                                "edit" : "0",
+                                "conditional_value" : "Hotel",
+                                "name" : "volunteerhotelpref",
+                                "conditional" : "1",
+                                "type" : "select",
+                                "options" : "Male\nFemale\nAny",
+                                "label" : "Hotel Rooming Preference",
+                                "required" : "0"
+                             },
+                             {
+                                "view" : "1",
+                                "sequence_number" : "5",
+                                "required" : "1",
+                                "label" : "What role are you interested in?  Admin roles are as follows: Runners work with the Admins assigned to the slot, they will help GMs with getting their badges and perform health checks.  Admins will help seat players at tables and check DMs in.  Head admin will be the escalation point for any issues that arise.",
+                                "options" : "DM - Adventurers League Only\nDM - Acquisitions Incorporated Only\nDM - Any\nAdmin\nAny",
+                                "conditional" : "0",
+                                "type" : "select",
+                                "name" : "volunteerrole",
+                                "edit" : "0"
+                             }
+                         ]
+                        }
+    convention_response = requests.put(convention_url, data= convention_params)
+    convention_json = convention_response.json()
+    print (convention_json)
     return()
 
 # -----------------------------------------------------------------------
@@ -474,23 +584,24 @@ def list_convention_info(tteconvention_id):
     return(convention_data)
 
 # -----------------------------------------------------------------------
-# Pull Slots Data from the TTE API for the whole convention
+# Pull Slots Data from the TTE API for the whole convention that match the time submitt and the event room id
 # -----------------------------------------------------------------------
-def tte_convention_slots_api_get(ttesession,tteconvention_id):
+def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event):
+    # print ('debug tte_convention_slots_api_get')
     slots_start = 1
     slots_total = 1000
     all_slots = list()
     slots_url = tteconvention_data['result']['_relationships']['slots']
     while slots_total >= slots_start:
-        slots_params = {'session_id': ttesession['id'], '_page_number': slots_start}
-        slots_response = requests.get('https://tabletop.events' + slots_url, params= slots_params)
+        slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': daypart_event_time['id'], 'room_id': event['type_room_id']}
+        slots_response = requests.get('https://tabletop.events' + slots_url, data= slots_params)
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
         slots_total = int(slots_json['result']['paging']['total_pages'])
         for slots in convention_slots:
             all_slots.append(slots)
         if slots_start < slots_total:
-            slots_start = int(slots_data['result']['paging']['next_page_number'])
+            slots_start = int(slots_json['result']['paging']['next_page_number'])
         elif slots_start == slots_total:
             break
     return(all_slots)
@@ -695,28 +806,28 @@ def tte_convention_days_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 def tte_convention_days_api_post(ttesession,tteconvention_id,new_convention):
     # Declarations
-    all_days = []
     all_dates = new_convention['dates'].split('\r\n')
     tteconvention_days_url = 'https://tabletop.events/api/conventionday'
     for date in all_dates:
-        start_date = date + ' 12:00 AM'
-        start_day = datetime.datetime.strptime(start_date, "%m/%d/%Y %I:%M %p")
-        day_name = start_day.strftime('%a %b %m')
-        end_day = start_day + datetime.timedelta(days=1)
+        day_date = date + ' 12:00:00 AM'
+        start_date = datetime.datetime.strptime(day_date, '%m/%d/%Y %I:%M:%S %p')
+        start_date_utc = datetime_utc_convert(ttesession,tteconvention_id,start_date)
+        start_day = start_date_utc.strftime('%Y-%m-%d %H:%M:%S')
+        end_date_utc = start_date_utc + datetime.timedelta(days=1)
+        end_day = end_date_utc.strftime('%Y-%m-%d %H:%M:%S')
+        day_name = start_date.strftime('%a %b %d')
         day_params = {
+            'session_id': ttesession['id'],
             'attendee_start_date': start_day,
             'attendee_end_date': end_day,
             'start_date': start_day,
             'end_date': end_day,
             'convention_id': tteconvention_id,
-            'name': day_name
+            'name': day_name,
+            'day_type': 'events'
         }
         day_response = requests.post(tteconvention_days_url, params= day_params)
         day_json = day_response.json()
-        print (day_json)
-        current_day = day_json['id'],day_json['name']
-        all_days.append(day_data)
-    print (all_days)
     return()
 
 # -----------------------------------------------------------------------
@@ -1169,6 +1280,15 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
 def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
     print ('tte_convention_events_api_post testing')
     all_events = []
+
+    # Function to create event type and event room type
+    def add_event_type(ttesession,tteconvention_id,event):
+        # Create the event type
+        event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
+        # Assign the room that matches the event type and return that id.
+        event['type_room_id'] = tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event)
+        return(event)
+
     # For each event, gather the information needed to post the event
     # Get the convention days information
     convention_days = tte_convention_days_api_get(ttesession,tteconvention_id)
@@ -1179,23 +1299,26 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
         print (event)
         #Get the event types from TTE
         event_types = tte_convention_eventtypes_api_get(ttesession,tteconvention_id)
-        # Compare the Name and Tier of the event types (if any exist) with the provided type listed for the event
-        # If the event is a game, get a list of event types, checking if they have a tier or not.
-        # If the event isn't a game, return the list of event types that don't have tiers.
-        if event['tier'] != None:
-            event_type_l = [type for type in event_types if type['name'] == event['type'] and event['tier'] in type['custom_fields']]
-        else:
-            event_type_l = [type for type in event_types if type['name'] == event['type']]
-        # If there are event types and a match is found, assign the id of the match to the event
+        # Compare the Name of the event types (if any exist) with the provided type listed for the event
+        event_type_l = [type for type in event_types if type['name'] == event['type']]
+        # If there are event types and a match is found, assign the id of the match to the event'
         if len(event_type_l) !=0:
-            event['type_id'] = e['id']
+            all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
+            for e in event_type_l:
+                if e['name'] == event['type']:
+                    event['type_id'] = e['id']
+                    for room in all_rooms:
+                        if event['type'] == room['name']:
+                            event['type_room_id'] = room['id']
+                else:
+                    event = add_event_type(ttesession,tteconvention_id,event)
+        # If no event types exist, create a new Event Type and return the TTE id for that Type, and create an Event Room Type ID.
         else:
-            # If there isn't a match, create a new Event Type and return the TTE id for that Type
             if event['tier'] !='':
-                print ('Adding Event Type to TTE: ', event['type'], event['tier'])
+                print ('Adding Event Type to TTE: ', event['type'], ' Tier: ', event['tier'])
             else:
                 print ('Adding Event Type to TTE: ', event['type'])
-            event['type_id'] = tte_convention_events_type_api_post(ttesession,tteconvention_id,event)
+            event = add_event_type(ttesession,tteconvention_id,event)
         # Calculate the datetime value of the event
         event['duration'] = int(event['duration'])
         event['unconverted_datetime'] = datetime.datetime.strptime(event['datetime'],'%m/%d/%y %I:%M:%S %p')
@@ -1207,57 +1330,83 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
             event['date_check'] = datetime.date(event['datetime_utc'].year,event['datetime_utc'].month,event['datetime_utc'].day)
             if event['date_check'] == day['date_check']:
                 event['day_id'] = day['id']
-        # Get the slots for the convention
-        conventions_slots = tte_convention_slots_api_get(ttesession,tteconvention_id)
         # Define a list to be filled with the slot times used (in increments of 30 minutes) in the event
-        all_slot_times = []
-        # Define a list to be filled with the slot info (id and datetime) of the event
-        slot_list = []
-        for x in range(event['duration'],30):
-            slot_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
-            all_slot_times.append(slot_time)
-        # Parse through the convention dayparts to find the
-        # Then compare to see if they are equal to determine the TTE ID of the time
-        # Parse through the datetimes of the day and the slottimes of the event
-        for dayparts in convention_dayparts:
-            for slot_time in all_slot_times:
-                # Find the id of the daypart for the start of the event
+        all_event_times = []
+        for x in range(0,event['duration'],30):
+            event_time = event['datetime_utc'] + datetime.timedelta(minutes=x)
+            all_event_times.append(event_time)
+        # Parse through the convention dayparts and the times of the event
+        # Compare to see if there are matches to determine the TTE ID of the times of the event
+        # Define a list to be filled with the ids and datetimes of the times of the event
+        event_time_info = []
+        for event_time in all_event_times:
+            for dayparts in convention_dayparts:
+                daypart_event_time = {}
+                # Find the id of the daypart for the start of the event and add that to the event dict
                 # Add to the list of slot times and ids
-                if dayparts['datetime'] == slot_time and event['datetime_utc'] == dayparts['datetime']:
-                    slot_info.append(dayparts['id'], dayparts['datetime'])
+                if dayparts['datetime'] == event_time and event['datetime_utc'] == dayparts['datetime']:
+                    daypart_event_time['id'] = dayparts['id']
+                    daypart_event_time['datetime'] = dayparts['datetime']
+                    event_time_info.append(daypart_event_time)
                     event['dayparts_start_id'] = dayparts['id']
                 # Add other ids of correspdonging slot times that fall within the event
-                elif dayparts['datetime'] == slot_time and event['datetime_utc'] != dayparts['datetime']:
-                        slot_info.append(dayparts['id'], dayparts['datetime'])
-        # Verify an events has a ID for the day, ID for the Event Type, and ID for the Day Part
-        if event['day_id'] and event['type_id'] and event['dayparts_id']:
+                elif dayparts['datetime'] == event_time and event['datetime_utc'] != dayparts['datetime']:
+                    daypart_event_time['id'] = dayparts['id']
+                    daypart_event_time['datetime'] = dayparts['datetime']
+                    event_time_info.append(daypart_event_time)
+
+
+
+
+
+        convention_slots_info = (slot for slot in convention_slots_data if )
+
+        print (convention_slots_info)
+        # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
+        if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
-            event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
-            event_response = requests.post('https://tabletop.events/api/event', params= event_params)
-            event_json = event_response.json()
-            event_data = event_data['result']
-            print ('Added new Event to TTE: ', event_data['name'], event_data['unconverted_datetime'], event_data['id'])
+            event_data = tte_event_api_post(ttesession,tteconvention_id,event)
+            print ('Added new Event to TTE: ', event_data['name'], event['unconverted_datetime'], event_data['id'])
             event['id'] = event_data['id']
-            # Add slots for the event (assigns tables and times)
-            for i in range(1,event['tablecount'],1):
-                for conslot in conventions_slots:
-                    if conslot['room_id'] == event_data['room_id']:
-                        for eventslot in slot_info:
-                            if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
-                                event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
-                                event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
-                                event_slot_response = requests.put(event_slot_url, params=event_slot_params)
-                                event_slot_json = event_slot_response.json()
-                                if event_slot_json['id']:
-                                    event_slot_l.append(event_slot_json['id'])
-                                    event['slots'] = event_slot_l
-                                    print ('Added event to slot ', event_slot_json['name'])
-                                else:
-                                    print ('Unable to add slot', eventslot)
-                            else:
-                                print ('Unable to add slot ', eventslot)
-                    else:
-                        print ('No matching room found for event')
+            # Add slots for the event (assigns tables and times) as many times as there are tables for the event
+            for i in range(0,int(event['tablecount']),1):
+                convention_slots_info = []
+                for eventslot in event_time_info:
+                    # Get the slots for the convention that span the daypart_event_time, and the event room id
+                    convention_slots = tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
+                    convention_slots_info.extend(convention_slots)
+                # Find slots that are at the same space (table) and are available
+                for y in range(0,len(event_time_info),1):
+                    old_space = None
+                    for x in range(0,len(convention_slots_info),1):
+                        if old_space == None:
+                            old_space = convention_slots_info[x]['space_id']
+                        elif old_space == convention_slots_info[x]['space_id']
+                            
+
+                            convention_slots_info[x]['']
+                        old_space =
+
+
+                        convention_slots_info
+
+
+                    for conslot in convention_slots_info:
+                        print ('Con Slot: ', conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
+                        if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
+                            event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
+                            event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
+                            event_slot_response = requests.put(event_slot_url, params=event_slot_params)
+                            event_slot_json = event_slot_response.json()
+                            print (event_slot_json)
+                            try:
+                                event_slot_l.append(event_slot_json['result']['id'])
+                                event['slots'] = event_slot_l
+                                print ('Added event to slot ', event_slot_json['result']['name'])
+                            except:
+                                print ('Unable to add slot', eventslot)
+                        else:
+                            print ('Unable to add slot ', eventslot)
             all_events.append(event)
     return(all_events)
 
@@ -1272,16 +1421,13 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
       tteconvention_eventtypes_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['eventtypes']
       # Loop through the eventtypes for the convention
       while eventtypes_total >= eventtypes_start:
-        eventtypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id}
+        eventtypes_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_include': 'custom_fields'}
         eventtypes_response = requests.get(tteconvention_eventtypes_url, params= eventtypes_params)
         eventtypes_json = eventtypes_response.json()
         eventtypes_data = eventtypes_json['result']['items']
         eventtypes_total = int(eventtypes_json['result']['paging']['total_pages'])
         for eventtypes in eventtypes_data:
-            eventtypes_d = dict()
-            eventtypes_d['id'] = eventtypes['id']
-            eventtypes_d['name'] = eventtypes['name']
-            all_eventtypes.append(eventtypes_d)
+            all_eventtypes.append(eventtypes)
         if eventtypes_start < eventtypes_total:
             eventtypes_start = int(eventtypes_json['result']['paging']['next_page_number'])
         elif eventtypes_start == eventtypes_total:
@@ -1289,19 +1435,70 @@ def tte_convention_eventtypes_api_get(ttesession,tteconvention_id):
       return(all_eventtypes)
 
 # -----------------------------------------------------------------------
+# Create a new Event
+# -----------------------------------------------------------------------
+def tte_event_api_post(ttesession,tteconvention_id,event):
+    print ('testing tte_event_api_post')
+    if event['tier'] != '':
+        event_tier = {
+        'custom_fields': {
+        'tier': event['tier']
+        }
+        }
+        event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
+        event_response = requests.post('https://tabletop.events/api/event', json=event_tier, params= event_params)
+        event_json = event_response.json()
+        event_data = event_json['result']
+    else:
+        event_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name' : event['name'], 'max_tickets' : 6, 'priority' : 3, 'age_range': 'all', 'type_id' : event['type_id'], 'conventionday_id': event['day_id'], 'duration' : event['duration'], 'alternatedaypart_id' : event['dayparts_start_id'], 'preferreddaypart_id' : event['dayparts_start_id']}
+        event_response = requests.post('https://tabletop.events/api/event', params= event_params)
+        event_json = event_response.json()
+        event_data = event_json['result']
+    return(event_data)
+
+# -----------------------------------------------------------------------
 # Post a new Event Type
 # -----------------------------------------------------------------------
 def tte_convention_events_type_api_post(ttesession,tteconvention_id,event_type):
     #print ('tte_convention_events_type_api_post')
-    if event_type['tier'] != None:
-        custom_tier = {'required': 1, 'type': 'text', 'label': 'Tier', 'name': 'tier', 'conditional': 0, 'edit': 0, 'view': 1}
-        events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0, 'custom_fields': custom_tier}
+    if event_type['tier'] != '':
+        custom_tier = {
+        'custom_fields': [{
+        'required': '1',
+        'type': 'text',
+        'label': 'Tier',
+        'name': 'tier',
+        'conditional': '0',
+        'edit': '0',
+        'view': '1',
+        'sequence_number': '1',
+        }]
+        }
+        events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0}
+        events_type_response = requests.post(config.tte_url + '/eventtype', json=custom_tier, params= events_type_params)
+        events_type_json = events_type_response.json()
+        events_type_id = events_type_json['result']['id']
     else:
         events_type_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'name': event_type['type'], 'limit_volunteers': 0, 'max_tickets': 6, 'user_submittable': 0, 'default_cost_per_slot': 0, 'limit_ticket_availability': 0}
-    events_type_response = requests.post(config.tte_url + '/eventtype', params= events_type_params)
-    events_type_json = events_type_response.json()
-    events_type_id = events_type_json['result']['id']
+        events_type_response = requests.post(config.tte_url + '/eventtype', params= events_type_params)
+        events_type_json = events_type_response.json()
+        events_type_id = events_type_json['result']['id']
     return(events_type_id)
+
+# -----------------------------------------------------------------------
+# Add an event type room with the allowed event type
+# -----------------------------------------------------------------------
+def tte_convention_event_type_room_api_post(ttesession,tteconvention_id,event):
+    all_rooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
+    for room in all_rooms:
+        if event['type'] == room['name']:
+            event['type_room_id'] = room['id']
+    event_type_room_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, 'eventtype_id': event['type_id'], 'room_id': event['type_room_id']}
+    event_type_room_response = requests.post(config.tte_url + '/eventtyperoom', params = event_type_room_params)
+    event_type_room_id_json = event_type_room_response.json()
+    event_type_room_id = event_type_room_id_json['result']['id']
+    return(event_type_room_id)
+
 # -----------------------------------------------------------------------
 # Add host to an event
 # -----------------------------------------------------------------------
@@ -1505,7 +1702,7 @@ def tte_events_api_get(ttesession,tteconvention_id):
     all_events = list()
     while events_total >= events_start:
         events_url = tteconvention_data['result']['_relationships']['events']
-        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id, '_page_number': events_start, '_include_relationships':1}
+        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id, '_page_number': events_start, '_include_relationships':1, "_include": 'custom_fields'}
         events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
         events_data = events_response.json()
         convention_events = events_data['result']['items']
@@ -1524,16 +1721,31 @@ def tte_events_api_get(ttesession,tteconvention_id):
 # -----------------------------------------------------------------------
 # Query for a location id
 # -----------------------------------------------------------------------
-def tte_geolocation_api_get(ttesession,new_convention):
-    geolocation_url = '/api/geolocation' + '?query=' + new_convention['location']
+def tte_geolocation_api_get(ttesession,convention_info):
+    geolocation_name = convention_info['location']
+    geolocation_url = 'https://tabletop.events/api/geolocation' + '?query=' + convention_info['location']
     geolocation_params = {'session_id': ttesession['id']}
-    geolocation_response = requests.get('https://tabletop.events' + geolocation_url, params= geolocation_params)
+    geolocation_response = requests.get(geolocation_url, params= geolocation_params)
     geolocation_json = geolocation_response.json()
     try:
-        geolocation_id = geolocation_json['result']['items']['id']
+        for location in geolocation_json['result']['items']:
+            new_date = datetime.datetime.strptime(location['date_created'],'%Y-%m-%d %H:%M:%S')
+            try:
+                old_date
+            except NameError:
+                old_date = None
+            if old_date is None:
+                old_date = new_date
+                geolocation_id = location['id']
+            if new_date > old_date:
+                old_date = new_date
+                geolocation_id = location['id']
+            else:
+                geolocation_id = location['id']
+                pass
     except:
-        print ('Could not find location', new_convention['location'], 'adding to TTE')
-        geolocation_id = tte_geolocation_api_post(ttesession,new_convention)
+        print ('Could not find location', convention_info, 'adding to TTE')
+        geolocation_id = tte_geolocation_api_post(ttesession,convention_info)
     return(geolocation_id)
 
 # -----------------------------------------------------------------------
@@ -1661,8 +1873,8 @@ def newconvention():
         new_convention['location'] = request.form['location']
         new_convention['description'] = request.form['description']
         new_convention['phone_number'] = request.form['phone_number']
+        new_convention['email'] = request.form['email']
         new_convention['dates'] = request.form['dates']
-        new_convention['volunteer_greeting'] = request.form['volunteer_greeting']
         if newconventionform.validate():
             print ('Creating Convention')
             created_convention = tte_convention_convention_api_post(ttesession,new_convention)
@@ -1693,16 +1905,7 @@ def conventions():
             session['tteconvention_id'] = request.form.get('selectcon',None)
             print ('Getting Convention Information')
             tte_convention_api_get(ttesession,session['tteconvention_id'])
-            this_convention = Convention(tteconvention_data['result']['name'])
-            this_convention.add_location(tteconvention_data['result']['geolocation_name'])
-            this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
-            this_convention.add_description(tteconvention_data['result']['description'])
-            for day in tteconvention_data['result']['days']:
-                dayonly = day['day_time'].strftime('%m/%d/%Y')
-                all_days.append(dayonly)
-            this_convention.add_dates(all_days)
-            updateconform = NewConventionForm(request.form, obj=this_convention)
-            updateconform.populate_obj(this_convention)
+            updateconform = conform_info()
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
@@ -1710,29 +1913,20 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             })
         if request.form.get('conventionsubmit') and session.get('tteconvention_id') is not None:
-                all_days = []
-                print ('Updatinging the convention')
-                update_convention['name'] = request.form['name']
-                update_convention['location'] = request.form['location']
-                update_convention['description'] = request.form['description']
-                update_convention['phone_number'] = request.form['phone_number']
-                update_convention['dates'] = request.form['dates']
-                tte_convention_convention_api_put(ttesession,update_convention)
-                print ('Getting Convention Information')
-                this_convention = Convention(tteconvention_data['result']['name'])
-                this_convention.add_location(tteconvention_data['result']['geolocation_name'])
-                this_convention.add_phone_number(tteconvention_data['result']['phone_number'])
-                this_convention.add_description(tteconvention_data['result']['description'])
-                for day in tteconvention_data['result']['days']:
-                    dayonly = day['day_time'].strftime('%m/%d/%Y')
-                    all_days.append(dayonly)
-                this_convention.add_dates(all_days)
-                updateconform = NewConventionForm(request.form, obj=this_convention)
-                updateconform.populate_obj(this_convention)
-                return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
-                'tteconventions' : tteconventions,
-                'tteconvention_data' : tteconvention_data,
-                })
+            update_convention = {}
+            print ('Updating the convention')
+            update_convention['name'] = request.form['name']
+            update_convention['location'] = request.form['location']
+            update_convention['description'] = request.form['description']
+            update_convention['email'] = request.form['email']
+            update_convention['phone_number'] = request.form['phone_number']
+            update_convention['dates'] = request.form['dates']
+            tte_convention_convention_api_put(ttesession,update_convention)
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_data' : tteconvention_data,
+            })
         if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -1741,7 +1935,8 @@ def conventions():
             location = os.path.join(folder,volunteerselect)
             volunteers = volunteer_parse(location,tteconvention_id)
             savedvolunteers = list_volunteers(session['tteconvention_id'])
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -1755,11 +1950,10 @@ def conventions():
             location = os.path.join(folder,conventionselect)
             print ('Parsing the Convention Matrix File')
             convention_info = convention_parse(location,tteconvention_id,tteconvention_name)
-            print ('Creating the Event Rooms and Spaces')
-            savedspaces = tte_convention_roomnsandspaces_api_post(ttesession,tteconvention_id,convention_info)
             print ('Creating the Volunteer Shifts')
             tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -1772,7 +1966,8 @@ def conventions():
             location = os.path.join(folder,eventselect)
             savedevents = event_parse(location,tteconvention_id,tteconvention_name)
             pushevents = tte_convention_events_api_post(ttesession,tteconvention_id,savedevents)
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -1783,11 +1978,11 @@ def conventions():
             tteconvention_name = tteconvention_data['result']['name']
             tteevents = tte_events_api_get(ttesession,tteconvention_id)
             deleteevents = tte_convention_events_api_delete(ttesession,tteconvention_id,tteevents)
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
-            'savedevents' : savedevents
             })
         if request.form.get('shiftsdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
@@ -1796,7 +1991,8 @@ def conventions():
             deleteshifts = tte_convention_volunteer_shifts_api_delete(ttesession,tteconvention_id,tteshifts)
             convention_info = list_convention_info(tteconvention_id)
             #databaseslotdelete = database_slot_delete(tteconvention_id)
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -1806,7 +2002,8 @@ def conventions():
             tteconvention_name = tteconvention_data['result']['name']
             ttedayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
             deletedayparts = tte_convention_dayparts_api_delete(ttesession,tteconvention_id,ttedayparts)
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -1817,13 +2014,14 @@ def conventions():
             tterooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             ttespace = tte_convention_spaces_api_get(ttesession,tteconvention_id)
             tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace)
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
+            updateconform = conform_info()
+            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
         else:
-            return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name })
+            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name })
 
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
