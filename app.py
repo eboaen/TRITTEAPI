@@ -587,7 +587,7 @@ def list_convention_info(tteconvention_id):
 # Pull Slots Data from the TTE API for the whole convention that match the time submitt and the event room id
 # -----------------------------------------------------------------------
 def tte_convention_slots_api_get(ttesession,tteconvention_id,eventslot,event):
-    print ('debug tte_convention_slots_api_get')
+    #print ('debug tte_convention_slots_api_get')
     slots_start = 1
     slots_total = 1000
     all_slots = list()
@@ -1373,10 +1373,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 old_space = None
                 event_slot_list = []
                 for slot in convention_slots_info:
-                    if old_space == None and convention_slots_info['is_assigned'] == 0:
-                        old_space = convention_slots_info['slot']
+                    if old_space == None and slot['is_assigned'] == 0:
+                        old_space = slot
                         event_slot_list.append(old_space)
-                    elif old_space == convention_slots_info['space_id'] and convention_slots_info['is_assigned'] == 0:
+                    elif old_space == slot['space_id'] and slot['is_assigned'] == 0:
                         event_slot_list.append(old_space)
                     else:
                         pass
