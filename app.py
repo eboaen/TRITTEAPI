@@ -1354,14 +1354,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     daypart_event_time['id'] = dayparts['id']
                     daypart_event_time['datetime'] = dayparts['datetime']
                     event_time_info.append(daypart_event_time)
-
-
-
-
-
-        convention_slots_info = (slot for slot in convention_slots_data if )
-
-        print (convention_slots_info)
         # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
@@ -1376,37 +1368,30 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     convention_slots = tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event)
                     convention_slots_info.extend(convention_slots)
                 # Find slots that are at the same space (table) and are available
-                for y in range(0,len(event_time_info),1):
-                    old_space = None
-                    for x in range(0,len(convention_slots_info),1):
-                        if old_space == None:
-                            old_space = convention_slots_info[x]['space_id']
-                        elif old_space == convention_slots_info[x]['space_id']
-                            
-
-                            convention_slots_info[x]['']
-                        old_space =
-
-
-                        convention_slots_info
-
-
-                    for conslot in convention_slots_info:
-                        print ('Con Slot: ', conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
-                        if eventslot['id'] == conslot['daypart_id'] and conslot['is_assigned'] == 0:
-                            event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
-                            event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
-                            event_slot_response = requests.put(event_slot_url, params=event_slot_params)
-                            event_slot_json = event_slot_response.json()
-                            print (event_slot_json)
-                            try:
-                                event_slot_l.append(event_slot_json['result']['id'])
-                                event['slots'] = event_slot_l
-                                print ('Added event to slot ', event_slot_json['result']['name'])
-                            except:
-                                print ('Unable to add slot', eventslot)
-                        else:
-                            print ('Unable to add slot ', eventslot)
+                old_space = None
+                event_slot_list = []
+                for slot in convention_slots_info:
+                    if old_space == None and convention_slots_info['is_assigned'] == 0:
+                        old_space = convention_slots_info['slot']
+                        event_slot_list.append(old_space)
+                    elif old_space == convention_slots_info['space_id'] and convention_slots_info['is_assigned'] == 0:
+                        event_slot_list.append(old_space)
+                    else:
+                        pass
+                # Schedule each slot
+                for conslot in event_slot_list:
+                    print ('Con Slot: ', conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
+                    event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
+                    event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
+                    event_slot_response = requests.put(event_slot_url, params=event_slot_params)
+                    event_slot_json = event_slot_response.json()
+                    print (event_slot_json)
+                    try:
+                        event_slot_l.append(event_slot_json['result']['id'])
+                        event['slots'] = event_slot_l
+                        print ('Added event to slot ', event_slot_json['result']['name'])
+                    except:
+                        print ('Unable to add slot', eventslot)
             all_events.append(event)
     return(all_events)
 
