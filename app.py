@@ -1381,19 +1381,19 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     else:
                         pass
                 # Schedule each slot
+                all_event_slots = []
                 for conslot in event_slot_list:
-                    print ('Con Slot: ', conslot['daypart_id'], 'Event Slot: ', eventslot['id'])
                     event_slot_url = 'https://tabletop.events/api/slot/' + conslot['id']
                     event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
                     event_slot_response = requests.put(event_slot_url, params=event_slot_params)
                     event_slot_json = event_slot_response.json()
                     print (event_slot_json)
                     try:
-                        event_slot_l.append(event_slot_json['result']['id'])
-                        event['slots'] = event_slot_l
+                        all_event_slots.append(event_slot_json['result']['id'])
+                        event['slots'] = all_event_slots
                         print ('Added event to slot ', event_slot_json['result']['name'])
                     except:
-                        print ('Unable to add slot', eventslot)
+                        print ('Unable to add slot', event_slot_json['result']['name'])
             all_events.append(event)
     return(all_events)
 
