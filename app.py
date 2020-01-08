@@ -587,13 +587,14 @@ def list_convention_info(tteconvention_id):
 # Pull Slots Data from the TTE API for the whole convention that match the time submitt and the event room id
 # -----------------------------------------------------------------------
 def tte_convention_slots_api_get(ttesession,tteconvention_id,daypart_event_time,event):
-    # print ('debug tte_convention_slots_api_get')
+    print ('debug tte_convention_slots_api_get')
     slots_start = 1
     slots_total = 1000
     all_slots = list()
     slots_url = tteconvention_data['result']['_relationships']['slots']
     while slots_total >= slots_start:
         slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': daypart_event_time['id'], 'room_id': event['type_room_id']}
+        print (slots_params)
         slots_response = requests.get('https://tabletop.events' + slots_url, data= slots_params)
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
@@ -1354,6 +1355,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     daypart_event_time['id'] = dayparts['id']
                     daypart_event_time['datetime'] = dayparts['datetime']
                     event_time_info.append(daypart_event_time)
+        print (event_time_info)
         # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
