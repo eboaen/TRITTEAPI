@@ -1380,6 +1380,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                         event_slot_list.append(old_space)
                     else:
                         pass
+                print (event_slot_list)
                 # Schedule each slot
                 all_event_slots = []
                 for conslot in event_slot_list:
@@ -1387,7 +1388,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     event_slot_params = {'session_id': ttesession['id'], 'event_id': event['id']}
                     event_slot_response = requests.put(event_slot_url, params=event_slot_params)
                     event_slot_json = event_slot_response.json()
-                    print (event_slot_json)
+                    # print (event_slot_json)
                     try:
                         all_event_slots.append(event_slot_json['result']['id'])
                         event['slots'] = all_event_slots
