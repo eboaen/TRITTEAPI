@@ -1072,7 +1072,7 @@ def tte_volunteer_shifts_api_get(ttesession,tteconvention_id,user_id):
     volunteer_shifts_start = 1
     volunteer_shifts_total = 1000
     all_volunteer_shifts = list()
-    ttevolunteer_shifts_url = 'https://tabletop.events/api/volunteershift' + user_id
+    ttevolunteer_shifts_url = 'https://tabletop.events/api/volunteershift/' + user_id
     while volunteer_shifts_total >= volunteer_shifts_start:
         volunteer_shifts_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_shifts_start}
         volunteer_shifts_response = requests.get(ttevolunteer_shifts_url, params= volunteer_shifts_params)
