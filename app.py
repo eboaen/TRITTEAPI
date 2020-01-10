@@ -1395,11 +1395,11 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     print (slot['name'], slot['is_assigned'])
                     if old_space == None and slot['is_assigned'] == 0:
                         old_space = slot
-                        event_slot_list.append(old_space)
+                        event_slot_list.append(slot)
                     if old_space == None and slot['is_assigned'] != 0:
                         pass
                     elif old_space['space_id'] == slot['space_id'] and slot['is_assigned'] == 0:
-                        event_slot_list.append(old_space)
+                        event_slot_list.append(slot)
                     else:
                         pass
                 print (event_slot_list)
