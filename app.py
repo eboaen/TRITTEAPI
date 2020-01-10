@@ -238,7 +238,6 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
     for volunteer in volunteer_data:
         volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
-        print (volunteer['shifts'])
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
@@ -665,7 +664,7 @@ def volunteer_data_csv(volunteers):
     folder = config.UPLOAD_FOLDER
     saveloc = folder + '/volunterdata.csv'
     with open(saveloc, mode='w') as csv_file:
-        fieldnames = ['email_address', 'firstname', 'lastname', 'email_address', 'shift_list']
+        fieldnames = ['email_address', 'firstname', 'lastname', 'shift_list']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
         for volunteer in volunteers:
             shift_list = []
@@ -673,6 +672,7 @@ def volunteer_data_csv(volunteers):
                 shift_list.append(shift['shift_data']['name'])
                 volunteer['shift_list'] = shift_list
             writer.writerow(volunteer)
+            print (volunteer)
     return()
 
 # -----------------------------------------------------------------------
