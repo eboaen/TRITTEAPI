@@ -669,7 +669,7 @@ def volunteer_data_csv(volunteers):
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
         for volunteer in volunteers:
             shift_list = []
-            for shift in volunteer['shifts']
+            for shift in volunteer['shifts']:
                 shift_list.append(shift['name'])
                 volunteer['shift_list'] = shift_list
             writer.writerow(volunteer)
