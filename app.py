@@ -665,9 +665,13 @@ def volunteer_data_csv(volunteers):
     folder = config.UPLOAD_FOLDER
     saveloc = folder + '/volunterdata.csv'
     with open(saveloc, mode='w') as csv_file:
-        fieldnames = ['email_address', 'firstname', 'lastname', 'email_address']
+        fieldnames = ['email_address', 'firstname', 'lastname', 'email_address', 'shift_list']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
         for volunteer in volunteers:
+            shift_list = []
+            for shift in volunteer['shifts']
+                shift_list.append(shift['name'])
+                volunteer['shift_list'] = shift_list
             writer.writerow(volunteer)
     return()
 
@@ -1077,7 +1081,6 @@ def tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer_id):
         volunteer_shifts_params = {'session_id': ttesession, 'convention_id': tteconvention_id, 'volunteer_id':volunteer_id , '_page_number': volunteer_shifts_start}
         volunteer_shifts_response = requests.get(ttevolunteer_shifts_url, params= volunteer_shifts_params)
         volunteer_shifts_json = volunteer_shifts_response.json()
-        print (volunteer_shifts_json)
         volunteer_shifts_data = volunteer_shifts_json['result']['items']
         volunteer_shifts_total = int(volunteer_shifts_json['result']['paging']['total_pages'])
         volunteer_shifts_start = int(volunteer_shifts_json['result']['paging']['page_number'])
@@ -1103,7 +1106,6 @@ def tte_shift_api_get(ttesession,tteconvention_id,shift_id):
     shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': shift_start}
     shift_response = requests.get(tteshift_url, params= shift_params)
     shift_json = shift_response.json()
-    print (shift_json)
     shift_data = shift_json['result']
     return(shift_data)
 
