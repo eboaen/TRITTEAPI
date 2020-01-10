@@ -606,7 +606,6 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,eventslot,event):
             slots_start = int(slots_json['result']['paging']['next_page_number'])
         elif slots_start == slots_total:
             break
-    print (all_slots)
     return(all_slots)
 
 # -----------------------------------------------------------------------
