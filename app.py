@@ -1103,7 +1103,7 @@ def tte_shift_api_get(ttesession,tteconvention_id,shift_id):
     shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': shift_start}
     shift_response = requests.get(tteshift_url, params= shift_params)
     shift_json = shift_response.json()
-    shift_data = shift_data['result']['items']
+    shift_data = shift_json['result']['items']
     return(shift_data)
 
 # -----------------------------------------------------------------------
