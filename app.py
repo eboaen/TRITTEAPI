@@ -1079,8 +1079,8 @@ def tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer_id):
         volunteer_shifts_json = volunteer_shifts_response.json()
         print (volunteer_shifts_json)
         volunteer_shifts_data = volunteer_shifts_json['result']['items']
-        volunteer_shifts_total = int(volunteer_shifts_data['result']['paging']['total_pages'])
-        volunteer_shifts_start = int(volunteer_shifts_data['result']['paging']['page_number'])
+        volunteer_shifts_total = int(volunteer_shifts_json['result']['paging']['total_pages'])
+        volunteer_shifts_start = int(volunteer_shifts_json['result']['paging']['page_number'])
         for volunteer_shift in volunteer_shifts_data:
             volunteer_shift['shift_data'] = tte_shift_api_get(ttesession,tteconvention_id,volunteer_shift['shift_id'])
             all_volunteer_shifts.append(volunteer_shift)
