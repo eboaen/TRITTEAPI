@@ -1088,7 +1088,7 @@ def tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer_id):
             volunteer_shift['shift_data'] = tte_shift_api_get(ttesession,tteconvention_id,volunteer_shift['shift_id'])
             all_volunteer_shifts.append(volunteer_shift)
         if volunteer_shifts_start < volunteer_shifts_total:
-            volunteer_shifts_start = int(volunteer_shifts_data['result']['paging']['next_page_number'])
+            volunteer_shifts_start = int(volunteer_shifts_json['result']['paging']['next_page_number'])
         elif volunteer_shifts_start == volunteer_shifts_total:
             break
         else:
