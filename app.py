@@ -594,7 +594,6 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,eventslot,event):
     slots_url = tteconvention_data['result']['_relationships']['slots']
     while slots_total >= slots_start:
         slots_params = {'session_id': ttesession['id'], '_page_number': slots_start, 'daypart_id': eventslot['id'], 'room_id': event['type_room_id']}
-        print (slots_params)
         slots_response = requests.get('https://tabletop.events' + slots_url, data= slots_params)
         slots_json = slots_response.json()
         convention_slots = slots_json['result']['items']
@@ -605,6 +604,7 @@ def tte_convention_slots_api_get(ttesession,tteconvention_id,eventslot,event):
             slots_start = int(slots_json['result']['paging']['next_page_number'])
         elif slots_start == slots_total:
             break
+    print (all_slots)
     return(all_slots)
 
 # -----------------------------------------------------------------------
@@ -650,10 +650,23 @@ def event_data_csv(events):
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'host_count']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames,extrasaction='ignore')
-
         writer.writeheader()
         for event in events:
             writer.writerow(event)
+    return()
+
+# -----------------------------------------------------------------------
+# Save the volunteer data to CSV
+# -----------------------------------------------------------------------
+def volunteer_data_csv(volunteers):
+    folder = config.UPLOAD_FOLDER
+    saveloc = folder + '/volunterdata.csv'
+    with open(saveloc, mode='w') as csv_file:
+        writer = csv.DictWriter(csv_file, extrasaction='ignore')
+        for volunteer in volunteers:
+            writer.writerow(volunteer)
+    return()
+
 # -----------------------------------------------------------------------
 # Pull Hosts Data from the TTE API for a specific event
 # -----------------------------------------------------------------------
@@ -1355,7 +1368,6 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     daypart_event_time['id'] = dayparts['id']
                     daypart_event_time['datetime'] = dayparts['datetime']
                     event_time_info.append(daypart_event_time)
-        print (event_time_info)
         # Verify an event has a ID for the day, ID for the Event Type, and ID for the Day Part
         if event['day_id'] and event['type_id'] and event['dayparts_start_id']:
             # Create the Event
@@ -1369,7 +1381,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     # Get the slots for the convention that span the daypart_event_time, and the event room id
                     convention_slots = tte_convention_slots_api_get(ttesession,tteconvention_id,eventslot,event)
                     convention_slots_info.extend(convention_slots)
-                # Find slots that are at the same space (table) and are available
+                # Create a list of slots that are at the same space (table) and are available
                 old_space = None
                 event_slot_list = []
                 for slot in convention_slots_info:
@@ -1896,6 +1908,7 @@ def conventions():
             updateconform = conform_info()
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
+            volunteer_data_csv(tteconvention_data['volunteers'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
