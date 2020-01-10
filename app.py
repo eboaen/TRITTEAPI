@@ -236,6 +236,9 @@ def tte_convention_api_get(ttesession,tteconvention_id):
         # field['event_hosts'] = event_hosts
     # API Pull from TTE to get the volunteer information
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
+    for volunteer in volunteer_data:
+        volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
+        print (volunteer['shifts'])
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
@@ -662,7 +665,8 @@ def volunteer_data_csv(volunteers):
     folder = config.UPLOAD_FOLDER
     saveloc = folder + '/volunterdata.csv'
     with open(saveloc, mode='w') as csv_file:
-        writer = csv.DictWriter(csv_file, extrasaction='ignore')
+        fieldnames = ['email_address', 'firstname', 'lastname', 'email_address']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
         for volunteer in volunteers:
             writer.writerow(volunteer)
     return()
