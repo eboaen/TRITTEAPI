@@ -1104,7 +1104,7 @@ def tte_shift_api_get(ttesession,tteconvention_id,shift_id):
     shift_response = requests.get(tteshift_url, params= shift_params)
     shift_json = shift_response.json()
     print (shift_json)
-    shift_data = shift_json['result']['items']
+    shift_data = shift_json['result']
     return(shift_data)
 
 # -----------------------------------------------------------------------
