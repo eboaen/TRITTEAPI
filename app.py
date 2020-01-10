@@ -1099,7 +1099,7 @@ def tte_shift_api_get(ttesession,tteconvention_id,shift_id):
     shift_start = 1
     shift_total = 1000
     all_shift = list()
-    tteshift_url = 'https://tabletop.events/api/shift' + shift_id
+    tteshift_url = 'https://tabletop.events/api/shift/' + shift_id
     shift_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': shift_start}
     shift_response = requests.get(tteshift_url, params= shift_params)
     shift_json = shift_response.json()
