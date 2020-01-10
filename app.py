@@ -1396,7 +1396,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                     if old_space == None and slot['is_assigned'] == 0:
                         old_space = slot
                         event_slot_list.append(old_space)
-                    elif old_space == slot['space_id'] and slot['is_assigned'] == 0:
+                    elif old_space['space_id'] == slot['space_id'] and slot['is_assigned'] == 0:
                         event_slot_list.append(old_space)
                     else:
                         pass
@@ -1916,7 +1916,7 @@ def conventions():
             updateconform = conform_info()
             print (ttesession,session['tteconvention_id'])
             #event_data_csv(tteconvention_data['events'])
-            volunteer_data_csv(tteconvention_data['volunteers'])
+            #volunteer_data_csv(tteconvention_data['volunteers'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
