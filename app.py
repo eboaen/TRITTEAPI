@@ -236,8 +236,8 @@ def tte_convention_api_get(ttesession,tteconvention_id):
         # field['event_hosts'] = event_hosts
     # API Pull from TTE to get the volunteer information
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
-    for volunteer in volunteer_data:
-        volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
+    #for volunteer in volunteer_data:
+        #volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
@@ -1393,9 +1393,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 old_space = None
                 event_slot_list = []
                 for slot in convention_slots_info:
+                    print (slot['name'], slot['is_assigned'])
                     if old_space == None and slot['is_assigned'] == 0:
                         old_space = slot
                         event_slot_list.append(old_space)
+                    if old_space == None and slot['is_assigned'] != 0:
+                        pass
                     elif old_space['space_id'] == slot['space_id'] and slot['is_assigned'] == 0:
                         event_slot_list.append(old_space)
                     else:
