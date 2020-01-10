@@ -664,7 +664,7 @@ def volunteer_data_csv(volunteers):
     folder = config.UPLOAD_FOLDER
     saveloc = folder + '/volunterdata.csv'
     with open(saveloc, mode='w') as csv_file:
-        fieldnames = ['email_address', 'firstname', 'lastname', 'shift_list']
+        fieldnames = ['email_address', 'firstname', 'lastname', 'shift_list', 'custom_fields']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
         for volunteer in volunteers:
             shift_list = []
@@ -788,7 +788,7 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
     all_volunteers = list()
     ttevolunteer_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['volunteers']
     while volunteer_total >= volunteer_start:
-        volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start}
+        volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start, "_include": "custom_fields"}
         volunteer_response = requests.get(ttevolunteer_url, params= volunteer_params)
         volunteer_json = volunteer_response.json()
         volunteer_data = volunteer_json['result']['items']
