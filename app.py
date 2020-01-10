@@ -670,7 +670,7 @@ def volunteer_data_csv(volunteers):
         for volunteer in volunteers:
             shift_list = []
             for shift in volunteer['shifts']:
-                shift_list.append(shift['name'])
+                shift_list.append(shift['shift_data']['name'])
                 volunteer['shift_list'] = shift_list
             writer.writerow(volunteer)
     return()
