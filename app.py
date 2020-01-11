@@ -191,6 +191,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
     for volunteer in tteconvention_data['volunteers']:
         for event in tteconvention_data['events']:
             for host in event['hosts']:
+                print (volunteer['user_id'], host['user_id'])
                 if volunteer['user_id'] == host['user_id']:
                     volunteer_events = []
                     volunteer_events.append(event)
@@ -239,12 +240,10 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     # API Pull from TTE to get
     event_data = tte_events_api_get(ttesession,tteconvention_id)
     for event in event_data:
-        print (event)
         # Get the slots this event is assigned to
         slots_url = 'https://tabletop.events' + event['_relationships']['slots']
         event_slots = tte_event_slots_api_get(ttesession,tteconvention_id,slots_url)
         slot_tables = slots_parse(event_slots)
-        print (event['event_number'],event['name'])
         event['event_tables'] = slot_tables
         # Get the hosts this event has
         # hosts_url = field['_relationships']['hosts']
