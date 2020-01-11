@@ -201,7 +201,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
                     volunteer['events'] = volunteer_events
                 else:
                     pass
-        table = document.add_table(rows=len('volunteer_events'), cols=3)
+        table = document.add_table(rows=len('volunteer_events'), cols=5)
         hdr_cells = table.rows[0].cells
         hdr_cells[0].text = 'Event Name'
         hdr_cells[1].text = 'Duration'
