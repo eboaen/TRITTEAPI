@@ -103,6 +103,7 @@ class LoginForm(FlaskForm):
 
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
+    volunteerreport = SubmitField(label='Create Report for Volunteers')
     volunteersave = SubmitField(label='Submit File for Volunteers')
     eventsave = SubmitField(label='Submit File for Convention Events')
     conventionsave = SubmitField(label='Submit File for Convention Details')
@@ -183,6 +184,21 @@ def conform_info():
     updateconform.populate_obj(this_convention)
     return(updateconform)
 
+# -----------------------------------------------------------------------
+# Output a listing of events run by a specific host
+# -----------------------------------------------------------------------
+create_volunteer_report(ttesession,tteconvention_id):
+    for volunteer in tteconvention_data['volunteers']:
+        for event in tteconvention_data['events']:
+            for host in event['hosts']
+                if volunteer['user_id'] == host['user_id']
+                    volunteer_events = []
+                    volunteer_events.append(event)
+                    volunteer['events'] = volunteer_events
+                else:
+                    pass
+        print (volunteer['events'])
+    return()
 
 # -----------------------------------------------------------------------
 # Convention Functions
@@ -1946,6 +1962,17 @@ def conventions():
             location = os.path.join(folder,volunteerselect)
             volunteers = volunteer_parse(location,tteconvention_id)
             savedvolunteers = list_volunteers(session['tteconvention_id'])
+            updateconform = conform_info()
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
+            'savedvolunteers' : savedvolunteers
+            })
+        if request.form.get('volunteerreport') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_name = tteconvention_data['result']['name']
+            create_volunteer_report(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
