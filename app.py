@@ -15,6 +15,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm.exc import NoResultFound
 from pytz import timezone
+from docx import Document
 
 import pytz
 import os
@@ -188,8 +189,9 @@ def conform_info():
 # Output a listing of events run by a specific host
 # -----------------------------------------------------------------------
 def create_volunteer_report(ttesession,tteconvention_id):
+    document = Document()
     for volunteer in tteconvention_data['volunteers']:
-        print (volunteer)
+        document.add_heading(volunteer['name'], 0)
         for event in tteconvention_data['events']:
             for host in event['hosts']:
                 print (volunteer['user_id'], host['user_id'])
@@ -199,7 +201,23 @@ def create_volunteer_report(ttesession,tteconvention_id):
                     volunteer['events'] = volunteer_events
                 else:
                     pass
-        print (volunteer['events'])
+        table = document.add_table(rows=len('volunteer_events'), cols=3)
+        hdr_cells = table.rows[0].cells
+        hdr_cells[0].text = 'Event Name'
+        hdr_cells[1].text = 'Duration'
+        hdr_cells[2].text = 'Room'
+        hdr_cells[3].text = 'Table'
+        hdr_cells[4].text = 'Start Time'
+        for vol_event in volunteer_events:
+            row_cells = table.add_row().cells
+            row_cells[0].text = vol_event['name']
+            row_cells[1].text = vol_event['duration']
+            row_cells[2].text = vol_event['room_name']
+            row_cells[3].text = vol_event['space_name']
+            row_cells[4].text = vol_event['startdaypart_name']
+        document.add_page_break()
+        doc_name = tteconvention_data['result']['name']' + '_volunteer_events.docx'
+        document.save(doc_name)
     return()
 
 # -----------------------------------------------------------------------
