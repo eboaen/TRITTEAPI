@@ -190,7 +190,7 @@ def conform_info():
 def create_volunteer_report(ttesession,tteconvention_id):
     for volunteer in tteconvention_data['volunteers']:
         for event in tteconvention_data['events']:
-            for host in event['hosts']
+            for host in event['hosts']:
                 if volunteer['user_id'] == host['user_id']
                     volunteer_events = []
                     volunteer_events.append(event)
