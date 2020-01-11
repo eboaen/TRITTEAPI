@@ -1728,7 +1728,7 @@ def tte_events_api_get(ttesession,tteconvention_id):
     all_events = list()
     while events_total >= events_start:
         events_url = tteconvention_data['result']['_relationships']['events']
-        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id, '_page_number': events_start, '_include_relationships':1, "_include": 'custom_fields'}
+        events_params = {'session_id': ttesession['id'], 'tteconvention_id': tteconvention_id, '_page_number': events_start, '_include_relationships':1, "_include": 'custom_fields', "_include":hosts}
         events_response = requests.get('https://tabletop.events' + events_url,params= events_params)
         events_data = events_response.json()
         convention_events = events_data['result']['items']
