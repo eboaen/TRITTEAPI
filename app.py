@@ -187,7 +187,7 @@ def conform_info():
 # -----------------------------------------------------------------------
 # Output a listing of events run by a specific host
 # -----------------------------------------------------------------------
-create_volunteer_report(ttesession,tteconvention_id):
+def create_volunteer_report(ttesession,tteconvention_id):
     for volunteer in tteconvention_data['volunteers']:
         for event in tteconvention_data['events']:
             for host in event['hosts']
