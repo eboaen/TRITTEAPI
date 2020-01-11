@@ -1978,7 +1978,6 @@ def conventions():
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
-            'savedvolunteers' : savedvolunteers
             })
         if request.form.get('conventionsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
