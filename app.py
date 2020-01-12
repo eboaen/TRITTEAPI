@@ -1114,7 +1114,7 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
 # Get Volunteer Information
 # -----------------------------------------------------------------------
 def tte_volunteer_api_get(ttesession,volunteer_id):
-    ttevolunter_url = 'https://tabletop.events/api/volunteer' + volunteer_id
+    ttevolunter_url = 'https://tabletop.events/api/volunteer/' + volunteer_id
     ttevolunter_params = {'session_id': ttesession}
     ttevolunter_reponse = requests.get(ttevolunter_url, params= ttevolunter_params)
     ttevolunter_json = ttevolunter_reponse.json()
