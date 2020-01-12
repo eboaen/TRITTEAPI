@@ -827,14 +827,13 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
     all_volunteers = list()
     ttevolunteer_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['volunteers']
     while volunteer_total >= volunteer_start:
-        volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start, "_include": "custom_fields", "_include": 'email_address'}
+        volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start, "_include": "custom_fields", "_include": 'email_address', '_include': 'external_jsons'}
         volunteer_response = requests.get(ttevolunteer_url, params= volunteer_params)
         volunteer_json = volunteer_response.json()
         volunteer_data = volunteer_json['result']['items']
         volunteer_total = int(volunteer_json['result']['paging']['total_pages'])
         volunteer_start = int(volunteer_json['result']['paging']['page_number'])
         for volunteer in volunteer_data:
-            volunteer['more'] = tte_volunteer_api_get(ttesession,volunteer['id'])
             all_volunteers.append(volunteer)
         if volunteer_start < volunteer_total:
             volunteer_start = int(volunteer_json['result']['paging']['next_page_number'])
@@ -1109,18 +1108,6 @@ def tte_user_add(ttesession,volunteer_email,volunteer_name,tteconvention_id):
         print ('Unable to add: ', volunteer_email)
         return()
 
-
-# -----------------------------------------------------------------------
-# Get Volunteer Information
-# -----------------------------------------------------------------------
-def tte_volunteer_api_get(ttesession,volunteer_id):
-    ttevolunter_url = 'https://tabletop.events/api/volunteer/' + volunteer_id
-    ttevolunter_params = {'session_id': ttesession}
-    ttevolunter_reponse = requests.get(ttevolunter_url, params= ttevolunter_params)
-    ttevolunter_json = ttevolunter_reponse.json()
-    print (ttevolunter_json)
-    ttevolunter_data = ttevolunter_json['result']
-    return(ttevolunter_data)
 
 # -----------------------------------------------------------------------
 # Get Volunteer Shift Information
