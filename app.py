@@ -215,7 +215,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
             row_cells[3].text = vol_event['space_name']
             row_cells[4].text = vol_event['startdaypart_name']
         document.add_page_break()
-    doc_name = tteconvention_data['result']['name']' + '_volunteer_events.docx'
+    doc_name = tteconvention_data['result']['name'] + '_volunteer_events.docx'
     doc_url = 'downloads/' + doc_name'
     document.save(doc_url)
     response = requests.get(doc_url, stream=True)
