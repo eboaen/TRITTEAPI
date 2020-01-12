@@ -1118,7 +1118,7 @@ def tte_volunteer_api_get(ttesession,volunteer_id):
     ttevolunter_params = {'session_id': ttesession, 'volunteer_id':volunteer_id}
     ttevolunter_reponse = requests.get(ttevolunter_url, params= ttevolunter_params)
     ttevolunter_json = ttevolunter_reponse.json()
-    print (json.dumps(ttevolunter_json,index=4))
+    print (ttevolunter_json)
     ttevolunter_data = ttevolunter_json['result']
     return(ttevolunter_data)
 
