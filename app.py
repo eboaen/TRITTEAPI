@@ -833,8 +833,8 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
         volunteer_data = volunteer_json['result']['items']
         volunteer_total = int(volunteer_json['result']['paging']['total_pages'])
         volunteer_start = int(volunteer_json['result']['paging']['page_number'])
-        volunteer_data['more'] = tte_volunteer_api_get(ttesession,volunteer_data['id'])
         for volunteer in volunteer_data:
+            volunteer['more'] = tte_volunteer_api_get(ttesession,volunteer_data['id'])
             all_volunteers.append(volunteer)
         if volunteer_start < volunteer_total:
             volunteer_start = int(volunteer_json['result']['paging']['next_page_number'])
