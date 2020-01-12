@@ -215,14 +215,14 @@ def create_volunteer_report(ttesession,tteconvention_id):
             row_cells[3].text = vol_event['space_name']
             row_cells[4].text = vol_event['startdaypart_name']
         document.add_page_break()
-        doc_name = tteconvention_data['result']['name']' + '_volunteer_events.docx
-        doc_url = 'downloads/' + doc_name'
-        document.save(doc_name)
-        response = requests.get(doc_url, stream=True)
-        response.raise_for_status()
-        with open(doc_name, 'wb') as handle:
-            for block in response.iter_content(1024):
-                handle.write(block)
+    doc_name = tteconvention_data['result']['name']' + '_volunteer_events.docx
+    doc_url = 'downloads/' + doc_name'
+    document.save(doc_url)
+    response = requests.get(doc_url, stream=True)
+    response.raise_for_status()
+    with open(doc_name, 'wb') as handle:
+        for block in response.iter_content(1024):
+            handle.write(block)
     return()
 
 # -----------------------------------------------------------------------
