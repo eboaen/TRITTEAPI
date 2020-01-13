@@ -48,4 +48,21 @@ curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4B
 curl -X GET https://tabletop.events/api/event/0173376E-0D24-11EA-A6F3-E906BD109BF6/slots?_page_number=1 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
 
 
-curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6/volunteer/settings  -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027'
+curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027&_include_relationships=1'
+
+curl -X GET /api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6/eventtypes -d 'session_id=54E02016-2CAE-11EA-8E51-86EF23B98859&_include_relationships=1'
+curl -X GET https://tabletop.events/api/eventtype/94DACE98-2E37-11EA-A5EA-46A523B98859/eventtyperooms -d 'session_id=54E02016-2CAE-11EA-8E51-86EF23B98859'
+curl -X GET https://tabletop.events/api/eventtype/94DACE98-2E37-11EA-A5EA-46A523B98859/rooms -d 'session_id=54E02016-2CAE-11EA-8E51-86EF23B98859'
+curl -X GET https://tabletop.events/api/convention/B50C8666-0E4D-11EA-88D1-C7E4BC109BF6/slots?_page_number=1&room_id=7A380166-2FD9-11EA-8A8E-AA7E4D80CDF7&daypart_id=4EFB0630-0E4E-11EA-87EB-884348169743&session_id=54E02016-2CAE-11EA-8E51-86EF23B98859
+
+
+curl -X POST https://tabletop.events/api/conventionday -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027' -d '7CA6DA82-29D8-11EA-A7A0-D63A2C1046E6'
+
+
+curl -X POST https://tabletop.events/api/conventionday?session_id=86A34F02-29D3-11EA-A7A0-89362C1046E6&attendee_start_date=2020-04-17+00:00:00&attendee_end_date=2020-04-18+00:00:00&end_date=2020-04-18+00:00:00&start_date=2020-04-17+00:00:00&name=Fri+Apr+04&convention_id=F142A3CE-29DA-11EA-A7A0-243D2C1046E6
+
+
+curl -X POST https://tabletop.events/api/conventionday -d 'start_date=2020-04-18+04:00:00&end_date=2020-04-19+04:00:00&attendee_start_date=2020-04-18+04:00:00&attendee_end_date=2020-04-19+04:00:00&convention_id=33BAD67E-2A3D-11EA-B973-BB6D0033F565&session_id=B1390C1A-2A38-11EA-A5E0-C1072C1046E6&name=Fri+Apr+04'
+
+curl -X GET https://tabletop.events/api/convention/33BAD67E-2A3D-11EA-B973-BB6D0033F565 -d 'session_id=B1390C1A-2A38-11EA-A5E0-C1072C1046E6&_include_relationships=1'
+curl -X PUT https://tabletop.events/api/convention/33BAD67E-2A3D-11EA-B973-BB6D0033F565/days -d 'session_id=B1390C1A-2A38-11EA-A5E0-C1072C1046E6&attendee_start_date=2020-04-18+04:00:00&end_date=2020-04-19+04:00:00&start_date=2020-04-18+04:00:00&name=Sat+Apr+18&attendee_end_date=2020-04-19+04:00:00&day_type=events'
