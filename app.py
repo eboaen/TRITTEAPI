@@ -827,8 +827,9 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
     all_volunteers = list()
     ttevolunteer_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['volunteers']
     while volunteer_total >= volunteer_start:
-        volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start, "_include": "custom_fields", "_include": 'email_address', '_include': 'external_jsons'}
+        volunteer_params = {'session_id': ttesession, 'convention_id': tteconvention_id, '_page_number': volunteer_start}
         volunteer_response = requests.get(ttevolunteer_url, params= volunteer_params)
+        print (volunteer_response.url())
         volunteer_json = volunteer_response.json()
         volunteer_data = volunteer_json['result']['items']
         volunteer_total = int(volunteer_json['result']['paging']['total_pages'])
