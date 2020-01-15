@@ -1,7 +1,7 @@
 # -----------------------------------------------------------------------
 # Schedule Creator Addon
 # -----------------------------------------------------------------------
-def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_type):
+def create_schedule(ttesession,tteconvention_id,event_tablecount,event):
     class volunteer:
         def __init__(self,name):
             self.name
@@ -10,7 +10,7 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
         def add_shift(self,shift):
             self.shifts.append(shift)
         def
-        
+
 
 
 
@@ -25,8 +25,6 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
     convention_dayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
     # Pull the information regarding the dayparts that comprise the event
     event_dayparts = tte_eventdayparts_api_get(ttesession,tteconvention_id,event_id)
-    # Pull the information on the event itself
-    event = tte_event_api_get(ttesession,tteconvention_id,event_id)
     # Iterate through the types of shifts and the shifts in the convention to get the tteid(s) of the shift(s) that cover the event
     for type in convention_shift_types:
         for shift in convention_shifts:
@@ -48,34 +46,31 @@ def create_schedule(ttesession,tteconvention_id,event_id,event_tablecount,event_
                     event['shift_durations'] = event['shift_durations'] + shift['duration']
                     event['next_shift_time'] = shift['end_time']
                     event['shifts'].append(shift)
-    # Itereate through the volunteers as many times as there are tables for the event to compare all volunteer shift ids, content, and difficulty to the event.
-    # If there is a match, check if the volunteer isn't already scheduled for the time, and if the volunteer is under 8 hours for the day.
-    # If all those don't conflict, add the volunteer to the event as a host
+    # Itereate through the volunteers as many times as there are tables for the event to compare all volunteer information with the event information to add the volunteer as a host to an event
     for tc in range(1,event_tablecount,1):
         for volunteer in convention_data['volunteers']:
+            volunteer_dayparts_scheduled = []
             # Get the shifts the volunteer applied for
             volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['user_id'])
-            # If there are any events already hosted by the volunteer, get their information
+            # Get any events already hosted by the volunteer
             volunteer['events'] = tte_user_events_api_get(ttesession,volunteer['user_id'])
+            # If there are events already scheduled, get the daypart ids that the events span
             if len(volunteer['events']) != 0:
                 for volunteer_event in volunteer['events']:
                     volunteer_event['detail'] = tte_event_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-                    volunteer_event['dayparts'] = tte_eventdayparts_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
-
-
-
+                    volunteer_event_dayparts = tte_eventdayparts_api_get(ttesession,tteconvention_id,volunteer_event['event_id'])
+                    volunteer_dayparts_scheduled.extend(volunteer_event_dayparts)
+                else:
+                    pass
+            volunteer['scheduled_dayparts'] = volunteer_dayparts_scheduled
+            # Verify adding the event to the volunteers schedule won't put them over 8 hours.
+            volunter_time = len(volunteer['scheduled_dayparts']) * 30
+            event_time =
+            if volunter_time + =>
             # Find if there are matches between the volunteer shift ids and the event shift ids
             for volunteer_shift in volunteer['shifts']:
                 for event_shift in event['shifts']:
                     if volunteer_shift['id'] == event_shift['id']:
-                        # Get a list of events the volunteer is already scheduled for
-
-
-                                if len(volunteer['day_timetotals') != 0:
-                                    for day in volunteer['day_timetotals'):
-                                        if
-
-                                for volunteer_event_daypart in volunteer_event['dayparts']:
 
 
                         # Make sure the dayparts of the volunteer's events don't conflict with the dayparts of the event attempting to be scheduled
