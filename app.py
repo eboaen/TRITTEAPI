@@ -202,6 +202,10 @@ def create_volunteer_report(ttesession,tteconvention_id):
         volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
         print (json.dumps(volunteer, indent= 4))
         document.add_heading(volunteer['name'], level=1)
+        try:
+            document.add_heading(volunteer['email_address'], level=2)
+        except KeyError:
+            pass
         document.add_heading('Volunteer Information',level=2)
         volunteer_table = document.add_table(rows=9, cols=2)
 
