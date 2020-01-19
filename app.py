@@ -271,14 +271,19 @@ def create_volunteer_report(ttesession,tteconvention_id):
             document.add_page_break()
             document.add_heading(volunteer['name'], level=1)
             document.add_heading('Volunteer Shifts',level=2)
-            shifts_table = document.add_table(rows=1, cols=2)
+            shifts_table = document.add_table(rows=1, cols=3)
             shifts_hdr_cells = shifts_table.rows[0].cells
             shifts_hdr_cells[0].text = 'Shift Name'
-            shifts_hdr_cells[1].text = 'Time Range'
+            shifts_hdr_cells[1].text = 'Day'
+            shifts_hdr_cells[2].text = 'Time Range'
             for vol_shift in volunteer['shifts']:
                 shifts_row_cells = shifts_table.add_row().cells
                 shifts_row_cells[0].text = vol_shift['shift_data']['name']
-                shifts_row_cells[1].text = vol_shift['shift_data']['times_range']
+                shift_datetime_utc = datetime.datetime.strptime(vol_shift['shift_data']['start_time'], '%m/%d/%Y %I:%M:%S %p')
+                shift_datetime_converted = datetime_timezone_convert(ttesession,tteconvention_id, shift_datetime_utc)
+                vol_shift_day = shift_datetime_converted.strftime('%a %b %d')
+                shifts_row_cells[1].text = vol_shift_day
+                shifts_row_cells[2].text = vol_shift['shift_data']['times_range']
 
         if len(volunteer_events) != 0:
             document.add_page_break()
