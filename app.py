@@ -202,16 +202,38 @@ def create_volunteer_report(ttesession,tteconvention_id):
         volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
         print (json.dumps(volunteer, indent= 4))
         document.add_heading(volunteer['name'], level=1)
-        table = document.add_table(rows=len(volunteer['shifts']), cols=2)
-        shifts_hdr_cells = table.rows[0].cells
+        document.add_heading('Volunteer Information',level=2)
+        volunteer_table = document.add_table(rows=9, cols=2)
+        volunteer_row_cells = volunteer_table.add_row().cells
+        volunteer_row_cells[0].text = 'Volunteer Location'
+        volunteer_row_cells[1].text = volunteer['custom_fields']['volunteerlocation']
+        volunteer_row_cells[0].text = 'Volunteer Pronouns'
+        volunteer_row_cells[2].text = volunteer['custom_fields']['volunteerpronouns']
+        volunteer_row_cells[0].text = 'Volunteer Level'
+        volunteer_row_cells[3].text = volunteer['custom_fields']['volunteerlevel']
+        volunteer_row_cells[0].text = 'Volunteer Source'
+        volunteer_row_cells[4].text = volunteer['custom_fields']['volunteersource']
+        volunteer_row_cells[0].text = 'Volunteer Emergency Contact'
+        volunteer_row_cells[5].text = volunteer['custom_fields']['volunteeremergencycontact']
+        volunteer_row_cells[0].text = 'Volunteer Experience'
+        volunteer_row_cells[5].text = volunteer['custom_fields']['volunteerexperience']
+        volunteer_row_cells[0].text = 'Volunteer Role(s)'
+        volunteer_row_cells[5].text = volunteer['custom_fields']['volunteerrole']
+        volunteer_row_cells[0].text = 'Volunteer Highest Tier'
+        volunteer_row_cells[5].text = volunteer['custom_fields']['volunteertiers']
+        volunteer_row_cells[0].text = 'Volunteer Shirt Size'
+        volunteer_row_cells[5].text = volunteer['custom_fields']['shirtsize']
+        shifts_table = document.add_table(rows=len(volunteer['shifts']), cols=2)
+        shifts_hdr_cells = shifts_table.rows[0].cells
         shifts_hdr_cells[0].text = 'Shift Name'
         shifts_hdr_cells[1].text = 'Time Range'
         if len(volunteer['shifts']) != 0:
             for vol_shift in volunteer['shifts']:
+                shifts_row_cells = shifts_table.add_row().cells
                 shifts_row_cells[0].text = vol_shift['shift_data']['name']
                 shifts_row_cells[1].text = vol_shift['shift_data']['times_range']
-        table = document.add_table(rows=len(volunteer_events), cols=5)
-        events_hdr_cells = table.rows[0].cells
+        events_table = document.add_table(rows=len(volunteer_events), cols=5)
+        events_hdr_cells = events_table.rows[0].cells
         events_hdr_cells[0].text = 'Event Name'
         events_hdr_cells[1].text = 'Duration'
         events_hdr_cells[2].text = 'Room'
