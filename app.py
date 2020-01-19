@@ -191,7 +191,6 @@ def conform_info():
 def create_volunteer_report(ttesession,tteconvention_id):
     document = Document()
     for volunteer in tteconvention_data['volunteers']:
-        print (volunteer['name'])
         volunteer_events = []
         for event in tteconvention_data['events']:
             for host in event['hosts']:
@@ -201,7 +200,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
                 else:
                     pass
         volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
-        print (json.dumps(volunteer['shifts'], indent= 2))
+        print (json.dumps(volunteer, indent= 4))
         document.add_heading(volunteer['name'], level=1)
         table = document.add_table(rows=len(volunteer['shifts']), cols=2)
         shifts_hdr_cells = table.rows[0].cells
