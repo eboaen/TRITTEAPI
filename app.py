@@ -200,7 +200,6 @@ def create_volunteer_report(ttesession,tteconvention_id):
                     volunteer['events'] = volunteer_events
                 else:
                     pass
-
         volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
         print (volunteer['shifts'])
         document.add_heading(volunteer['name'], level=1)
@@ -211,13 +210,14 @@ def create_volunteer_report(ttesession,tteconvention_id):
         hdr_cells[2].text = 'Room'
         hdr_cells[3].text = 'Table'
         hdr_cells[4].text = 'Start Time'
-        for vol_event in volunteer_events:
-            row_cells = table.add_row().cells
-            row_cells[0].text = vol_event['name']
-            row_cells[1].text = vol_event['duration']
-            row_cells[2].text = vol_event['room_name']
-            row_cells[3].text = vol_event['space_name']
-            row_cells[4].text = vol_event['startdaypart_name']
+        if volunteer_events:
+            for vol_event in volunteer_events:
+                row_cells = table.add_row().cells
+                row_cells[0].text = vol_event['name']
+                row_cells[1].text = vol_event['duration']
+                row_cells[2].text = vol_event['room_name']
+                row_cells[3].text = vol_event['space_name']
+                row_cells[4].text = vol_event['startdaypart_name']
         document.add_paragraph('Total Hours: ' + volunteer['hours_scheduled_count'] )
         document.add_page_break()
     doc_name = tteconvention_data['result']['name'] + '_volunteer_events.docx'
@@ -831,7 +831,6 @@ def tte_convention_volunteer_api_get(ttesession,tteconvention_id):
     while volunteer_total >= volunteer_start:
         volunteer_params = {'session_id': ttesession['id'], 'convention_id': tteconvention_id, '_page_number': volunteer_start}
         volunteer_response = requests.get(ttevolunteer_url, params= volunteer_params)
-        print (volunteer_response.url)
         volunteer_json = volunteer_response.json()
         volunteer_data = volunteer_json['result']['items']
         volunteer_total = int(volunteer_json['result']['paging']['total_pages'])
