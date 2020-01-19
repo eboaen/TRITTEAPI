@@ -191,6 +191,7 @@ def conform_info():
 def create_volunteer_report(ttesession,tteconvention_id):
     document = Document()
     for volunteer in tteconvention_data['volunteers']:
+        print volunteer['name']
         for event in tteconvention_data['events']:
             for host in event['hosts']:
                 if volunteer['user_id'] == host['user_id']:
@@ -199,6 +200,9 @@ def create_volunteer_report(ttesession,tteconvention_id):
                     volunteer['events'] = volunteer_events
                 else:
                     pass
+
+        volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
+        print volunteer['shifts']
         document.add_heading(volunteer['name'], level=1)
         table = document.add_table(rows=len('volunteer_events'), cols=5)
         hdr_cells = table.rows[0].cells
@@ -276,9 +280,6 @@ def tte_convention_api_get(ttesession,tteconvention_id):
         # field['event_hosts'] = event_hosts
     # API Pull from TTE to get the volunteer information
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
-    for volunteer in volunteer_data:
-        print (json.dumps(volunteer, indent=4))
-        #volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
