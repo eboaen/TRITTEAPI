@@ -302,7 +302,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
         document.add_page_break()
 
     doc_name = tteconvention_data['result']['name'].replace(" ", "_") + '_volunteer_events.docx'
-    doc_save = '/downloads/' + doc_name
+    doc_save = 'downloads/' + doc_name
     document.save(doc_save)
     doc_url = 'https://schedule.theroleinitiative.org:8086/downloads/' + doc_name
     response = requests.get(doc_url, stream=True)
