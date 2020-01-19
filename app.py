@@ -204,23 +204,31 @@ def create_volunteer_report(ttesession,tteconvention_id):
         document.add_heading(volunteer['name'], level=1)
         document.add_heading('Volunteer Information',level=2)
         volunteer_table = document.add_table(rows=9, cols=2)
-        volunteer_row_cells = volunteer_table.add_row().cells
+        volunteer_row_cells = volunteer_table.rows[0].cells
         volunteer_row_cells[0].text = 'Volunteer Location'
         volunteer_row_cells[1].text = volunteer['custom_fields']['volunteerlocation']
+        volunteer_row_cells = volunteer_table.rows[1].cells
         volunteer_row_cells[0].text = 'Volunteer Pronouns'
-        volunteer_row_cells[2].text = volunteer['custom_fields']['volunteerpronouns']
+        volunteer_row_cells[1].text = volunteer['custom_fields']['volunteerpronouns']
+        volunteer_row_cells = volunteer_table.rows[2].cells
         volunteer_row_cells[0].text = 'Volunteer Level'
-        volunteer_row_cells[3].text = volunteer['custom_fields']['volunteerlevel']
+        volunteer_row_cells[1].text = volunteer['custom_fields']['volunteerlevel']
+        volunteer_row_cells = volunteer_table.rows[3].cells
         volunteer_row_cells[0].text = 'Volunteer Source'
-        volunteer_row_cells[4].text = volunteer['custom_fields']['volunteersource']
+        volunteer_row_cells[1].text = volunteer['custom_fields']['volunteersource']
+        volunteer_row_cells = volunteer_table.rows[4].cells
         volunteer_row_cells[0].text = 'Volunteer Emergency Contact'
         volunteer_row_cells[5].text = volunteer['custom_fields']['volunteeremergencycontact']
+        volunteer_row_cells = volunteer_table.rows[5].cells
         volunteer_row_cells[0].text = 'Volunteer Experience'
         volunteer_row_cells[5].text = volunteer['custom_fields']['volunteerexperience']
+        volunteer_row_cells = volunteer_table.rows[6].cells
         volunteer_row_cells[0].text = 'Volunteer Role(s)'
         volunteer_row_cells[5].text = volunteer['custom_fields']['volunteerrole']
+        volunteer_row_cells = volunteer_table.rows[7].cells
         volunteer_row_cells[0].text = 'Volunteer Highest Tier'
         volunteer_row_cells[5].text = volunteer['custom_fields']['volunteertiers']
+        volunteer_row_cells = volunteer_table.rows[8].cells
         volunteer_row_cells[0].text = 'Volunteer Shirt Size'
         volunteer_row_cells[5].text = volunteer['custom_fields']['shirtsize']
         shifts_table = document.add_table(rows=len(volunteer['shifts']), cols=2)
