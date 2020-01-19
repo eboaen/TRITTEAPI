@@ -61,12 +61,14 @@
           <div class ="media">
             <div class="container">
               <form action="" method="post" role="form">
+
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <label form="sel1">Select a File to use:</label>
                 <div class="form-group">
                   {{ fileform.selectfile }}
                 </div>
                 <div class="input submit">
+                  <p></p>
                   {{ fileform.volunteerreport }}
                   <p></p>
                   {{ fileform.volunteersave }}
