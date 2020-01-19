@@ -279,7 +279,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
             for vol_shift in volunteer['shifts']:
                 shifts_row_cells = shifts_table.add_row().cells
                 shifts_row_cells[0].text = vol_shift['shift_data']['name']
-                shift_datetime_utc = datetime.datetime.strptime(vol_shift['shift_data']['start_time'], '%m/%d/%Y %I:%M:%S %p')
+                shift_datetime_utc = datetime.datetime.strptime(vol_shift['shift_data']['start_time'], '%Y-%m-%d %H:%M:%S')
                 shift_datetime_converted = datetime_timezone_convert(ttesession,tteconvention_id, shift_datetime_utc)
                 vol_shift_day = shift_datetime_converted.strftime('%a %b %d')
                 shifts_row_cells[1].text = vol_shift_day
