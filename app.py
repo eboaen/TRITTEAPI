@@ -266,7 +266,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
             volunteer_row_cells[1].text = volunteer['custom_fields']['volunteershirtsize']
         except KeyError:
             pass
-            
+
         if len(volunteer['shifts']) != 0:
             shifts_table = document.add_table(rows=len(volunteer['shifts']), cols=2)
             shifts_hdr_cells = shifts_table.rows[0].cells
@@ -293,8 +293,9 @@ def create_volunteer_report(ttesession,tteconvention_id):
                 events_row_cells[4].text = vol_event['startdaypart_name']
         document.add_paragraph('Total Hours: ' + str(volunteer['hours_scheduled_count']) )
         document.add_page_break()
-    doc_name = tteconvention_data['result']['name'] + '_volunteer_events.docx'
-    doc_url = 'downloads/' + doc_name
+
+    doc_name = tteconvention_data['result']['name'].replace(" ", "_") + '_volunteer_events.docx'
+    doc_url = 'https://downloads/' + doc_name
     document.save(doc_url)
     response = requests.get(doc_url, stream=True)
     response.raise_for_status()
