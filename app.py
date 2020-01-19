@@ -207,9 +207,9 @@ def create_volunteer_report(ttesession,tteconvention_id):
         shifts_hdr_cells[0].text = 'Shift Name'
         shifts_hdr_cells[1].text = 'Time Range'
         if len(volunteer['shifts']) != 0:
-        for vol_shift in volunteer['shifts']:
-            shifts_row_cells[0].text = vol_shift['shift_data']['name']
-            shifts_row_cells[1].text = vol_shift['shift_data']['times_range']
+            for vol_shift in volunteer['shifts']:
+                shifts_row_cells[0].text = vol_shift['shift_data']['name']
+                shifts_row_cells[1].text = vol_shift['shift_data']['times_range']
         table = document.add_table(rows=len(volunteer_events), cols=5)
         events_hdr_cells = table.rows[0].cells
         events_hdr_cells[0].text = 'Event Name'
