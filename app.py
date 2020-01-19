@@ -192,10 +192,10 @@ def create_volunteer_report(ttesession,tteconvention_id):
     document = Document()
     for volunteer in tteconvention_data['volunteers']:
         print (volunteer['name'])
+        volunteer_events = []
         for event in tteconvention_data['events']:
             for host in event['hosts']:
                 if volunteer['user_id'] == host['user_id']:
-                    volunteer_events = []
                     volunteer_events.append(event)
                     volunteer['events'] = volunteer_events
                 else:
@@ -210,7 +210,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
         hdr_cells[2].text = 'Room'
         hdr_cells[3].text = 'Table'
         hdr_cells[4].text = 'Start Time'
-        if volunteer_events:
+        if len(volunteer_events) != 0:
             for vol_event in volunteer_events:
                 row_cells = table.add_row().cells
                 row_cells[0].text = vol_event['name']
