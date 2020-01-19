@@ -201,24 +201,32 @@ def create_volunteer_report(ttesession,tteconvention_id):
                 else:
                     pass
         volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
-        print (volunteer['shifts'])
+        print (json.dumps(volunteer['shifts'], indent= 2))
         document.add_heading(volunteer['name'], level=1)
-        table = document.add_table(rows=len('volunteer_events'), cols=5)
-        hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = 'Event Name'
-        hdr_cells[1].text = 'Duration'
-        hdr_cells[2].text = 'Room'
-        hdr_cells[3].text = 'Table'
-        hdr_cells[4].text = 'Start Time'
+        table = document.add_table(rows=len(volunteer['shifts']), cols=2)
+        shifts_hdr_cells = table.rows[0].cells
+        shifts_hdr_cells[0].text = 'Shift Name'
+        shifts_hdr_cells[1].text = 'Time Range'
+        if len(volunteer['shifts']) != 0:
+        for vol_shift in volunteer['shifts']:
+            shifts_row_cells[0].text = vol_shift['shift_data']['name']
+            shifts_row_cells[1].text = vol_shift['shift_data']['times_range']
+        table = document.add_table(rows=len(volunteer_events), cols=5)
+        events_hdr_cells = table.rows[0].cells
+        events_hdr_cells[0].text = 'Event Name'
+        events_hdr_cells[1].text = 'Duration'
+        events_hdr_cells[2].text = 'Room'
+        events_hdr_cells[3].text = 'Table'
+        events_hdr_cells[4].text = 'Start Time'
         if len(volunteer_events) != 0:
             for vol_event in volunteer_events:
-                row_cells = table.add_row().cells
-                row_cells[0].text = vol_event['name']
-                row_cells[1].text = vol_event['duration']
-                row_cells[2].text = vol_event['room_name']
-                row_cells[3].text = vol_event['space_name']
-                row_cells[4].text = vol_event['startdaypart_name']
-        document.add_paragraph('Total Hours: ' + volunteer['hours_scheduled_count'] )
+                events_row_cells = table.add_row().cells
+                events_row_cells[0].text = vol_event['name']
+                events_row_cells[1].text = vol_event['duration']
+                events_row_cells[2].text = vol_event['room_name']
+                events_row_cells[3].text = vol_event['space_name']
+                events_row_cells[4].text = vol_event['startdaypart_name']
+        document.add_paragraph('Total Hours: ' + str(volunteer['hours_scheduled_count']) )
         document.add_page_break()
     doc_name = tteconvention_data['result']['name'] + '_volunteer_events.docx'
     doc_url = 'downloads/' + doc_name
