@@ -231,23 +231,23 @@ def create_volunteer_report(ttesession,tteconvention_id):
         volunteer_row_cells = volunteer_table.rows[8].cells
         volunteer_row_cells[0].text = 'Volunteer Shirt Size'
         volunteer_row_cells[1].text = volunteer['custom_fields']['volunteershirtsize']
-        shifts_table = document.add_table(rows=len(volunteer['shifts']), cols=2)
-        shifts_hdr_cells = shifts_table.rows[0].cells
-        shifts_hdr_cells[0].text = 'Shift Name'
-        shifts_hdr_cells[1].text = 'Time Range'
         if len(volunteer['shifts']) != 0:
+            shifts_table = document.add_table(rows=len(volunteer['shifts']), cols=2)
+            shifts_hdr_cells = shifts_table.rows[0].cells
+            shifts_hdr_cells[0].text = 'Shift Name'
+            shifts_hdr_cells[1].text = 'Time Range'
             for vol_shift in volunteer['shifts']:
                 shifts_row_cells = shifts_table.add_row().cells
                 shifts_row_cells[0].text = vol_shift['shift_data']['name']
                 shifts_row_cells[1].text = vol_shift['shift_data']['times_range']
-        events_table = document.add_table(rows=len(volunteer_events), cols=5)
-        events_hdr_cells = events_table.rows[0].cells
-        events_hdr_cells[0].text = 'Event Name'
-        events_hdr_cells[1].text = 'Duration'
-        events_hdr_cells[2].text = 'Room'
-        events_hdr_cells[3].text = 'Table'
-        events_hdr_cells[4].text = 'Start Time'
         if len(volunteer_events) != 0:
+            events_table = document.add_table(rows=len(volunteer_events), cols=5)
+            events_hdr_cells = events_table.rows[0].cells
+            events_hdr_cells[0].text = 'Event Name'
+            events_hdr_cells[1].text = 'Duration'
+            events_hdr_cells[2].text = 'Room'
+            events_hdr_cells[3].text = 'Table'
+            events_hdr_cells[4].text = 'Start Time'
             for vol_event in volunteer_events:
                 events_row_cells = table.add_row().cells
                 events_row_cells[0].text = vol_event['name']
