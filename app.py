@@ -256,7 +256,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
         volunteer_row_cells = volunteer_table.rows[7].cells
         volunteer_row_cells[0].text = 'Volunteer Highest Tier'
         try:
-        volunteer_row_cells[1].text = volunteer['custom_fields']['volunteertiers']
+            volunteer_row_cells[1].text = volunteer['custom_fields']['volunteertiers']
         except KeyError:
             pass
 
@@ -266,6 +266,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
             volunteer_row_cells[1].text = volunteer['custom_fields']['volunteershirtsize']
         except KeyError:
             pass
+            
         if len(volunteer['shifts']) != 0:
             shifts_table = document.add_table(rows=len(volunteer['shifts']), cols=2)
             shifts_hdr_cells = shifts_table.rows[0].cells
