@@ -207,7 +207,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
         except KeyError:
             pass
         document.add_heading('Volunteer Information',level=2)
-        volunteer_table = document.add_table(rows=9, cols=2)
+        volunteer_table = document.add_table(rows=10, cols=2)
 
         volunteer_row_cells = volunteer_table.rows[0].cells
         volunteer_row_cells[0].text = 'Volunteer Location'
@@ -268,6 +268,13 @@ def create_volunteer_report(ttesession,tteconvention_id):
         volunteer_row_cells[0].text = 'Volunteer Shirt Size'
         try:
             volunteer_row_cells[1].text = volunteer['custom_fields']['volunteershirtsize']
+        except KeyError:
+            pass
+
+        volunteer_row_cells = volunteer_table.rows[9].cells
+        volunteer_row_cells[0].text = 'Volunteer Comments'
+        try:
+            volunteer_row_cells[1].text = volunteer['custom_fields']['volunteerother']
         except KeyError:
             pass
 
