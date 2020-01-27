@@ -1554,9 +1554,10 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                         print ('Added event to slot ', event_slot_json['result']['name'])
                     except:
                         print ('Unable to add slot', event_slot_json['result']['name'])
-                # If a host emaill address is included for the event, add the host to the event
+                # If a host email address is included for the event, add the host to the event
                 if event['hosts'] != '':
                     for host in event['hosts']:
+                        print (host)
                         volunteer = next((vol for vol in tteconvention_data['volunteers'] if vol['email_address'] == host), None)
                         print (volunteer)
                         host_id = volunteer['id']
