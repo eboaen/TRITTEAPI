@@ -1415,10 +1415,6 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
         for header in reader.fieldnames:
             if 'Event Name' in header:
                 newheader.append('name')
-#            elif 'Date' in header:
-#                newheader.append('date_info')
-#            elif 'Start Time' in header:
-#                newheader.append('starttime')
             elif "Datetime" in header:
                 newheader.append('datetime')
             elif 'Duration' in header:
@@ -1558,6 +1554,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                         print ('Added event to slot ', event_slot_json['result']['name'])
                     except:
                         print ('Unable to add slot', event_slot_json['result']['name'])
+                # If a host emaill address is included for the event, add the host to the event
+                if event['hosts'] != '':
+                    for host in event['hosts']:
+                        volunteer = next((vol for vol in tteconvention_data['volunteers'] if vol['email_address'] = host), None)
+                        host_id = volunteer['id']
+                        host = tte_event_host_post(ttesession,event_data['id'],host_id)
             all_events.append(event)
     return(all_events)
 
