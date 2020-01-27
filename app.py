@@ -1558,6 +1558,7 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 if event['hosts'] != '':
                     for host in event['hosts']:
                         volunteer = next((vol for vol in tteconvention_data['volunteers'] if vol['email_address'] == host), None)
+                        print (volunteer)
                         host_id = volunteer['id']
                         host = tte_event_host_post(ttesession,event_data['id'],host_id)
             all_events.append(event)
