@@ -1429,6 +1429,9 @@ def event_parse(filename,tteconvention_id,tteconvention_name):
                 newheader.append('tier')
         reader.fieldnames = newheader
         for event in reader:
+            event_hosts = []
+            event_hosts = event['hosts'].split()
+            event['hosts'] = event_hosts
             savedevents.append(event)
         return(savedevents)
 
