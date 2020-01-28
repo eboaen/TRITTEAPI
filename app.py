@@ -1560,10 +1560,12 @@ def tte_convention_events_api_post(ttesession,tteconvention_id,savedevents):
                 # If a host email address is included for the event, add the host to the event
                 if event['hosts'] != '':
                     for host in event['hosts']:
-                        print (host)
-                        volunteer = next((vol for vol in tteconvention_data['volunteers'] if vol['email_address'] == host), None)
-                        print (volunteer)
-                        host = tte_event_host_post(ttesession,event_data['id'],volunteer['user_id'])
+                        try:
+                            volunteer = next((vol for vol in tteconvention_data['volunteers'] if vol['email_address'] == host), None)
+                            host = tte_event_host_post(ttesession,event_data['id'],volunteer['user_id'])
+                            print (volunteer['name'], 'added to', event['name'])
+                        except:
+                            print ('Unable to add host to event', event['name'])
             all_events.append(event)
     return(all_events)
 
