@@ -310,7 +310,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
             for vol_event in volunteer_events:
                 events_row_cells = events_table.add_row().cells
                 events_row_cells[0].text = vol_event['name']
-                events_row_cells[1].text = vol_event['duration']
+                events_row_cells[1].text = str(vol_event['duration'])
                 events_row_cells[2].text = vol_event['room_name']
                 events_row_cells[3].text = vol_event['space_name']
                 events_row_cells[4].text = vol_event['startdaypart_name']
