@@ -105,7 +105,6 @@ class LoginForm(FlaskForm):
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
     volunteerreport = SubmitField(label='Create Report for Volunteers')
-    volunteersave = SubmitField(label='Submit File for Volunteers')
     eventsave = SubmitField(label='Submit File for Convention Events')
     conventionsave = SubmitField(label='Submit File for Convention Details')
     eventsdelete = SubmitField(label='Delete All Convention Events')
@@ -1059,120 +1058,6 @@ def volunteer_parse(filename,tteconvention_id):
         return(saved)
 
 # -----------------------------------------------------------------------
-# Volunteer Save to Database
-# -----------------------------------------------------------------------
-def volunteer_save(new_volunteer,tteconvention_id):
-    #Declarations
-    tiers = []
-    all_slots = []
-    tteconventions = []
-    cons = {}
-    volunteer = Volunteers()
-    old_volunteer = Volunteers()
-    ttesession = session.get('ttesession')
-    #Load the volunteers from the TRI database for this convention
-    all_volunteers = list_volunteers(tteconvention_id)
-    # Check the database to see if the volunteer already exists
-    k = 'email', new_volunteer['email']
-#    if k not in all_volunteers and new_volunteer['email'] != all_volunteers[k]:
-    if k not in all_volunteers:
-        volunteer.name = new_volunteer['name']
-        volunteer.email = new_volunteer['email']
-        volunteer.role = new_volunteer['role']
-        if 'Tier 1' in new_volunteer['tiers']:
-            tiers.append('1')
-        if 'Tier 2' in new_volunteer['tiers']:
-            tiers.append('2')
-        if 'Tier 3' in new_volunteer['tiers']:
-            tiers.append('3')
-        if 'Tier 4' in new_volunteer['tiers']:
-            tiers.append('4')
-        if tiers is not None:
-            volunteer.tiers = ','.join(tiers)
-        if new_volunteer['hours'] == 'Badge':
-            volunteer.hours = 10
-        elif new_volunteer['hours'] == 'Hotel':
-            volunteer.hours = 20
-        else:
-            try:
-                volunteer.hours = int(new_volunteer['hours'])
-            except TypeError:
-                pass
-            except ValueError:
-                print (new_volunteer['email'], ' failed to parse hours')
-        for field in new_volunteer:
-            if 'slot' in field:
-                slot_number = field.rsplit()
-                slot_number = slot_number[1]
-                if 'X' in new_volunteer[field]:
-                    slot_id = None
-                    slot_d = {}
-                    slot_d[slot_number] = slot_id
-                    con_slots.append(slot_d)
-            cons[tteconvention_id] = con_slots
-        volunteer.slots = cons
-        tteconventions.append(tteconvention_id)
-        volunteer.conventions = ','.join(tteconventions)
-        ttevolunteer_id = tte_user_api_pull(ttesession,new_volunteer['email'])
-        if ttevolunteer_id is None:
-            try:
-                volunteer.tteid = tte_user_add(ttesession,new_volunteer['email'],new_volunteer['name'],tteconvention_id)
-                print ('Added new volunteer to TTE: ', new_volunteer['email'],new_volunteer['name'], volunteer.tteid)
-                db.session.merge(volunteer)
-            except:
-                logger.exception("Cannot save volunteer")
-                db.session.rollback()
-                saved = 'failed'
-                return (saved)
-        else:
-            volunteer.tteid = ttevolunteer_id
-    # If the volunteer exists in the TRI User Database already but, add the new tteconvention to their conventions list
-    #elif k in all_volunteers and tteconvention_id not in all_volunteers[k].tteconventions:
-    #    old_volunteer = all_volunteers[k]
-    #    tteconventions = old_volunteer.tteconventions
-    #    tteconventions.append(tteconvention_id)
-    #    old_volunteer.conventions = ','.join(tteconventions)
-    #    ttevolunteer_id = tte_user_api_pull(ttesession,old_volunteer.email)
-    #    if ttevolunteer_id is None:
-    #        try:
-    #            old_volunteer.tteid = tte_user_add(ttesession,old_volunteer.email,old_volunteer.name,tteconvention_id)
-    #            print ('Added old volunteer to TTE: ', old_volunteer['email'],old_volunteer['name'], old_volunteer.tteid)
-    #            db.session.merge(old_volunteer)
-    #        except:
-    #            logger.exception("Cannot save volunteer: ", old_volunteer['email'],old_volunteer['name'])
-    #            db.session.rollback()
-    #            saved = 'failed'
-    #            return (saved)
-    #    else:
-    #        old_volunteer.tteid = ttevolunteer_id
-    try:
-        db.session.commit()
-        saved = 'saved'
-        return (saved)
-    except:
-        logger.exception("Cannot save volunteer")
-        db.session.rollback()
-        saved = 'failed'
-        return (saved)
-
-# -----------------------------------------------------------------------
-# List all volunteers in database
-# -----------------------------------------------------------------------
-def list_volunteers(tteconvention_id):
-    volunteer = Volunteers()
-    db_volunteers = Volunteers.query.filter(Volunteers.conventions.ilike(tteconvention_id))
-    all_volunteers = []
-    v = {}
-    for vol in db_volunteers:
-        v['name'] = vol.name
-        v['role'] = vol.role
-        v['hours'] = vol.hours
-        v['tiers'] = vol.tiers
-        v['slots'] = vol.slots
-        all_volunteers.append(v)
-    return(all_volunteers)
-
-# -----------------------------------------------------------------------
 # Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
@@ -2072,6 +1957,7 @@ def conventions():
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
             })
+        # Submit file to setup the volunteer application
         if request.form.get('conventionsubmit') and session.get('tteconvention_id') is not None:
             update_convention = {}
             print ('Updating the convention')
@@ -2086,21 +1972,6 @@ def conventions():
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
-            })
-        if request.form.get('volunteersave') and session.get('tteconvention_id') is not None:
-            tteconvention_id = session.get('tteconvention_id')
-            tteconvention_name = tteconvention_data['result']['name']
-            # Volunteer Management
-            volunteerselect = request.form.get('selectfile')
-            location = os.path.join(folder,volunteerselect)
-            volunteers = volunteer_parse(location,tteconvention_id)
-            savedvolunteers = list_volunteers(session['tteconvention_id'])
-            updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
-            'tteconventions' : tteconventions,
-            'tteconvention_name' : tteconvention_name,
-            'tteconvention_data' : tteconvention_data,
-            'savedvolunteers' : savedvolunteers
             })
         if request.form.get('volunteerreport') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')

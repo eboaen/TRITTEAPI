@@ -71,7 +71,6 @@
                   <p></p>
                   {{ fileform.volunteerreport }}
                   <p></p>
-                  {{ fileform.volunteersave }}
                   {{ fileform.conventionsave }}
                   {{ fileform.eventsave }}
                   <p></p>
@@ -88,7 +87,7 @@
     </div> <!-- /container -->
     <div class="jumbotron">
         <div class ="main">
-          <div class="container"> <!-- Select a convention to work on -->
+          <div class="container">
             <div class="jumbotron">
               <div class ="media">
                 <div class="container">
@@ -113,6 +112,23 @@
       </div><!-- /media -->
     </div><!-- /jumbotron -->
     {% endif %}
+      <div class="jumbotron">
+          <div class ="main">
+            <div class="container">
+              <form action="" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                  <div class="input text">
+                    {% if tteconvention_data.result is defined %}
+                      <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
+                        {% for volunteer in tteconvention_data.volunteers %}
+                          <p>volunteer.name</p>
+                        {% endfor}
+                    {% endif %}
+                  </div>
+              </form>
+            </div> <!-- /container -->
+        </div><!-- /main -->
+      </div><!-- /jumbotron -->
 </main>
 <footer class="container">
   <p class="lead text-left"><a href="{{ url_for('index') }}">Return</a></p>
