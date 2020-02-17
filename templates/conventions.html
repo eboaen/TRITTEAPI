@@ -120,40 +120,44 @@
                   <div class="input text">
                     {% if tteconvention_data is defined %}
                       <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
-                      <table>
-                        <tr>
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Phone</th>
-                          <th>Location</th>
-                          <th>Pronouns</th>
-                          <th>Role</th>
-                          <th>Level</th>
-                          <th>Tiers</th>
-                          <th>T-Shirt Size</th>
-                          <th>Emergency Contact</th>
-                          <th>Experience</th>
-                          <th>Source</th>
-                          <th>Comments</th>
-                          <th>Possible Slots</th>
-                        </tr>
-                        {% for volunteer in tteconvention_data.volunteers %}
+                      <table class="table">
+                        <thead>
                           <tr>
-                            <td>{{ volunteer.name }}</td>
-                            <td>{{ volunteer.email }}</td>
-                            <td>{{ volunteer.phone }}</td>
-                            <td>{{ volunteer.custom_fields.volunteerlocation }}</td>
-                            <td>{{ volunteer.custom_fields.volunteerpronouns }}</td>
-                            <td>{{ volunteer.custom_fields.volunteerrole }}</td>
-                            <td>{{ volunteer.custom_fields.volunteerlevel }}</td>
-                            <td>{{ volunteer.custom_fields.volunteertiers }}</td>
-                            <td>{{ volunteer.custom_fields.volunteershirtsize }}</td>
-                            <td>{{ volunteer.custom_fields.volunteeremergencycontact }}</td>
-                            <td>{{ volunteer.custom_fields.volunteerexperience }}</td>
-                            <td>{{ volunteer.custom_fields.volunteersource }}</td>
-                            <td>{{ volunteer.custom_fields.volunteerother }}</td>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Location</th>
+                            <th scope="col">Pronouns</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Level</th>
+                            <th scope="col">Tiers</th>
+                            <th scope="col">T-Shirt Size</th>
+                            <th scope="col">Emergency Contact</th>
+                            <th scope="col">Experience</th>
+                            <th scope="col">Source</th>
+                            <th scope="col">Comments</th>
+                            <th scope="col">Possible Slots</th>
                           </tr>
-                        {% endfor %}
+                        </thead>
+                        <tbody>
+                          {% for volunteer in tteconvention_data.volunteers %}                          
+                            <tr>
+                              <td>{{ volunteer.name }}</td>
+                              <td>{{ volunteer.email_address }}</td>
+                              <td>{{ volunteer.phone_number }}</td>
+                              <td>{{ volunteer.custom_fields.volunteerlocation }}</td>
+                              <td>{{ volunteer.custom_fields.volunteerpronouns }}</td>
+                              <td>{{ volunteer.custom_fields.volunteerrole }}</td>
+                              <td>{{ volunteer.custom_fields.volunteerlevel }}</td>
+                              <td>{{ volunteer.custom_fields.volunteertiers }}</td>
+                              <td>{{ volunteer.custom_fields.volunteershirtsize }}</td>
+                              <td>{{ volunteer.custom_fields.volunteeremergencycontact }}</td>
+                              <td>{{ volunteer.custom_fields.volunteerexperience }}</td>
+                              <td>{{ volunteer.custom_fields.volunteersource }}</td>
+                              <td>{{ volunteer.custom_fields.volunteerother }}</td>
+                            </tr>
+                          {% endfor %}
+                      </tbody>
                       </table>
                     {% endif %}
                   </div>
