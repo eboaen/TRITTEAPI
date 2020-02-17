@@ -118,7 +118,7 @@
               <form action="" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <div class="input text">
-                    {% if tteconvention_data.volunteers is defined %}
+                    {% if tteconvention_data is defined %}
                       <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
                       <table>
                         <tr>
