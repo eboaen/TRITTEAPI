@@ -189,6 +189,8 @@ def conform_info():
 # -----------------------------------------------------------------------
 def create_volunteer_report(ttesession,tteconvention_id):
     document = Document()
+    #event_data_csv(tteconvention_data['events'])
+    #volunteer_data_csv(tteconvention_data['volunteers'])
     for volunteer in tteconvention_data['volunteers']:
         volunteer_events = []
         for event in tteconvention_data['events']:
@@ -199,7 +201,8 @@ def create_volunteer_report(ttesession,tteconvention_id):
                 else:
                     pass
         volunteer['shifts'] = tte_volunteer_shifts_api_get(ttesession,tteconvention_id,volunteer['id'])
-        print (json.dumps(volunteer, indent= 4))
+
+        #Create volunteer page in doc with info from TTE
         document.add_heading(volunteer['name'], level=1)
         try:
             document.add_heading(volunteer['email_address'], level=2)
@@ -277,6 +280,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
         except KeyError:
             pass
 
+        # Create page for volunter with their shift information
         if len(volunteer['shifts']) != 0:
             document.add_page_break()
             document.add_heading(volunteer['name'], level=1)
@@ -295,6 +299,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
                 shifts_row_cells[1].text = vol_shift_day
                 shifts_row_cells[2].text = vol_shift['shift_data']['times_range']
 
+        # Create page for volunteer with info on the events they are hosting
         if len(volunteer_events) != 0:
             document.add_page_break()
             document.add_heading(volunteer['name'], level=1)
@@ -1951,8 +1956,6 @@ def conventions():
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
             print (ttesession,session['tteconvention_id'])
-            #event_data_csv(tteconvention_data['events'])
-            #volunteer_data_csv(tteconvention_data['volunteers'])
             return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,

@@ -118,12 +118,43 @@
               <form action="" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                   <div class="input text">
-                    {% if tteconvention_data is defined %}
+                    {% if tteconvention_data.volunteers is defined %}
                       <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
+                      <table>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Phone</th>
+                          <th>Location</th>
+                          <th>Pronouns</th>
+                          <th>Role</th>
+                          <th>Level</th>
+                          <th>Tiers</th>
+                          <th>T-Shirt Size</th>
+                          <th>Emergency Contact</th>
+                          <th>Experience</th>
+                          <th>Source</th>
+                          <th>Comments</th>
+                          <th>Possible Slots</th>
+                        </tr>
                         {% for volunteer in tteconvention_data.volunteers %}
-                          <p>{{ volunteer.name }}</p>
-                          <p>{{ volunteer.customfields }}</p>
+                          <tr>
+                            <td>{{ volunteer.name }}</td>
+                            <td>{{ volunteer.email }}</td>
+                            <td>{{ volunteer.phone }}</td>
+                            <td>{{ volunteer.customfields.volunteerlocation }}</td>
+                            <td>{{ volunteer.customfields.volunteerpronouns }}</td>
+                            <td>{{ volunteer.customfields.volunteerrole }}</td>
+                            <td>{{ volunteer.customfields.volunteerlevel }}</td>
+                            <td>{{ volunteer.customfields.volunteertiers }}</td>
+                            <td>{{ volunteer.customfields.volunteershirtsize }}</td>
+                            <td>{{ volunteer.customfields.volunteeremergencycontact }}</td>
+                            <td>{{ volunteer.customfields.volunteerexperience }}</td>
+                            <td>{{ volunteer.customfields.volunteersource }}</td>
+                            <td>{{ volunteer.customfields.volunteerother }}</td>
+                          </tr>
                         {% endfor %}
+                      </table>
                     {% endif %}
                   </div>
               </form>
