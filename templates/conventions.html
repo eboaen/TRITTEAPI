@@ -121,7 +121,7 @@
                     {% if tteconvention_data is defined %}
                       <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
                         {% for volunteer in tteconvention_data.volunteers %}
-                          <p>volunteer.name</p>
+                          <p>{{ volunteer.name }}</p>
                         {% endfor %}
                     {% endif %}
                   </div>
