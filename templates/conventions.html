@@ -86,61 +86,59 @@
     </div> <!-- /container -->
     {% endif %}
       <div class="container">
-        <div class="jumbotron">
-          <form action="" method="post">
-            {% if tteconvention_data is defined %}
-              <div class="row justify-content-left">
-                <div class="col-auto">
-                  <table class="table table-responsive table-striped table-bordered table-hover table-sm">
-                    <thead>
+        <form action="" method="post">
+          {% if tteconvention_data is defined %}
+            <div class="row justify-content-left">
+              <div class="col-auto">
+                <table class="table table-responsive table-striped table-bordered table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col">Location</th>
+                      <th scope="col">Pronouns</th>
+                      <th scope="col">Role</th>
+                      <th scope="col">Level</th>
+                      <th scope="col">Tiers</th>
+                      <th scope="col">T-Shirt Size</th>
+                      <th scope="col">Emergency Contact</th>
+                      <th scope="col">Experience</th>
+                      <th scope="col">Source</th>
+                      <th scope="col">Comments</th>
+                      <th scope="col">Possible Slots</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for volunteer in tteconvention_data.volunteers %}
                       <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Pronouns</th>
-                        <th scope="col">Role</th>
-                        <th scope="col">Level</th>
-                        <th scope="col">Tiers</th>
-                        <th scope="col">T-Shirt Size</th>
-                        <th scope="col">Emergency Contact</th>
-                        <th scope="col">Experience</th>
-                        <th scope="col">Source</th>
-                        <th scope="col">Comments</th>
-                        <th scope="col">Possible Slots</th>
-                        <th scope="col"></th>
+                        <td>{{ volunteer.name }}</td>
+                        <td>{{ volunteer.email_address }}</td>
+                        <td>{{ volunteer.phone_number }}</td>
+                        <td>{{ volunteer.custom_fields.volunteerlocation }}</td>
+                        <td>{{ volunteer.custom_fields.volunteerpronouns }}</td>
+                        <td>{{ volunteer.custom_fields.volunteerrole }}</td>
+                        <td>{{ volunteer.custom_fields.volunteerlevel }}</td>
+                        <td>{{ volunteer.custom_fields.volunteertiers }}</td>
+                        <td>{{ volunteer.custom_fields.volunteershirtsize }}</td>
+                        <td>{{ volunteer.custom_fields.volunteeremergencycontact }}</td>
+                        <td>{{ volunteer.custom_fields.volunteerexperience }}</td>
+                        <td>{{ volunteer.custom_fields.volunteersource }}</td>
+                        <td>{{ volunteer.custom_fields.volunteerother }}</td>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <input type="hidden" name="volunteer_id" value="{{ volunteer.id }}"/>
+                          <div class="input text">
+                            <td>{{ fileform.volunteerdelete }}</td>
+                          </div>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {% for volunteer in tteconvention_data.volunteers %}
-                        <tr>
-                          <td>{{ volunteer.name }}</td>
-                          <td>{{ volunteer.email_address }}</td>
-                          <td>{{ volunteer.phone_number }}</td>
-                          <td>{{ volunteer.custom_fields.volunteerlocation }}</td>
-                          <td>{{ volunteer.custom_fields.volunteerpronouns }}</td>
-                          <td>{{ volunteer.custom_fields.volunteerrole }}</td>
-                          <td>{{ volunteer.custom_fields.volunteerlevel }}</td>
-                          <td>{{ volunteer.custom_fields.volunteertiers }}</td>
-                          <td>{{ volunteer.custom_fields.volunteershirtsize }}</td>
-                          <td>{{ volunteer.custom_fields.volunteeremergencycontact }}</td>
-                          <td>{{ volunteer.custom_fields.volunteerexperience }}</td>
-                          <td>{{ volunteer.custom_fields.volunteersource }}</td>
-                          <td>{{ volunteer.custom_fields.volunteerother }}</td>
-                          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                          <input type="hidden" name="volunteer_id" value="{{ volunteer.id }}"/>
-                            <div class="input text">
-                              <td>{{ fileform.volunteerdelete }}</td>
-                            </div>
-                        </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div> <!-- /class="col-auto" -->
-              </div> <!-- / class="row justify-content-left" -->
-            {% endif %}
-          </form>
-        </div><!-- /jumbotron -->
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div> <!-- /class="col-auto" -->
+            </div> <!-- / class="row justify-content-left" -->
+          {% endif %}
+        </form>
       </div> <!-- /container -->
 </main>
 
