@@ -111,7 +111,7 @@ class FileForm(FlaskForm):
     shiftsdelete = SubmitField(label='Delete All Volunteer Shifts ')
     daypartsdelete = SubmitField(label='Delete All Convention Day Parts')
     roomsandtablesdelete = SubmitField(label='Delete All Convention Rooms and Tables')
-    volunteerdelete =
+    volunteerdelete = SubmitField(label='Delete Volunteer')
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
