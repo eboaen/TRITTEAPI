@@ -137,17 +137,12 @@
                             <th scope="col">Source</th>
                             <th scope="col">Comments</th>
                             <th scope="col">Possible Slots</th>
+                            <th scope="col"></th>
                           </tr>
                         </thead>
                         <tbody>
                           {% for volunteer in tteconvention_data.volunteers %}
                             <tr>
-                              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                              <input type="text" name="volunteer_id" value="{{ volunteer.id }}"/>
-                                <div class="input text">
-                                  <td>{{ fileform.volunteerdelete }}</td>
-                                </div>
-                              <td>{{ volunteer.id }}</td>
                               <td>{{ volunteer.name }}</td>
                               <td>{{ volunteer.email_address }}</td>
                               <td>{{ volunteer.phone_number }}</td>
@@ -161,6 +156,11 @@
                               <td>{{ volunteer.custom_fields.volunteerexperience }}</td>
                               <td>{{ volunteer.custom_fields.volunteersource }}</td>
                               <td>{{ volunteer.custom_fields.volunteerother }}</td>
+                              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                              <input type="text" name="volunteer_id" value="{{ volunteer.id }}"/>
+                                <div class="input text">
+                                  <td>{{ fileform.volunteerdelete }}</td>
+                                </div>
                             </tr>
                           {% endfor %}
                         </tbody>
