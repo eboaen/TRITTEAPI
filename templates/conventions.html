@@ -109,7 +109,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for volunteer in tteconvention_data.volunteers %}
+              {% for volunteer in tteconvention_data.volunteers|sort(attribute='volunteer.lastname') %}
                 <tr>
                   <td>{{ volunteer.name }}</td>
                   <td>{{ volunteer.email_address }}</td>
