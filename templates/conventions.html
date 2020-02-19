@@ -116,11 +116,11 @@
           <div class ="main">
             <div class="container">
               <form action="" method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                  <div class="input text">
-                    {% if tteconvention_data is defined %}
-                      <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
-                      <table class="table">
+                {% if tteconvention_data is defined %}
+                  <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
+                  <div class="row justify-content-left">
+                    <div class="col-auto">
+                      <table class="table table-responsive">
                         <thead>
                           <tr>
                             <th scope="col">Name</th>
@@ -165,8 +165,9 @@
                           {% endfor %}
                         </tbody>
                       </table>
-                    {% endif %}
-                  </div>
+                    </div> <!-- /class="col-auto" -->
+                  </div> <!-- / class="row justify-content-left" -->
+                {% endif %}
               </form>
             </div> <!-- /container -->
         </div><!-- /main -->
