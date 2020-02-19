@@ -140,8 +140,12 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for volunteer in tteconvention_data.volunteers %}                          
+                          {% for volunteer in tteconvention_data.volunteers %}
                             <tr>
+                              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <div class="input text">
+                                  <td>{{ fileform.volunteerdelete }}</td>
+                                </div>
                               <td>{{ volunteer.name }}</td>
                               <td>{{ volunteer.email_address }}</td>
                               <td>{{ volunteer.phone_number }}</td>
@@ -157,7 +161,7 @@
                               <td>{{ volunteer.custom_fields.volunteerother }}</td>
                             </tr>
                           {% endfor %}
-                      </tbody>
+                        </tbody>
                       </table>
                     {% endif %}
                   </div>
