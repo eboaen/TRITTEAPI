@@ -157,7 +157,7 @@
                               <td>{{ volunteer.custom_fields.volunteersource }}</td>
                               <td>{{ volunteer.custom_fields.volunteerother }}</td>
                               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                              <input type="text" name="volunteer_id" value="{{ volunteer.id }}"/>
+                              <input type="hidden" name="volunteer_id" value="{{ volunteer.id }}"/>
                                 <div class="input text">
                                   <td>{{ fileform.volunteerdelete }}</td>
                                 </div>
