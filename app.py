@@ -111,6 +111,7 @@ class FileForm(FlaskForm):
     shiftsdelete = SubmitField(label='Delete All Volunteer Shifts ')
     daypartsdelete = SubmitField(label='Delete All Convention Day Parts')
     roomsandtablesdelete = SubmitField(label='Delete All Convention Rooms and Tables')
+    volunteerdelete =
 
 class ConForm(FlaskForm):
     selectcon = SelectField('Convention', validators=[validators.DataRequired()])
@@ -1028,6 +1029,17 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
         daypart_delete_url = 'https://tabletop.events/api/daypart/' + daypart['id']
         daypart_delete_response = requests.delete(daypart_delete_url, params= daypart_delete_params)
         daypart_delete_data = daypart_delete_response.json()
+    return()
+
+# -----------------------------------------------------------------------
+# Delete a volunteer from TTE for a specific convention
+# -----------------------------------------------------------------------
+def tte_convention_volunteer_api_delete(ttesession,tteconvention_id,volunteer_id):
+    volunteer_delete_params = {'session_id': ttesession['id']}
+    volunteer_delete_url = 'https://tabletop.events/api/volunteer/' + volunteer_id
+    volunteer_delete_response = requests.delete(volunteer_delete_url, params= volunteer_delete_params)
+    volunteer_delete_data = volunteer_delete_response.json()
+    print (volunteer_delete_data)
     return()
 
 # -----------------------------------------------------------------------
@@ -2058,6 +2070,17 @@ def conventions():
             tterooms = tte_convention_rooms_api_get(ttesession,tteconvention_id)
             ttespace = tte_convention_spaces_api_get(ttesession,tteconvention_id)
             tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace)
+            updateconform = conform_info()
+            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            'tteconventions' : tteconventions,
+            'tteconvention_name' : tteconvention_name,
+            'tteconvention_data' : tteconvention_data,
+            })
+        if request.form.get('volunteerdelete') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_name = tteconvention_data['result']['name']
+            volunteer_id = request.form.get('volunteer_id')
+            tte_convention_volunteer_api_delete(ttesession,tteconvention_id,volunteer_id)
             updateconform = conform_info()
             return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
