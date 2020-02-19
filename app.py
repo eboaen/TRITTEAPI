@@ -1037,6 +1037,7 @@ def tte_convention_dayparts_api_delete(ttesession,tteconvention_id,all_dayparts)
 def tte_convention_volunteer_api_delete(ttesession,tteconvention_id,volunteer_id):
     volunteer_delete_params = {'session_id': ttesession['id']}
     volunteer_delete_url = 'https://tabletop.events/api/volunteer/' + volunteer_id
+    print (volunteer_delete_url)
     volunteer_delete_response = requests.delete(volunteer_delete_url, params= volunteer_delete_params)
     volunteer_delete_data = volunteer_delete_response.json()
     print (volunteer_delete_data)
