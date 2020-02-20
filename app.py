@@ -1907,6 +1907,9 @@ def login():
                 else:
                     flash('Incorrect Password entered')
                     return redirect(request.url)
+            elif username == None:
+                flash('Please enter a valid user')
+                return redirect(request.url)
             else:
                 flash('Please enter a valid user')
                 return redirect(request.url)
