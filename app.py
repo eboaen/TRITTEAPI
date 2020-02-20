@@ -1921,7 +1921,7 @@ def login():
 # -----------------------------------------------------------------------
 @app.route('/newuser', methods=['GET', 'POST'])
 def newuser():
-    newuser = User()
+    new_user = User()
     createuserform = CreateUserForm(request.form)
     if 'name' in session:
         name = session.get('name')
@@ -1934,16 +1934,16 @@ def newuser():
             email = request.form['email']
             role = request.form['role']
             if createuserform.validate():
-                newuser.name = name
-                newuser.username = username
-                newuser.password = bcrypt.generate_password_hash(password)
-                newuser.email = email
-                newuser.role = role
-                newuser.id = uuid.uuid4()
+                new_user.name = name
+                new_user.username = username
+                new_user.password = bcrypt.generate_password_hash(password)
+                new_user.email = email
+                new_user.role = role
+                new_user.id = uuid.uuid4()
                 print (request.url)
                 print (newuser.id)
                 try:
-                    db.session.add(newuser)
+                    db.session.add(new_user)
                     db.session.commit()
                     flash('User Saved')
                     return render_template(request.url)
