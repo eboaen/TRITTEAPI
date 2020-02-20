@@ -1927,6 +1927,7 @@ def newuser():
     createuserform.role.choices = [role for role in roles]
     if 'name' in session:
         name = session.get('name')
+        role = session.get('role')
 
         if request.method == 'POST':
             name = request.form['name']
@@ -1950,7 +1951,7 @@ def newuser():
                 except:
                     flash('Unable to save user')
                     return render_template(request.url)
-    return render_template('newuser.html', createuserform = createuserform)
+    return render_template('newuser.html', createuserform = createuserform, **{'name' : name, 'role' : role})
 
 
 # -----------------------------------------------------------------------
