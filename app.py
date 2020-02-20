@@ -19,7 +19,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from pytz import timezone
 from docx import Document
 
-import uuid4 from uuid
+from uuid import uuid4
 import pytz
 import os
 import shutil
