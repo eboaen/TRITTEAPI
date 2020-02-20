@@ -2082,6 +2082,7 @@ def conventions():
             tteconvention_name = tteconvention_data['result']['name']
             volunteer_id = request.form.get('volunteer_id')
             tte_convention_volunteer_api_delete(ttesession,tteconvention_id,volunteer_id)
+            tte_convention_api_get(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
             return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
             'tteconventions' : tteconventions,
