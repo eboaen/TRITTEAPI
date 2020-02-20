@@ -1898,20 +1898,18 @@ def login():
 
         if form.validate():
             testuser = User.query.filter_by(username=username).first()
-            if username == testuser.username and testuser.username != None:
-                if bcrypt.check_password_hash(testuser.password,password):
-                    session['name'] = testuser.name
-                    session['role'] = testuser.role
-                    session['ttesession'] = tte_session()
-                    return redirect(url_for('index'))
-                else:
-                    flash('Incorrect Password entered')
-                    return redirect(request.url)
-            elif username == None:
-                flash('Please enter a valid user')
-                return redirect(request.url)
-            else:
-                flash('Please enter a valid user')
+            try:
+                if username == testuser.username:
+                    if bcrypt.check_password_hash(testuser.password,password):
+                        session['name'] = testuser.name
+                        session['role'] = testuser.role
+                        session['ttesession'] = tte_session()
+                        return redirect(url_for('index'))
+                    else:
+                        flash('Incorrect Password entered')
+                        return redirect(request.url)
+            except AttributeError:
+                flash('Unable to find user')
                 return redirect(request.url)
         else:
             flash('All the form fields are required.')
