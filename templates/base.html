@@ -26,7 +26,7 @@
         <div class ="media">
           <div class="media-body" >
             <p class="lead text-left">Hello {{ name }}</p>
-            {% if role is equal to 'admin'}
+            {% if role is equal to 'admin' %}
               <p class='text-center'><a href="{{ url_for('newuser') }}">Create a new User</a></p>
             {% endif %}
             <p class='text-center'><a href="{{ url_for('upload') }}">Upload files</a></p>
