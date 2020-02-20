@@ -1921,10 +1921,10 @@ def login():
 # -----------------------------------------------------------------------
 @app.route('/newuser', methods=['GET', 'POST'])
 def newuser():
-    createuserform = CreateUserForm(request.form)
     newuser = User()
     roles = ['admin','organizer']
-    createuserform.role.choices = [role for role in roles]
+    createuserform = CreateUserForm(request.form, obj=roles)
+    createuserform.role.choices = [id for r in roles]
     if 'name' in session:
         name = session.get('name')
         role = session.get('role')
@@ -1965,6 +1965,7 @@ def index():
     if 'name' in session:
         name = session.get('name')
         role = session.get('role')
+
         ttesession = session.get('ttesession')
         if request.method == 'POST':
             if request.form.get('logoutsubmit'):
