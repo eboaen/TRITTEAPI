@@ -94,13 +94,21 @@ class Volunteers(db.Model):
     conventions = db.Column(db.String(255))
     tteid = db.Column(db.String(255), primary_key=True)
 
+class User(db.Model):
+    id = db.Column(db.Integer(255), primary_key=True)
+    name = db.Column(db.String(255))
+    email = db.Column(db.String(255))
+    role = db.Column(db.String(255))
+    username = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+
 # -----------------------------------------------------------------------
 # Forms
 # -----------------------------------------------------------------------
 class LoginForm(FlaskForm):
-    name = StringField('Name:', validators=[validators.DataRequired()])
+    username = StringField('username:', validators=[validators.DataRequired()])
     email = StringField('Email:', validators=[validators.DataRequired()])
-    password = StringField('Password:', validators=[validators.DataRequired()])
+    password = PasswordField('Password:', validators=[validators.DataRequired()])
 
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
@@ -332,6 +340,15 @@ def create_volunteer_report(ttesession,tteconvention_id):
         for block in response.iter_content(1024):
             handle.write(block)
     return()
+
+# -----------------------------------------------------------------------
+# Allow only CSV files
+# -----------------------------------------------------------------------
+def allowed_file(filename):
+    extensions=config.ALLOWED_EXTENSIONS
+
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in extensions
 
 # -----------------------------------------------------------------------
 # Convention Functions
@@ -1836,21 +1853,49 @@ def tte_geolocation_byid_api_get(ttesession):
 # Login to server route
 # -----------------------------------------------------------------------
 # This is a rudimentary authentication scheme.  A more robuest auth setup will be implemented before I do final release.
+#@app.route('/login', methods=['POST', 'GET'])
+#def login():
+#    form = LoginForm(request.form)
+#    session['id'] = 0
+#
+#    if request.method == 'POST':
+#        name = request.form['name']
+#        user = request.form['email'] #
+#        password = request.form['password']
+#
+#        if form.validate():
+#            if 'Eric' in name:
+#                session['name'] = name
+#                session['ttesession'] = tte_session()
+#                return redirect(url_for('index'))
+#            else:
+#                flash('Please enter a valid user')
+#                return redirect(request.url)
+#        else:
+#            flash('All the form fields are required.')
+#            return redirect(request.url)
+#    return render_template('login.html', form=form)
+
+# New password-based authentication
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     form = LoginForm(request.form)
     session['id'] = 0
 
     if request.method == 'POST':
-        name = request.form['name']
-        user = request.form['email'] #
+        username = request.form['username']
         password = request.form['password']
 
         if form.validate():
-            if 'Eric' in name:
-                session['name'] = name
-                session['ttesession'] = tte_session()
-                return redirect(url_for('index'))
+            testuser = User.query.filter_by(username=username).first()
+            if username == testuser.username:
+                if password == testuser.password:
+                    session['name'] = testuser.name
+                    session['ttesession'] = tte_session()
+                    return redirect(url_for('index'))
+                else:
+                    flash('Incorrect Password entered')
+                    return redirect(request.url)
             else:
                 flash('Please enter a valid user')
                 return redirect(request.url)
@@ -1858,15 +1903,6 @@ def login():
             flash('All the form fields are required.')
             return redirect(request.url)
     return render_template('login.html', form=form)
-
-# -----------------------------------------------------------------------
-# Allow only CSV files
-# -----------------------------------------------------------------------
-def allowed_file(filename):
-    extensions=config.ALLOWED_EXTENSIONS
-
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in extensions
 
 # -----------------------------------------------------------------------
 # Index Route
