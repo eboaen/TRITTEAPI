@@ -1988,6 +1988,7 @@ def upload():
     folder=config.UPLOAD_FOLDER
 
     if request.method == 'POST':
+        print (request.url)
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
