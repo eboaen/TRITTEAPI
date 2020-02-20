@@ -145,7 +145,7 @@ class CreateUserForm(FlaskForm):
     username = StringField('username:', validators=[validators.DataRequired()])
     password = PasswordField('Password:', validators=[validators.DataRequired()])
     email = StringField('email address:', validators=[validators.DataRequired()])
-    role = SelectField('User Role', validators=[validators.DataRequired()])
+    role = SelectField('User Role', choices=[('admin','admin'),('coodinator','coodinator)'],validators=[validators.DataRequired()])
 
 # -----------------------------------------------------------------------
 # Internal Functions
@@ -1922,9 +1922,7 @@ def login():
 @app.route('/newuser', methods=['GET', 'POST'])
 def newuser():
     newuser = User()
-    roles = ['admin','organizer']
-    createuserform = CreateUserForm(request.form, obj=roles)
-    createuserform.role.choices = [id for r in roles]
+    createuserform = CreateUserForm(request.form)
     if 'name' in session:
         name = session.get('name')
         role = session.get('role')
