@@ -99,7 +99,7 @@ class Volunteers(db.Model):
     tteid = db.Column(db.String(255), primary_key=True)
 
 class User(db.Model):
-    id = db.Column(db.Integer(255), primary_key=True)
+    id = db.Column(db.String(255), primary_key=True)
     name = db.Column(db.String(255))
     email = db.Column(db.String(255))
     role = db.Column(db.String(255))
