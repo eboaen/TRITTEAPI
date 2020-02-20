@@ -1898,7 +1898,7 @@ def login():
 
         if form.validate():
             testuser = User.query.filter_by(username=username).first()
-            if username == testuser.username:
+            if username == testuser.username and testuser.username != None:
                 if bcrypt.check_password_hash(testuser.password,password):
                     session['name'] = testuser.name
                     session['role'] = testuser.role
