@@ -145,7 +145,7 @@ class CreateUserForm(FlaskForm):
     username = StringField('username:', validators=[validators.DataRequired()])
     password = PasswordField('Password:', validators=[validators.DataRequired()])
     email = StringField('email address:', validators=[validators.DataRequired()])
-    role = SelectField('User Role', choices=[('admin','admin'),('coodinator','coodinator)'],validators=[validators.DataRequired()])
+    role = SelectField('User Role', choices=[('admin','admin'),('coodinator','coodinator')],validators=[validators.DataRequired()])
 
 # -----------------------------------------------------------------------
 # Internal Functions
