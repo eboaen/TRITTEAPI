@@ -1990,6 +1990,7 @@ def conventions():
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
             })
+        # Create a volunter report for event coord to use
         if request.form.get('volunteerreport') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2000,6 +2001,7 @@ def conventions():
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
+        # Updates the convention
         if request.form.get('conventionsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2017,6 +2019,7 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             'convention_info' : convention_info,
             })
+        # Deprecated....(I think)
         if request.form.get('eventsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2031,6 +2034,7 @@ def conventions():
             'tteconvention_data' : tteconvention_data,
             'savedevents' : savedevents
             })
+        # Delete all Events
         if request.form.get('eventsdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2042,6 +2046,7 @@ def conventions():
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
+        # Delete all volunteer shifts
         if request.form.get('shiftsdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2055,6 +2060,7 @@ def conventions():
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
+        # delete all dayparts
         if request.form.get('daypartsdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2066,6 +2072,7 @@ def conventions():
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
+        # Deletes the rooms and spaces (tables)
         if request.form.get('roomsandtablesdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2078,6 +2085,7 @@ def conventions():
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
+        # Deletes a volunteer
         if request.form.get('volunteerdelete') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
