@@ -1950,6 +1950,7 @@ def newconvention():
 @app.route('/conventions', methods=['GET', 'POST', 'PUT'])
 def conventions():
     # Declarations
+    global tteconvention_data
     name = session.get('name')
     ttesession = session.get('ttesession')
     folder = config.UPLOAD_FOLDER
@@ -2081,7 +2082,6 @@ def conventions():
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
             volunteer_id = request.form.get('volunteer_id')
-            global tteconvention_data
             tteconvention_data['volunteers'] = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
