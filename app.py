@@ -1933,7 +1933,6 @@ def newuser():
             password = request.form['password']
             email = request.form['email']
             role = request.form['role']
-
             if createuserform.validate():
                 newuser.name = name
                 newuser.username = username
@@ -1941,6 +1940,8 @@ def newuser():
                 newuser.email = email
                 newuser.role = role
                 newuser.id = uuid.uuid4()
+                print (request.url)
+                print (newuser.id)
                 try:
                     db.session.add(newuser)
                     db.session.commit()
@@ -1988,7 +1989,6 @@ def upload():
     folder=config.UPLOAD_FOLDER
 
     if request.method == 'POST':
-        print (request.url)
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
