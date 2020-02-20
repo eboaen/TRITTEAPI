@@ -1940,16 +1940,14 @@ def newuser():
                 new_user.email = email
                 new_user.role = role
                 new_user.id = str(uuid.uuid4())
-                print (request.url)
-                print (new_user.id)
                 try:
                     db.session.add(new_user)
                     db.session.commit()
                     flash('User Saved')
-                    return render_template(request.url)
+                    return redirect(request.url)
                 except:
                     flash('Unable to save user')
-                    return render_template(request.url)
+                    return redirect(request.url)
     return render_template('newuser.html', createuserform = createuserform, **{'name' : name, 'role' : role})
 
 
