@@ -6,6 +6,8 @@ from flask import session
 from flask import url_for
 from flask import flash
 from flask import send_from_directory
+from flask.ext.bcrypt import Bcrypt
+from flask.ext.bcrypt import generate_password_hash
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import TextField, PasswordField, TextAreaField, validators, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
@@ -17,6 +19,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from pytz import timezone
 from docx import Document
 
+import uuid
 import pytz
 import os
 import shutil
@@ -49,6 +52,7 @@ logger.addHandler(console)
 app = Flask(__name__, static_url_path='/templates')
 app.config.from_object(config)
 csrf = CSRFProtect(app)
+bcrypt = Bcrypt(app)
 
 # init db
 db = SQLAlchemy(app)
@@ -107,7 +111,6 @@ class User(db.Model):
 # -----------------------------------------------------------------------
 class LoginForm(FlaskForm):
     username = StringField('username:', validators=[validators.DataRequired()])
-    email = StringField('Email:', validators=[validators.DataRequired()])
     password = PasswordField('Password:', validators=[validators.DataRequired()])
 
 class FileForm(FlaskForm):
@@ -136,6 +139,13 @@ class NewConventionForm(FlaskForm):
     email = StringField('Please provide your email for volunteers to contact you: ', validators=[validators.DataRequired()])
     dates = TextAreaField('List each date of the Convention, one date per line:', widget=TextArea(), validators=[validators.DataRequired()])
     conventionsubmit = SubmitField(label='Submit')
+
+class CreateUserForm(FlaskForm):
+    name = StringField('Your Name:', validators=[validators.DataRequired()])
+    username = StringField('username:', validators=[validators.DataRequired()])
+    password = PasswordField('Password:', validators=[validators.DataRequired()])
+    email = StringField('email address:', validators=[validators.DataRequired()])
+    role = SelectField('User Role', validators=[validators.DataRequired()])
 
 # -----------------------------------------------------------------------
 # Internal Functions
@@ -1879,7 +1889,7 @@ def tte_geolocation_byid_api_get(ttesession):
 # New password-based authentication
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-    form = LoginForm(request.form)
+    form = LoginForm( )
     session['id'] = 0
 
     if request.method == 'POST':
@@ -1889,7 +1899,7 @@ def login():
         if form.validate():
             testuser = User.query.filter_by(username=username).first()
             if username == testuser.username:
-                if password == testuser.password:
+                if bcrypt.check_password_hash(testuser.password,password):
                     session['name'] = testuser.name
                     session['ttesession'] = tte_session()
                     return redirect(url_for('index'))
@@ -1903,6 +1913,42 @@ def login():
             flash('All the form fields are required.')
             return redirect(request.url)
     return render_template('login.html', form=form)
+
+# -----------------------------------------------------------------------
+# New User Route
+# -----------------------------------------------------------------------
+@app.route('/newuser', methods=['GET', 'POST'])
+def newuser():
+    createuserform = CreateUserForm(request.form)
+    newuser = User()
+
+    if 'name' in session:
+        name = session.get('name')
+
+        if request.method == 'POST':
+            name = request.form['name']
+            username = request.form['username']
+            password = request.form['password']
+            email = request.form['email']
+            role = request.form['role']
+
+            if form.validate():
+                newuser.name = name
+                newuser.username = username
+                newuser.password = bcrypt.generate_password_hash(password)
+                newuser.email = email
+                newuser.role = role
+                newuser.id = uuid4()
+                try:
+                    db.session.add(newuser)
+                    db.session.commit()
+                    flash('User Saved')
+                    return render_template(request.url)
+                except:
+                    flash('Unable to save user')
+                    return render_template(request.url)
+    return render_template('newuser.html')
+
 
 # -----------------------------------------------------------------------
 # Index Route
