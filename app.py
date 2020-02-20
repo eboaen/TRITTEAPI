@@ -1922,7 +1922,7 @@ def login():
 def newuser():
     createuserform = CreateUserForm(request.form)
     newuser = User()
-    roles = [admin,organizer]
+    roles = ['admin','organizer']
     createuserform.role.choices = [role for role in roles]
     if 'name' in session:
         name = session.get('name')
