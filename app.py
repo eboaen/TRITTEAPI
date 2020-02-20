@@ -6,8 +6,8 @@ from flask import session
 from flask import url_for
 from flask import flash
 from flask import send_from_directory
-from flask.ext.bcrypt import Bcrypt
-from flask.ext.bcrypt import generate_password_hash
+from flask_bcrypt import Bcrypt
+from flask_bcrypt import generate_password_hash
 from flask_wtf import FlaskForm, CSRFProtect
 from wtforms import TextField, PasswordField, TextAreaField, validators, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired
