@@ -1941,7 +1941,7 @@ def newuser():
                 new_user.role = role
                 new_user.id = uuid.uuid4()
                 print (request.url)
-                print (newuser.id)
+                print (new_user.id)
                 try:
                     db.session.add(new_user)
                     db.session.commit()
