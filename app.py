@@ -19,7 +19,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from pytz import timezone
 from docx import Document
 
-from uuid import uuid4
+import uuid
 import pytz
 import os
 import shutil
@@ -1940,7 +1940,7 @@ def newuser():
                 newuser.password = bcrypt.generate_password_hash(password)
                 newuser.email = email
                 newuser.role = role
-                newuser.id = uuid4()
+                newuser.id = uuid.uuid4()
                 try:
                     db.session.add(newuser)
                     db.session.commit()
