@@ -20,43 +20,54 @@
 	</nav>
 
 {% if name %}
-  <div class="container">
-    <main role="main">
-      <div class="jumbotron">
+	<div class="container">
+		<main role="main">
+			<div class="jumbotron">
         <div class ="media">
+          <div class="media-left media-middle">
+          </div>
           <div class="media-body" >
-            <p class="lead text-left">Hello {{ name }}</p>
-            {% if role is equal to 'admin'}
-              <p class='text-center'><a href="{{ url_for('newuser') }}">Create a new User</a></p>
-            {% endif %}
-            <p class='text-center'><a href="{{ url_for('upload') }}">Upload files</a></p>
-            <p class='text-center'><a href="{{ url_for('conventions') }}">Work on Conventions</a></p>
-            <p class='text-center'><a href="{{ url_for('newconvention') }}">Create a new Convention</a></p>
+            <p class="lead text-left"> Hello {{ name }}</p>
           </div>
         </div>
       </div>
-    </main>
-  </div> <!-- /container -->
-{% else %}
-  <div class="container">
-        	<div class="row">
-            	<div class="col-md-12">
-                <p class="lead text-left"><a href="{{ url_for('login') }}">Login</a></p>
-              </div>
-         </div>
+		</main>
 	</div> <!-- /container -->
-{% endif %}
-	<footer class="container">
-    {% if name %}
-      <form id="form1" action="/" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          <div class="input submit">
-          {{ logout.logoutsubmit }}
+
+  {% if role is equal to 'admin'}
+  	<div class="container">
+    	<div class="row">
+    		<div class="col-md-12">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <ul>
+                {% for message in messages %}
+                  <li>{{ message[1] }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          {% endwith %}
+          <form action="" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class="input text">
+              <p class="lead text-left">{{ createuserform.username.label }} {{ createuserform.username }}</p>
+              <p class="lead text-left">{{ createuserform.password.label }} {{ createuserform.password }}</p>
+              <p class="lead text-left">{{ createuserform.name.label }} {{ createuserform.name }}</p>
+              <p class="lead text-left">{{ createuserform.email.label }} {{ createuserform.email }}</p>
+              <p class="lead text-left">{{ createuserform.role.label }} {{ createuserform.role }}</p>
+            </div>
+            <div class="input submit">
+              <input type="submit" value="Submit" />
+            </div>
           </div>
-        </input>
-      </form>
-    {% endif %}
-		<a>DEBUGGING</a>
+      </div>
+  	</div> <!-- /container -->
+  {% endif %}
+{% endif %}
+
+  <footer class="container">
+    <p><a>DEBUGGING</a></p>
+    <p class="lead text-left"><a href="{{ url_for('index') }}">Return</a></p>
 	</footer>
 
 

@@ -1901,6 +1901,7 @@ def login():
             if username == testuser.username:
                 if bcrypt.check_password_hash(testuser.password,password):
                     session['name'] = testuser.name
+                    session['role'] = testuser.role
                     session['ttesession'] = tte_session()
                     return redirect(url_for('index'))
                 else:
@@ -1921,7 +1922,8 @@ def login():
 def newuser():
     createuserform = CreateUserForm(request.form)
     newuser = User()
-
+    roles = [admin,organizer]
+    createuserform.role.choices = [role for role in roles]
     if 'name' in session:
         name = session.get('name')
 
@@ -1947,7 +1949,7 @@ def newuser():
                 except:
                     flash('Unable to save user')
                     return render_template(request.url)
-    return render_template('newuser.html')
+    return render_template('newuser.html', createuserform = createuserform)
 
 
 # -----------------------------------------------------------------------
@@ -1960,6 +1962,7 @@ def index():
     # If it does, pass the user's name to the render_template
     if 'name' in session:
         name = session.get('name')
+        role = session.get('role')
         ttesession = session.get('ttesession')
         if request.method == 'POST':
             if request.form.get('logoutsubmit'):
@@ -1971,7 +1974,7 @@ def index():
             else:
                 pass
         else:
-            return render_template('base.html', logout = logout, **{'name' : name})
+            return render_template('base.html', logout = logout, **{'name' : name, 'role' : role})
     else:
         return render_template('base.html')
 
