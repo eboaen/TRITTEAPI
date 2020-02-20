@@ -1934,7 +1934,7 @@ def newuser():
             email = request.form['email']
             role = request.form['role']
 
-            if form.validate():
+            if createuserform.validate():
                 newuser.name = name
                 newuser.username = username
                 newuser.password = bcrypt.generate_password_hash(password)
