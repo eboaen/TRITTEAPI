@@ -34,7 +34,7 @@
 		</main>
 	</div> <!-- /container -->
 
-  {% if role is equal to 'admin' %}
+  {% if role equals 'admin' %}
   	<div class="container">
     	<div class="row">
     		<div class="col-md-12">
@@ -62,8 +62,8 @@
           </div>
       </div>
   	</div> <!-- /container -->
-  {% endif %}
-{% endif %}
+  {% endif %} <!-- /{% if role is equal to 'admin' %}-->
+{% endif %} <!-- /{% if name %} -->
 
   <footer class="container">
     <p><a>DEBUGGING</a></p>
