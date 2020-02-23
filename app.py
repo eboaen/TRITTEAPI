@@ -1953,6 +1953,7 @@ def passwordreset():
                 oldpassword = request.form['oldpassword']
                 passwordcheck = request.form['passwordcheck']
                 newpassword = request.form['newpassword']
+                print (oldpassword,passwordcheck,newpassword)
                 oldpassword = bcrypt.generate_password_hash(oldpassword).decode('utf-8')
                 passwordcheck = bcrypt.generate_password_hash(passwordcheck).decode('utf-8')
                 newpassword = bcrypt.generate_password_hash(newpassword).decode('utf-8')
