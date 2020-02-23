@@ -1969,7 +1969,7 @@ def resetpassword():
                 elif oldpassword == existing_user.password and oldpassword != passwordcheck:
                     flash('Your passwords do not match')
                     return redirect(request.url)
-                elif newpassword == existing_user.password oldpassword == passwordcheck:
+                elif newpassword == existing_user.password and oldpassword == passwordcheck:
                     flash('Your new password matches your old password, please enter in a new password')
                     return redirect(request.url)
                 else:
