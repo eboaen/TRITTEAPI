@@ -150,7 +150,7 @@ class CreateUserForm(FlaskForm):
 class ResetUserForm(FlaskForm):
     oldpassword = PasswordField('Old Password:', validators=[validators.DataRequired()])
     passwordcheck = PasswordField('Verify Old Password:', validators=[validators.DataRequired()])
-    password = PasswordField('New Password:', validators=[validators.DataRequired()])
+    newpassword = PasswordField('New Password:', validators=[validators.DataRequired()])
 
 
 # -----------------------------------------------------------------------
