@@ -1956,7 +1956,8 @@ def passwordreset():
                 oldpassword = str(bcrypt.generate_password_hash(oldpassword))
                 passwordcheck = str(bcrypt.generate_password_hash(passwordcheck))
                 newpassword = str(bcrypt.generate_password_hash(newpassword))
-
+                print (existing_user.password,oldpassword,passwordcheck,newpassword)
+            
                 if oldpassword == existing_user.password and oldpassword == passwordcheck and newpassword != existing_user.password:
                     try:
                         existing_user.password = newpassword
@@ -1973,7 +1974,8 @@ def passwordreset():
                     flash('Your new password matches your old password, please enter in a new password')
                     return redirect(request.url)
                 else:
-                    pass
+                    flash('')
+                    return redirect(request.url)
     return render_template('passwordreset.html', resetpasswordform = resetpasswordform, **{'name' : name})
 
 # -----------------------------------------------------------------------
