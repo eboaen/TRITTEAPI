@@ -147,6 +147,12 @@ class CreateUserForm(FlaskForm):
     email = StringField('email address:', validators=[validators.DataRequired()])
     role = SelectField('User Role', choices=[('admin','admin'),('coodinator','coodinator')],validators=[validators.DataRequired()])
 
+class ResetUserForm(FlaskForm):
+    oldpassword = PasswordField('Old Password:', validators=[validators.DataRequired()])
+    passwordcheck = PasswordField('Verify Old Password:', validators=[validators.DataRequired()])
+    password = PasswordField('New Password:', validators=[validators.DataRequired()])
+
+
 # -----------------------------------------------------------------------
 # Internal Functions
 # -----------------------------------------------------------------------
@@ -1862,31 +1868,7 @@ def tte_geolocation_byid_api_get(ttesession):
 # -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
-# This is a rudimentary authentication scheme.  A more robuest auth setup will be implemented before I do final release.
-#@app.route('/login', methods=['POST', 'GET'])
-#def login():
-#    form = LoginForm(request.form)
-#    session['id'] = 0
-#
-#    if request.method == 'POST':
-#        name = request.form['name']
-#        user = request.form['email'] #
-#        password = request.form['password']
-#
-#        if form.validate():
-#            if 'Eric' in name:
-#                session['name'] = name
-#                session['ttesession'] = tte_session()
-#                return redirect(url_for('index'))
-#            else:
-#                flash('Please enter a valid user')
-#                return redirect(request.url)
-#        else:
-#            flash('All the form fields are required.')
-#            return redirect(request.url)
-#    return render_template('login.html', form=form)
-
-# New password-based authentication
+# password-based authentication
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     form = LoginForm( )
@@ -1950,6 +1932,49 @@ def newuser():
                     return redirect(request.url)
     return render_template('newuser.html', createuserform = createuserform, **{'name' : name, 'role' : role})
 
+# -----------------------------------------------------------------------
+# Reset Password Route
+# -----------------------------------------------------------------------
+@app.route('/resetpassword', methods=['GET', 'POST'])
+def resetpassword():
+    user = User()
+    resetpasswordform = ResetUserForm(request.form)
+
+    if 'name' in session:
+        name = session.get('name')
+        try:
+            existing_user = User.query.filter_by(name=name).first()
+        except:
+            flash("Somehow this user doesn't exist")
+            return redirect(request.url)
+
+        if request.method == 'POST':
+            if resetpasswordform.validate():
+                oldpassword = request.form['oldpassword']
+                passwordcheck = request.form['passwordcheck']
+                newpassword = request.form['newpassword']
+                oldpassword = str(bcrypt.generate_password_hash(oldpassword))
+                passwordcheck = str(bcrypt.generate_password_hash(passwordcheck))
+                newpassword = str(bcrypt.generate_password_hash(newpassword))
+
+                if oldpassword == existing_user.password and oldpassword == passwordcheck and newpassword != existing_user.password:
+                    try:
+                        existing_user.password = newpassword
+                        db.session.commit()
+                        flash('User Saved')
+                        return redirect(request.url)
+                    except:
+                        flash('Unable to save user')
+                        return redirect(request.url)
+                elif oldpassword == existing_user.password and oldpassword != passwordcheck:
+                    flash('Your passwords do not match')
+                    return redirect(request.url)
+                elif newpassword == existing_user.password oldpassword == passwordcheck:
+                    flash('Your new password matches your old password, please enter in a new password')
+                    return redirect(request.url)
+                else:
+                    pass
+    return render_template('resetpassword.html', resetpasswordform = resetpasswordform, **{'name' : name})
 
 # -----------------------------------------------------------------------
 # Index Route
