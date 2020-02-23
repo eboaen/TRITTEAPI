@@ -1953,9 +1953,9 @@ def passwordreset():
                 oldpassword = request.form['oldpassword']
                 passwordcheck = request.form['passwordcheck']
                 newpassword = request.form['newpassword']
-                oldpassword = str(bcrypt.generate_password_hash(oldpassword))
-                passwordcheck = str(bcrypt.generate_password_hash(passwordcheck))
-                newpassword = str(bcrypt.generate_password_hash(newpassword))
+                oldpassword = bcrypt.generate_password_hash(oldpassword))
+                passwordcheck = bcrypt.generate_password_hash(passwordcheck))
+                newpassword = bcrypt.generate_password_hash(newpassword))
                 print (bcrypt.check_password_hash(oldpassword,passwordcheck))
                 print (bcrypt.check_password_hash(existing_user.password,oldpassword))
                 print (bcrypt.check_password_hash(oldpassword,newpassword))
