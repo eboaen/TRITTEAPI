@@ -1935,8 +1935,8 @@ def newuser():
 # -----------------------------------------------------------------------
 # Reset Password Route
 # -----------------------------------------------------------------------
-@app.route('/resetpassword', methods=['GET', 'POST'])
-def resetpassword():
+@app.route('/passwordreset', methods=['GET', 'POST'])
+def passwordreset():
     user = User()
     resetpasswordform = ResetUserForm(request.form)
 
@@ -1974,7 +1974,7 @@ def resetpassword():
                     return redirect(request.url)
                 else:
                     pass
-    return render_template('resetpassword.html', resetpasswordform = resetpasswordform, **{'name' : name})
+    return render_template('passwordreset.html', resetpasswordform = resetpasswordform, **{'name' : name})
 
 # -----------------------------------------------------------------------
 # Index Route
