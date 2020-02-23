@@ -1956,6 +1956,9 @@ def passwordreset():
                 oldpassword = str(bcrypt.generate_password_hash(oldpassword))
                 passwordcheck = str(bcrypt.generate_password_hash(passwordcheck))
                 newpassword = str(bcrypt.generate_password_hash(newpassword))
+                print (bcrypt.check_password_hash(oldpassword,passwordcheck))
+                print (bcrypt.check_password_hash(existing_user.password,oldpassword))
+                print (bcrypt.check_password_hash(oldpassword,newpassword))
 
                 if bcrypt.check_password_hash(oldpassword,passwordcheck) and bcrypt.check_password_hash(existing_user.password,oldpassword) and bcrypt.check_password_hash(oldpassword,newpassword) is False:
                     try:
