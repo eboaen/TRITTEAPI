@@ -1954,12 +1954,13 @@ def passwordreset():
                 passwordcheck = request.form['passwordcheck']
                 newpassword = request.form['newpassword']
                 print (oldpassword,passwordcheck,newpassword)
-                oldpassword = str(bcrypt.generate_password_hash(oldpassword).decode('utf-8'))
-                passwordcheck =  str(bcrypt.generate_password_hash(passwordcheck).decode('utf-8'))
-                newpassword = str(bcrypt.generate_password_hash(newpassword).decode('utf-8'))
-                print (bcrypt.check_password_hash(oldpassword,passwordcheck))
-                print (bcrypt.check_password_hash(existing_user.password,oldpassword))
-                print (bcrypt.check_password_hash(oldpassword,newpassword))
+                oldpassword = bcrypt.generate_password_hash(oldpassword).decode('utf-8')
+                passwordcheck =  bcrypt.generate_password_hash(passwordcheck).decode('utf-8')
+                newpassword = bcrypt.generate_password_hash(newpassword).decode('utf-8')
+                print (existing_user.password,str(oldpassword),str(passwordcheck),str(newpassword))
+                print (bcrypt.check_password_hash(str(oldpassword),str(passwordcheck))
+                print (bcrypt.check_password_hash(existing_user.password,str(oldpassword)))
+                print (bcrypt.check_password_hash(str(oldpassword),str(newpassword)))
 
                 if bcrypt.check_password_hash(oldpassword,passwordcheck) and bcrypt.check_password_hash(existing_user.password,oldpassword) and bcrypt.check_password_hash(oldpassword,newpassword) is False:
                     try:
