@@ -1958,7 +1958,7 @@ def passwordreset():
                 passwordcheck =  bcrypt.generate_password_hash(passwordcheck).decode('utf-8')
                 newpassword = bcrypt.generate_password_hash(newpassword).decode('utf-8')
                 print (existing_user.password,str(oldpassword),str(passwordcheck),str(newpassword))
-                print (bcrypt.check_password_hash(str(oldpassword),str(passwordcheck))
+                print (bcrypt.check_password_hash(str(oldpassword),str(passwordcheck)))
                 print (bcrypt.check_password_hash(existing_user.password,str(oldpassword)))
                 print (bcrypt.check_password_hash(str(oldpassword),str(newpassword)))
 
