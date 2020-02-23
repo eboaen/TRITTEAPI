@@ -1956,9 +1956,8 @@ def passwordreset():
                 oldpassword = str(bcrypt.generate_password_hash(oldpassword))
                 passwordcheck = str(bcrypt.generate_password_hash(passwordcheck))
                 newpassword = str(bcrypt.generate_password_hash(newpassword))
-                print (existing_user.password,oldpassword,passwordcheck,newpassword)
-            
-                if oldpassword == existing_user.password and oldpassword == passwordcheck and newpassword != existing_user.password:
+
+                if bcrypt.check_password_hash(oldpassword,passwordcheck) and bcrypt.check_password_hash(existing_user.password,oldpassword) and bcrypt.check_password_hash(oldpassword,newpassword) is False:
                     try:
                         existing_user.password = newpassword
                         db.session.commit()
@@ -1967,14 +1966,14 @@ def passwordreset():
                     except:
                         flash('Unable to save user')
                         return redirect(request.url)
-                elif oldpassword == existing_user.password and oldpassword != passwordcheck:
+                elif bcrypt.check_password_hash(oldpassword,passwordcheck) is False:
                     flash('Your passwords do not match')
                     return redirect(request.url)
-                elif newpassword == existing_user.password and oldpassword == passwordcheck:
+                elif bcrypt.check_password_hash(existing_user.password,newpassword):
                     flash('Your new password matches your old password, please enter in a new password')
                     return redirect(request.url)
                 else:
-                    flash('')
+                    flash('Something is not right')
                     return redirect(request.url)
     return render_template('passwordreset.html', resetpasswordform = resetpasswordform, **{'name' : name})
 
