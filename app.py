@@ -1953,24 +1953,19 @@ def passwordreset():
                 oldpassword = request.form['oldpassword']
                 passwordcheck = request.form['passwordcheck']
                 newpassword = request.form['newpassword']
-                print (oldpassword,passwordcheck,newpassword)
-                oldpassword = bcrypt.generate_password_hash(oldpassword).decode('utf-8')
-                passwordcheck =  bcrypt.generate_password_hash(passwordcheck).decode('utf-8')
-                newpassword = bcrypt.generate_password_hash(newpassword).decode('utf-8')
-                print (bcrypt.check_password_hash(oldpassword,passwordcheck))
                 print (bcrypt.check_password_hash(existing_user.password,oldpassword))
-                print (bcrypt.check_password_hash(oldpassword,newpassword))
-
-                if bcrypt.check_password_hash(oldpassword,passwordcheck) and bcrypt.check_password_hash(existing_user.password,oldpassword) and bcrypt.check_password_hash(oldpassword,newpassword) is False:
+                print (bcrypt.check_password_hash(existing_user.password,passwordcheck))
+                print (bcrypt.check_password_hash(existing_user.password,newpassword))
+                if bcrypt.check_password_hash(existing_user.password,oldpassword) and bcrypt.check_password_hash(existing_user.password,passwordcheck) and bcrypt.check_password_hash(existing_user.password,newpassword) is False:
                     try:
                         existing_user.password = newpassword
                         db.session.commit()
                         flash('User Saved')
                         return redirect(request.url)
                     except:
-                        flash('Unable to save user')
+                        flash('Unable to save new password')
                         return redirect(request.url)
-                elif bcrypt.check_password_hash(oldpassword,passwordcheck) is False:
+                elif bcrypt.check_password_hash(existing_user.password,passwordcheck) is False or bcrypt.check_password_hash(existing_user.password,passwordcheck) is False:
                     flash('Your passwords do not match')
                     return redirect(request.url)
                 elif bcrypt.check_password_hash(existing_user.password,newpassword):
