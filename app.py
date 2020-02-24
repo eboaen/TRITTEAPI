@@ -1880,7 +1880,7 @@ def login():
 
         if form.validate():
             testuser = User.query.filter_by(username=username).first()
-            print print (testuser.password)
+            print (testuser.password)
             try:
                 if username == testuser.username:
                     if bcrypt.check_password_hash(testuser.password,password):
