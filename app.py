@@ -1921,7 +1921,7 @@ def newuser():
                 new_user.password = bcrypt.generate_password_hash(password).decode('utf-8')
                 new_user.email = email
                 new_user.role = role
-                new_user.id = str(uuid.uuid4())
+                new_user.id = uuid.uuid4()
                 try:
                     db.session.add(new_user)
                     db.session.commit()
