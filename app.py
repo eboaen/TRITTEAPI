@@ -1944,6 +1944,7 @@ def passwordreset():
         name = session.get('name')
         try:
             existing_user = User.query.filter_by(name=name).first()
+            print (existing_user.password)
         except:
             flash("Somehow this user doesn't exist")
             return redirect(request.url)
@@ -1953,9 +1954,6 @@ def passwordreset():
                 oldpassword = request.form['oldpassword']
                 passwordcheck = request.form['passwordcheck']
                 newpassword = request.form['newpassword']
-                print (bcrypt.check_password_hash(existing_user.password,oldpassword))
-                print (bcrypt.check_password_hash(existing_user.password,passwordcheck))
-                print (bcrypt.check_password_hash(existing_user.password,newpassword))
                 if bcrypt.check_password_hash(existing_user.password,oldpassword) and bcrypt.check_password_hash(existing_user.password,passwordcheck) and bcrypt.check_password_hash(existing_user.password,newpassword) is False:
                     try:
                         existing_user.password = newpassword
