@@ -1880,7 +1880,6 @@ def login():
 
         if form.validate():
             testuser = User.query.filter_by(username=username).first()
-            print (testuser.password)
             try:
                 if username == testuser.username:
                     if bcrypt.check_password_hash(testuser.password,password):
@@ -1920,6 +1919,7 @@ def newuser():
                 new_user.name = name
                 new_user.username = username
                 new_user.password = bcrypt.generate_password_hash(password).decode('utf-8')
+                print (new_user.password)
                 new_user.email = email
                 new_user.role = role
                 new_user.id = str(uuid.uuid4())
@@ -1957,7 +1957,7 @@ def passwordreset():
                 newpassword = request.form['newpassword']
                 if bcrypt.check_password_hash(existing_user.password,oldpassword) and bcrypt.check_password_hash(existing_user.password,passwordcheck) and bcrypt.check_password_hash(existing_user.password,newpassword) is False:
                     try:
-                        existing_user.password = newpassword
+                        existing_user.password = bcrypt.generate_password_hash(newpassword).decode('utf-8')
                         db.session.commit()
                         flash('User Saved')
                         return redirect(request.url)
