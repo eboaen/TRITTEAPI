@@ -841,12 +841,11 @@ def volunteer_data_csv(volunteers):
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
         for volunteer in volunteers:
             shift_list = []
+            print (volunteer)
             for shift in volunteer['shifts']:
-                print (volunteer)
                 shift_list.append(shift['shift_data']['name'])
                 volunteer['shift_list'] = shift_list
             writer.writerow(volunteer)
-
     return()
 
 # -----------------------------------------------------------------------
@@ -2085,7 +2084,7 @@ def conventions():
             filename = create_volunteer_report(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
             return redirect(url_for('download',filename=filename))
-        # Create a CSV files on volunteers for event coord to use
+        # Create a CSV file on volunteers for event coord to use
         if request.form.get('volunteercsv') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
@@ -2093,7 +2092,7 @@ def conventions():
             updateconform = conform_info()
             filename = 'volunteerdata.csv'
             return redirect(url_for('download',filename=filename))
-        # Create a CSV files on events for event coord to use
+        # Create a CSV file on events for event coord to use
         if request.form.get('eventcsv') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
