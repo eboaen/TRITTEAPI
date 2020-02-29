@@ -349,13 +349,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
     doc_name = tteconvention_data['result']['name'].replace(" ", "_") + '_volunteer_events.docx'
     doc_save = 'downloads/' + doc_name
     document.save(doc_save)
-    doc_url = 'https://schedule.theroleinitiative.org:8086/downloads/' + doc_name
-    response = requests.get(doc_url, stream=True)
-    response.raise_for_status()
-    with open(doc_name, 'wb') as handle:
-        for block in response.iter_content(1024):
-            handle.write(block)
-    return()
+    return(doc_name)
 
 # -----------------------------------------------------------------------
 # Allow only CSV files
@@ -2088,13 +2082,9 @@ def conventions():
         if request.form.get('volunteerreport') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
             tteconvention_name = tteconvention_data['result']['name']
-            create_volunteer_report(ttesession,session['tteconvention_id'])
+            filename = create_volunteer_report(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
-            'tteconventions' : tteconventions,
-            'tteconvention_name' : tteconvention_name,
-            'tteconvention_data' : tteconvention_data,
-            })
+            return redirect(url_for('download',filename=filename))
         # Create a CSV files on volunteers for event coord to use
         if request.form.get('volunteercsv') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
@@ -2102,7 +2092,7 @@ def conventions():
             volunteer_data_csv(tteconvention_data['volunteers'])
             updateconform = conform_info()
             filename = 'volunteerdata.csv'
-            return redirect(url_for('download'))
+            return redirect(url_for('download',filename=filename))
         # Create a CSV files on events for event coord to use
         if request.form.get('eventcsv') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
@@ -2110,7 +2100,7 @@ def conventions():
             event_data_csv(tteconvention_data['events'])
             updateconform = conform_info()
             filename = 'eventdata.csv'
-            return redirect(url_for('download'))
+            return redirect(url_for('download',filename=filename))
         # Updates the convention
         if request.form.get('conventionsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
