@@ -116,6 +116,8 @@ class LoginForm(FlaskForm):
 class FileForm(FlaskForm):
     selectfile = SelectField('Filename', validators=[validators.DataRequired()])
     volunteerreport = SubmitField(label='Create Report for Volunteers')
+    volunteercsv = SubmitField(label='Create CSV file for Volunteers')
+    eventcsv = SubmitField(label='Create CSV file for Volunteers')
     eventsave = SubmitField(label='Submit File for Convention Events')
     conventionsave = SubmitField(label='Submit File for Convention Details')
     eventsdelete = SubmitField(label='Delete All Convention Events')
@@ -214,8 +216,6 @@ def conform_info():
 # -----------------------------------------------------------------------
 def create_volunteer_report(ttesession,tteconvention_id):
     document = Document()
-    #event_data_csv(tteconvention_data['events'])
-    #volunteer_data_csv(tteconvention_data['volunteers'])
     for volunteer in tteconvention_data['volunteers']:
         volunteer_events = []
         for event in tteconvention_data['events']:
@@ -831,7 +831,9 @@ def event_data_csv(events):
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames,extrasaction='ignore')
         writer.writeheader()
         for event in events:
+            print (event)
             writer.writerow(event)
+
     return()
 
 # -----------------------------------------------------------------------
@@ -846,10 +848,11 @@ def volunteer_data_csv(volunteers):
         for volunteer in volunteers:
             shift_list = []
             for shift in volunteer['shifts']:
+                print (volunteer)
                 shift_list.append(shift['shift_data']['name'])
                 volunteer['shift_list'] = shift_list
             writer.writerow(volunteer)
-            print (volunteer)
+
     return()
 
 # -----------------------------------------------------------------------
@@ -1866,9 +1869,11 @@ def tte_geolocation_byid_api_get(ttesession):
     return(geolociation_name)
 
 # -----------------------------------------------------------------------
+# Routes
+# -----------------------------------------------------------------------
+# -----------------------------------------------------------------------
 # Login to server route
 # -----------------------------------------------------------------------
-# password-based authentication
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     form = LoginForm( )
@@ -1976,33 +1981,6 @@ def passwordreset():
     return render_template('passwordreset.html', resetpasswordform = resetpasswordform, **{'name' : name})
 
 # -----------------------------------------------------------------------
-# Index Route
-# -----------------------------------------------------------------------
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    logout = LogoutForm()
-    # Check to see if the user already exists.
-    # If it does, pass the user's name to the render_template
-    if 'name' in session:
-        name = session.get('name')
-        role = session.get('role')
-
-        ttesession = session.get('ttesession')
-        if request.method == 'POST':
-            if request.form.get('logoutsubmit'):
-                session.pop('name')
-                delete_session_params = {'session_id': ttesession['id']}
-                delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession['id'], params= delete_session_params)
-                session.pop('ttesession')
-                return render_template('base.html')
-            else:
-                pass
-        else:
-            return render_template('base.html', logout = logout, **{'name' : name, 'role' : role})
-    else:
-        return render_template('base.html')
-
-# -----------------------------------------------------------------------
 # Upload file Route
 # -----------------------------------------------------------------------
 @app.route('/upload', methods=['GET', 'POST'])
@@ -2026,6 +2004,13 @@ def upload():
             file.save(os.path.join(folder, filename))
             return render_template('upload.html', filename=filename)
     return render_template('upload.html')
+
+# -----------------------------------------------------------------------
+# Upload file Route
+# -----------------------------------------------------------------------
+@app.route('/downloads/<path:filename>', methods=['GET'])
+def download(filename):
+    return send_from_directory(directory=os.getcwd()+".downloads", filename = filename)
 
 # -----------------------------------------------------------------------
 # New Convention Route
@@ -2110,6 +2095,22 @@ def conventions():
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
+        # Create a CSV files on volunteers for event coord to use
+        if request.form.get('volunteercsv') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_name = tteconvention_data['result']['name']
+            volunteer_data_csv(tteconvention_data['volunteers'])
+            updateconform = conform_info()
+            filename = 'volunteerdata.csv'
+            return redirect(url_for('download'))
+        # Create a CSV files on events for event coord to use
+        if request.form.get('eventcsv') and session.get('tteconvention_id') is not None:
+            tteconvention_id = session.get('tteconvention_id')
+            tteconvention_name = tteconvention_data['result']['name']
+            event_data_csv(tteconvention_data['events'])
+            updateconform = conform_info()
+            filename = 'eventdata.csv'
+            return redirect(url_for('download'))
         # Updates the convention
         if request.form.get('conventionsave') and session.get('tteconvention_id') is not None:
             tteconvention_id = session.get('tteconvention_id')
@@ -2213,6 +2214,34 @@ def conventions():
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,
         })
+
+# -----------------------------------------------------------------------
+# Index Route
+# -----------------------------------------------------------------------
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    logout = LogoutForm()
+    # Check to see if the user already exists.
+    # If it does, pass the user's name to the render_template
+    if 'name' in session:
+        name = session.get('name')
+        role = session.get('role')
+
+        ttesession = session.get('ttesession')
+        if request.method == 'POST':
+            if request.form.get('logoutsubmit'):
+                session.pop('name')
+                delete_session_params = {'session_id': ttesession['id']}
+                delete_session = requests.delete('https://tabletop.events/api/session/' + ttesession['id'], params= delete_session_params)
+                session.pop('ttesession')
+                return render_template('base.html')
+            else:
+                pass
+        else:
+            return render_template('base.html', logout = logout, **{'name' : name, 'role' : role})
+    else:
+        return render_template('base.html')
+
 # -----------------------------------------------------------------------
 # Run Program
 # -----------------------------------------------------------------------
