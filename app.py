@@ -826,10 +826,11 @@ def event_data_csv(events):
     folder = config.DOWNLOAD_FOLDER
     saveloc = folder + '/eventdata.csv'
     with open(saveloc, mode='w') as csv_file:
-        fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'host_count']
+        fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'hosts']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames,extrasaction='ignore')
         writer.writeheader()
-        for event in events:
+        sorted_events = sorted(events, key = lambda j: j['start_date'])
+        for event in sorted_events:
             print (event)
             writer.writerow(event)
 
