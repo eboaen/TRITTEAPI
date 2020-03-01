@@ -315,7 +315,7 @@ def create_volunteer_report(ttesession,tteconvention_id):
             shifts_hdr_cells[0].text = 'Shift Name'
             shifts_hdr_cells[1].text = 'Day'
             shifts_hdr_cells[2].text = 'Time Range'
-            volunter_sorted_shifts = sorted(volunteer['shifts'],key = lambda i: i[['shift_data']['start_time']])
+            volunter_sorted_shifts = sorted(volunteer['shifts'],key = lambda i: i['shift_data']['start_time'])
             for vol_shift in volunter_sorted_shifts:
                 shifts_row_cells = shifts_table.add_row().cells
                 shifts_row_cells[0].text = vol_shift['shift_data']['name']
