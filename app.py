@@ -216,7 +216,10 @@ def conform_info():
 # -----------------------------------------------------------------------
 def create_volunteer_report(ttesession,tteconvention_id):
     document = Document()
-    for volunteer in tteconvention_data['volunteers']:
+
+
+    sorted_volunters = sorted(tteconvention_data['volunteers'],key = lambda j: j['lastname'])
+    for volunteer in sorted_volunters:
         volunteer_events = []
         for event in tteconvention_data['events']:
             for host in event['hosts']:
@@ -820,7 +823,7 @@ def slots_parse(event_slots):
 # Save the event data to CSV
 # -----------------------------------------------------------------------
 def event_data_csv(events):
-    folder = config.UPLOAD_FOLDER
+    folder = config.DOWNLOAD_FOLDER
     saveloc = folder + '/eventdata.csv'
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'host_count']
@@ -836,7 +839,7 @@ def event_data_csv(events):
 # Save the volunteer data to CSV
 # -----------------------------------------------------------------------
 def volunteer_data_csv(volunteers):
-    folder = config.UPLOAD_FOLDER
+    folder = config.DOWNLOAD_FOLDER
     saveloc = folder + '/volunterdata.csv'
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['email_address', 'firstname', 'lastname', 'shift_list', 'custom_fields']

@@ -11,6 +11,7 @@ HOST = '0.0.0.0'
 ALLOWED_EXTENSIONS = set(['csv'])
 SECRET_KEY = '7d441f27d441f27567d441f2b6173269'
 UPLOAD_FOLDER = '/var/www/TRITTEAPI/uploads'
+DOWNLOAD_FOLDER = '/var/www/TRITTEAPI/downloads'
 
 # -----------------------------------------------------
 # TTE defaults configurations
