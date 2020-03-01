@@ -315,7 +315,8 @@ def create_volunteer_report(ttesession,tteconvention_id):
             shifts_hdr_cells[0].text = 'Shift Name'
             shifts_hdr_cells[1].text = 'Day'
             shifts_hdr_cells[2].text = 'Time Range'
-            for vol_shift in volunteer['shifts']:
+            volunter_sorted_shifts = sorted(volunteer['shifts'],key = lambda i: i[['shift_data']['start_time']])
+            for vol_shift in volunter_sorted_shifts:
                 shifts_row_cells = shifts_table.add_row().cells
                 shifts_row_cells[0].text = vol_shift['shift_data']['name']
                 shift_datetime_utc = datetime.datetime.strptime(vol_shift['shift_data']['start_time'], '%Y-%m-%d %H:%M:%S')
@@ -336,7 +337,8 @@ def create_volunteer_report(ttesession,tteconvention_id):
             events_hdr_cells[2].text = 'Room'
             events_hdr_cells[3].text = 'Table'
             events_hdr_cells[4].text = 'Start Time'
-            for vol_event in volunteer_events:
+            volunteer_sorted_events = sorted(volunteer_events, key = lambda k: k['start_date'])
+            for vol_event in volunteer_sorted_events:
                 events_row_cells = events_table.add_row().cells
                 events_row_cells[0].text = vol_event['name']
                 events_row_cells[1].text = str(vol_event['duration'])
