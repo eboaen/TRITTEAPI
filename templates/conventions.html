@@ -54,11 +54,15 @@
           </div>
           <div class="input submit">
             <p></p>
-            {{ fileform.volunteerreport }}
+
             <p></p>
             {{ fileform.conventionsave }}
             {{ fileform.eventsave }}
-            <p></p>
+
+            <p>Download a report on all volunteers: {{ fileform.volunteerreport }}</p>
+            <p>Download a CSV on all volunteers: {{ fileform.volunteercsv }}</p>
+            <p>Download a CSV on all events: {{ fileform.eventcsv }}</p>
+            <p>The following buttons are DESTRUCTIVE!  Do not use unless last resort</p>
             {{ fileform.eventsdelete }}
             {{ fileform.shiftsdelete }}
             {{ fileform.daypartsdelete }}
