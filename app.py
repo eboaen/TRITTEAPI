@@ -217,7 +217,6 @@ def conform_info():
 def create_volunteer_report(ttesession,tteconvention_id):
     document = Document()
 
-
     sorted_volunters = sorted(tteconvention_data['volunteers'],key = lambda j: j['lastname'])
     for volunteer in sorted_volunters:
         volunteer_events = []
@@ -419,7 +418,7 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
-    print(json.dumps(tteconvention_data, indent=2))
+    print (tteconvention_data['volunteers'])
     return()
 
 # -----------------------------------------------------------------------
