@@ -94,22 +94,26 @@
       <div class="container">
         <div class="jumbotron">
           <p class='text-center'> Here is a list of Slots for {{ tteconvention_data.result['name'] }} </p>
-          <table class="table-bordered table-sm">
-            <tr>
-              <th scope="col">Slot</th>
-              <th scope="col">Slot Day</th>
-              <th scope="col">Slot Time</th>
-              <th scope="col">Slot Duration</th>
-            </tr>
-            {% for shift in tteconvention_data.shifts|sort(attribute='start_time') %}
-              <tr>
-                <td>{{ shift.name }}</td>
-                <td>{{ shift.day }}</td>
-                <td>{{ shift.times_range }}</td>
-                <td>{{ shift.duration_in_hours }}</td>
-              </tr>
-            {% endfor %}
-          </table>
+          <div class="row justify-content-center">
+            <div class="col-auto">
+              <table class="table-responsive table-bordered table-sm text-center">
+                <tr>
+                  <th scope="col">Slot</th>
+                  <th scope="col">Slot Day</th>
+                  <th scope="col">Slot Time</th>
+                  <th scope="col">Slot Duration</th>
+                </tr>
+                {% for shift in tteconvention_data.shifts|sort(attribute='start_time') %}
+                  <tr>
+                    <td>{{ shift.name }}</td>
+                    <td>{{ shift.day }}</td>
+                    <td>{{ shift.times_range }}</td>
+                    <td>{{ shift.duration_in_hours }}</td>
+                  </tr>
+                {% endfor %}
+              </table>'
+            </div>
+          </div>
           <p></p>
           <form action="" method="post" role="form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
