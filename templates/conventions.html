@@ -114,11 +114,9 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <label form="sel1">Create a new slot</label>
               <div class="form-group">
-                <p>
-                {{ slotform.slotname.label }} {{ slotform.slotname }}
-                {{ slotform.slotstarttime.label }} {{ slotform.slotstarttime }}
-                {{ slotform.slotlength.label }} {{ slotform.slotlength }}
-                </p>
+                <p>{{ slotform.slotname.label }} {{ slotform.slotname }}</p>
+                <p>{{ slotform.slotstarttime.label }} {{ slotform.slotstarttime }}</p>
+                <p>{{ slotform.slotlength.label }} {{ slotform.slotlength }}</p>
                 <p>{{ slotform.slotsubmit }}</p>
               </div>
           </form>
