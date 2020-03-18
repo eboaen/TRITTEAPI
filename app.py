@@ -1312,8 +1312,9 @@ def tte_convention_volunteer_shifts_api_get(ttesession,tteconvention_id):
         shifts_data = shifts_json['result']['items']
         for shifts in shifts_data:
             for shift in shifts:
-                actual_date = datetime_timezone_convert(ttesession,tteconvention_id, shift['start_time'])
-                day = datetime.date(shift_actual.year,shift_actual.month,shift_actual.day)
+                shift_date_utc = datetime.datetime.strptime(shift['start_time'], '%Y-%m-%d %H:%M:%S')
+                shift_date_converted = datetime_timezone_convert(ttesession,tteconvention_id, shift_date_utc)
+                day = datetime.date(shift_date_converted.year,shift_date_converted.month,shift_date_converted.day)
                 shift['day'] = day
             all_shifts.append(shifts)
         if shifts_start < shifts_total:
