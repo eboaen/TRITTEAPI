@@ -428,7 +428,8 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
     tteconvention_data['shifts'] = shifts_data
-    print (tteconvention_data['volunteers'])
+    for shift in tteconvention_data['shifts']:
+        print (shift)
     return()
 
 # -----------------------------------------------------------------------

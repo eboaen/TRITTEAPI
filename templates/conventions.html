@@ -91,20 +91,24 @@
     </div> <!-- /container -->
     {% endif %}
     {% if tteconvention_data is defined %}
-      <form action="" method="post" role="form">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          <label form="sel1">Create a new slot type</label>
-          <div class="form-group">
-            <p>
-            {{ slotform.slotname.label }} {{ slotform.slotname }}
-            {{ slotform.slotnum.label }} {{ slotform.slotnum }}
-            {{ slotform.slotlength.label }} {{ slotform.slotlength }}
-            {{ slotform.slottablestart.label }} {{ slotform.slottablestart }}
-            {{ slotform.slottableend.label }} {{ slotform.slottableend }}
-            </p>
-            <p>{{ slotform.slotsubmit.label }} {{ slotform.slotsubmit }}</p>
-          </div>
-      </form>
+      <div class="container-fluid">
+        <div class="jumbotron">
+          <form action="" method="post" role="form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <label form="sel1">Create a new slot type</label>
+              <div class="form-group">
+                <p>
+                {{ slotform.slotname.label }} {{ slotform.slotname }}
+                {{ slotform.slotnum.label }} {{ slotform.slotnum }}
+                {{ slotform.slotlength.label }} {{ slotform.slotlength }}
+                {{ slotform.slottablestart.label }} {{ slotform.slottablestart }}
+                {{ slotform.slottableend.label }} {{ slotform.slottableend }}
+                </p>
+                <p>{{ slotform.slotsubmit }}</p>
+              </div>
+          </form>
+        </div>
+      </div>
       <div class="container-fluid">
         <p class='text-center'> Here is a list of volunteers for {{ tteconvention_data.result['name'] }} </p>
         <table class="table-bordered table-sm">
