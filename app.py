@@ -427,8 +427,6 @@ def tte_convention_api_get(ttesession,tteconvention_id):
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
     tteconvention_data['shifts'] = shifts_data
-    for shift in tteconvention_data['shifts']:
-        print (shift)
     return()
 
 # -----------------------------------------------------------------------
@@ -1311,6 +1309,7 @@ def tte_convention_volunteer_shifts_api_get(ttesession,tteconvention_id):
         shifts_total = int(shifts_json['result']['paging']['total_pages'])
         shifts_data = shifts_json['result']['items']
         for shifts in shifts_data:
+            print (shifts)
             for shift in shifts:
                 shift_date_utc = datetime.datetime.strptime(shift['start_time'], '%Y-%m-%d %H:%M:%S')
                 shift_date_converted = datetime_timezone_convert(ttesession,tteconvention_id, shift_date_utc)
