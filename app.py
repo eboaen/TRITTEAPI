@@ -156,7 +156,6 @@ class ResetUserForm(FlaskForm):
 
 class SlotForm(FlaskForm):
     slotname = StringField('Type of slot', validators=[validators.DataRequired()])
-    slotnum = StringField('Number of slots', validators=[validators.DataRequired()])
     slotlength = StringField('Length of slots', validators=[validators.DataRequired()])
     slottablestart = StringField('Starting Table Number', validators=[validators.DataRequired()])
     slottableend = StringField('Ending Table Number', validators=[validators.DataRequired()])
@@ -1312,6 +1311,10 @@ def tte_convention_volunteer_shifts_api_get(ttesession,tteconvention_id):
         shifts_total = int(shifts_json['result']['paging']['total_pages'])
         shifts_data = shifts_json['result']['items']
         for shifts in shifts_data:
+            for shift in shifts:
+                actual_date = datetime_timezone_convert(ttesession,tteconvention_id, shift['start_time'])
+                day = datetime.date(shift_actual.year,shift_actual.month,shift_actual.day)
+                shift['day'] = day
             all_shifts.append(shifts)
         if shifts_start < shifts_total:
             shifts_start = int(shifts_json['result']['paging']['next_page_number'])
