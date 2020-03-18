@@ -9,6 +9,8 @@ def create_schedule(ttesession,tteconvention_id):
             self.events = []
             self.shifts = []
             self.dayparts = []
+            self.types = []
+            self.tiers = []
 
         def add_event(self,event):
             self.events.append(event)
@@ -16,6 +18,10 @@ def create_schedule(ttesession,tteconvention_id):
             self.shifts.append(shift)
         def add_dayparts(self,dayparts):
             self.dayparts.extend(daypart)
+        def add_tier(self,tier):
+            self.tiers.append(tier)
+        def add_type(self,type):
+            self.types.append(type)
 
     class Event:
         def __init__(self,name,id):

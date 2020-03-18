@@ -154,6 +154,13 @@ class ResetUserForm(FlaskForm):
     passwordcheck = PasswordField('Verify Old Password:', validators=[validators.DataRequired()])
     newpassword = PasswordField('New Password:', validators=[validators.DataRequired()])
 
+class SlotForm(FlaskForm):
+    slotname = StringField('Type of slot', validators=[validators.DataRequired()])
+    slotnum = StringField('Number of slots', validators=[validators.DataRequired()])
+    slotlength = StringField('Length of slots', validators=[validators.DataRequired()])
+    slottablestart = StringField('Starting Table Number', validators=[validators.DataRequired()])
+    slottableend = StringField('Ending Table Number', validators=[validators.DataRequired()])
+    slotsubmit = SubmitField(label='Create Slots')
 
 # -----------------------------------------------------------------------
 # Internal Functions
@@ -413,11 +420,14 @@ def tte_convention_api_get(ttesession,tteconvention_id):
         # field['event_hosts'] = event_hosts
     # API Pull from TTE to get the volunteer information
     volunteer_data = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
+    # API Pull from TTE to get the shifts
+    shifts_data = tte_convention_volunteer_shifts_api_get(ttesession,tteconvention_id)
     # Populate dictionary with the info pulled from TTE
     tteconvention_data['result']['geolocation_name'] = tte_geolocation_byid_api_get(ttesession)
     tteconvention_data['result']['days'] = tte_convention_days_api_get(ttesession,tteconvention_id)
     tteconvention_data['events'] = event_data
     tteconvention_data['volunteers'] = volunteer_data
+    tteconvention_data['shifts'] = shifts_data
     print (tteconvention_data['volunteers'])
     return()
 
@@ -762,7 +772,7 @@ def list_convention_info(tteconvention_id):
     return(convention_data)
 
 # -----------------------------------------------------------------------
-# Pull Slots Data from the TTE API for the whole convention that match the time submitt and the event room id
+# Pull Slots Data from the TTE API for the whole convention that match the time submit and the event room id
 # -----------------------------------------------------------------------
 def tte_convention_slots_api_get(ttesession,tteconvention_id,eventslot,event):
     #print ('debug tte_convention_slots_api_get')
@@ -1190,23 +1200,6 @@ def tte_shift_api_get(ttesession,tteconvention_id,shift_id):
 # Slot Functions
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
-# Delete shofts from database
-# -----------------------------------------------------------------------
-def database_slot_delete(tteconvention_id):
-    convention = Conventions()
-    convention = Conventions.query.filter_by(tteid=tteconvention_id).first()
-    convention.slots = None
-    try:
-        db.session.commit()
-        deleted = 'Deleted all slots'
-        return (deleted)
-    except:
-        logger.exception("Cannot delete slots")
-        db.session.rollback()
-        deleted = 'failed'
-        return (deleted)
-
-# -----------------------------------------------------------------------
 # Post to TTE the Volunteer Shifts
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info):
@@ -1258,7 +1251,7 @@ def tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,conventi
     return()
 
 # -----------------------------------------------------------------------
-# Pull shifts from TTE
+# Pull shift types from TTE
 # -----------------------------------------------------------------------
 def tte_convention_volunteer_shifttypes_api_get(ttesession,tteconvention_id):
     shifttypes_url = 'https://tabletop.events' + tteconvention_data['result']['_relationships']['shifttypes']
@@ -1978,6 +1971,7 @@ def conventions():
     conform.selectcon.choices = [(tteconventions[con]['id'],tteconventions[con]['name']) for con in tteconventions]
     fileform = FileForm(request.form, obj=files)
     fileform.selectfile.choices = [(file,file) for file in files]
+    slotform = SlotForm(request.form)
     if request.method == "POST":
         # Pull all the data regarding the convention
         if request.form.get('consubmit'):
@@ -1987,7 +1981,7 @@ def conventions():
             tte_convention_api_get(ttesession,session['tteconvention_id'])
             updateconform = conform_info()
             print (ttesession,session['tteconvention_id'])
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
             })
@@ -2003,7 +1997,7 @@ def conventions():
             update_convention['dates'] = request.form['dates']
             tte_convention_convention_api_put(ttesession,update_convention)
             updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_data' : tteconvention_data,
             })
@@ -2042,7 +2036,7 @@ def conventions():
             print ('Creating the Volunteer Shifts')
             tte_convention_volunteer_shift_api_post(ttesession,tteconvention_id,convention_info)
             updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -2057,7 +2051,7 @@ def conventions():
             savedevents = event_parse(location,tteconvention_id,tteconvention_name)
             pushevents = tte_convention_events_api_post(ttesession,tteconvention_id,savedevents)
             updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -2070,7 +2064,7 @@ def conventions():
             tteevents = tte_events_api_get(ttesession,tteconvention_id)
             deleteevents = tte_convention_events_api_delete(ttesession,tteconvention_id,tteevents)
             updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -2084,7 +2078,7 @@ def conventions():
             convention_info = list_convention_info(tteconvention_id)
             #databaseslotdelete = database_slot_delete(tteconvention_id)
             updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -2096,7 +2090,7 @@ def conventions():
             ttedayparts = tte_convention_dayparts_api_get(ttesession,tteconvention_id)
             deletedayparts = tte_convention_dayparts_api_delete(ttesession,tteconvention_id,ttedayparts)
             updateconform = conform_info()
-            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html', updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -2109,7 +2103,7 @@ def conventions():
             ttespace = tte_convention_spaces_api_get(ttesession,tteconvention_id)
             tte_convention_roomnsandspaces_api_delete(ttesession,tteconvention_id,tterooms,ttespace)
             updateconform = conform_info()
-            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
@@ -2122,13 +2116,13 @@ def conventions():
             tte_convention_volunteer_api_delete(ttesession,tteconvention_id,volunteer_id)
             tteconvention_data['volunteers'] = tte_convention_volunteer_api_get(ttesession,tteconvention_id)
             updateconform = conform_info()
-            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name,
+            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name,
             'tteconventions' : tteconventions,
             'tteconvention_name' : tteconvention_name,
             'tteconvention_data' : tteconvention_data,
             })
         else:
-            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, **{'name' : name })
+            return render_template('conventions.html',  updateconform=updateconform, conform=conform, fileform=fileform, slotform=slotform, **{'name' : name })
 
     else:
         return render_template('conventions.html', conform=conform, fileform=fileform, **{'name' : name,

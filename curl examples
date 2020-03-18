@@ -1,6 +1,11 @@
 
 C551D1BE-0FDF-11EA-9A4D-436CB2C82C75 80B5EA32-0737-11EA-A34B-10BF4B10ACB6
 
+# Get Event info
+curl -X GET https://tabletop.events/api/event/FFE7A094-4165-11EA-A19C-6BB94DD5AE94 -d 'session_id=AEC377C2-2E2A-11EA-A5EA-9B9523B98859&_include_relationships=1'
+
+
+
 
 curl -X GET https://tabletop.events/api/convention/80B5EA32-0737-11EA-A34B-10BF4B10ACB6 -d 'session_id=1184FBAC-1115-11EA-A2B7-120948194027&_include_relationships=1'
 
