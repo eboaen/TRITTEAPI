@@ -155,10 +155,10 @@ class ResetUserForm(FlaskForm):
     newpassword = PasswordField('New Password:', validators=[validators.DataRequired()])
 
 class SlotForm(FlaskForm):
-    slotname = StringField('Type of slot', validators=[validators.DataRequired()])
+    slotname = StringField('Name of slot', validators=[validators.DataRequired()])
     slotstarttime = StringField('Start date and time of the slot (MM/DD/YYYY hh:mm:ss)', validators=[validators.DataRequired()])
-    slotlength = StringField('Length of slots', validators=[validators.DataRequired()])
-    slotsubmit = SubmitField(label='Create Slots')
+    slotlength = StringField('Length of slot', validators=[validators.DataRequired()])
+    slotsubmit = SubmitField(label='Create Slot')
 
 # -----------------------------------------------------------------------
 # Internal Functions
