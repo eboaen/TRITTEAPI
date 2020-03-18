@@ -93,6 +93,20 @@
     {% if tteconvention_data is defined %}
       <div class="container-fluid">
         <div class="jumbotron">
+          <table class="table-bordered table-sm">
+            <tr>
+              <th scope="col">Slot Type</th>
+              <th scope="col">Slot</th>
+              <th scope="col">Slot Time</th>
+            </tr>
+            {% for shift in tteconvention_data.shifts|sort(attribute='start_time') %}
+              <tr>
+                <td>{{ shift.shifttype.name }}</td>
+                <td>{{ shift.name }}</td>
+                <td>{{ shift.times_range }}</td>
+              </tr>
+            {% endfor %}    
+          </table>
           <form action="" method="post" role="form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <label form="sel1">Create a new slot type</label>
