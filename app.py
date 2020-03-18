@@ -156,9 +156,8 @@ class ResetUserForm(FlaskForm):
 
 class SlotForm(FlaskForm):
     slotname = StringField('Type of slot', validators=[validators.DataRequired()])
+    slotstarttime = StringField('Start date and time of the slot (MM/DD/YYYY hh:mm:ss)', validators=[validators.DataRequired()])
     slotlength = StringField('Length of slots', validators=[validators.DataRequired()])
-    slottablestart = StringField('Starting Table Number', validators=[validators.DataRequired()])
-    slottableend = StringField('Ending Table Number', validators=[validators.DataRequired()])
     slotsubmit = SubmitField(label='Create Slots')
 
 # -----------------------------------------------------------------------

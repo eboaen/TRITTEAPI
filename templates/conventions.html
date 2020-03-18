@@ -114,14 +114,12 @@
           </table>
           <form action="" method="post" role="form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <label form="sel1">Create a new slot type</label>
+              <label form="sel1">Create a new slot</label>
               <div class="form-group">
                 <p>
                 {{ slotform.slotname.label }} {{ slotform.slotname }}
-                {{ slotform.slotnum.label }} {{ slotform.slotnum }}
+                {{ slotform.slotstarttime.label }} {{ slotform.slotstarttime }}
                 {{ slotform.slotlength.label }} {{ slotform.slotlength }}
-                {{ slotform.slottablestart.label }} {{ slotform.slottablestart }}
-                {{ slotform.slottableend.label }} {{ slotform.slottableend }}
                 </p>
                 <p>{{ slotform.slotsubmit }}</p>
               </div>
