@@ -823,7 +823,7 @@ def slots_parse(event_slots):
 # -----------------------------------------------------------------------
 def event_data_csv(events):
     folder = config.DOWNLOAD_FOLDER
-    saveloc = '/downloads/eventdata.csv'
+    saveloc = './downloads/eventdata.csv'
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'hosts']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames,extrasaction='ignore')
@@ -839,7 +839,7 @@ def event_data_csv(events):
 # -----------------------------------------------------------------------
 def volunteer_data_csv(volunteers):
     folder = config.DOWNLOAD_FOLDER
-    saveloc = '/downloads/volunterdata.csv'
+    saveloc = './downloads/volunterdata.csv'
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['email_address', 'firstname', 'lastname', 'shift_list', 'custom_fields']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
