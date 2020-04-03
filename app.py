@@ -827,7 +827,6 @@ def event_data_csv(events):
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['event_number', 'name', 'startdaypart_name', 'duration', 'event_tables', 'hosts']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames,extrasaction='ignore')
-        writer.writeheader()
         sorted_events = sorted(events, key = lambda j: j['start_date'])
         for event in sorted_events:
             print (event)
@@ -843,7 +842,6 @@ def volunteer_data_csv(volunteers):
     with open(saveloc, mode='w') as csv_file:
         fieldnames = ['email_address', 'firstname', 'lastname', 'shift_list', 'custom_fields']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
-        writer.writheader()
         sorted_volunteers = sorted(volunteers, key = lambda j: j['lastname'])
         for volunteer in sorted_volunteers:
             shift_list = []
