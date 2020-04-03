@@ -848,9 +848,6 @@ def volunteer_data_csv(volunteers):
         for volunteer in sorted_volunteers:
             shift_list = []
             print (volunteer)
-            for shift in volunteer['shifts']:
-                shift_list.append(shift['shift_data']['name'])
-                volunteer['shift_list'] = shift_list
             writer.writerow(volunteer)
     return()
 
