@@ -1931,7 +1931,7 @@ def upload():
 # -----------------------------------------------------------------------
 @app.route('/downloads/<path:filename>', methods=['GET'])
 def download(filename):
-    return send_from_directory(directory=os.getcwd()+".downloads", filename = filename)
+    return send_from_directory(directory=os.getcwd()+"./downloads", filename = filename)
 
 # -----------------------------------------------------------------------
 # New Convention Route
