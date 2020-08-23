@@ -1088,35 +1088,6 @@ def tte_convention_volunteer_api_delete(ttesession,tteconvention_id,volunteer_id
 # Volunteer Functions
 # -----------------------------------------------------------------------
 # -----------------------------------------------------------------------
-# Ingest Volunteers
-# -----------------------------------------------------------------------
-def volunteer_parse(filename,tteconvention_id):
-    # Definitions
-    newheader = []
-
-    # Open CSV file and verify headers
-    with open(filename, newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        for header in reader.fieldnames:
-            if 'Email Address' in header:
-                newheader.append('email')
-            elif 'Name' in header:
-                newheader.append('name')
-            elif 'Role' in header:
-                newheader.append('role')
-            elif 'Hours' in header:
-                newheader.append('hours')
-            elif 'Tiers' in header:
-                newheader.append('tiers')
-            elif 'Slot' in header:
-                header_l = header.rsplit()
-                newheader.append('slot ' + header_l[1])
-        reader.fieldnames = newheader
-        for vol in reader:
-            saved = volunteer_save(vol,tteconvention_id)
-        return(saved)
-
-# -----------------------------------------------------------------------
 # Query if user exists in TTE
 # -----------------------------------------------------------------------
 def tte_user_api_pull(ttesession,volunteer_email):
